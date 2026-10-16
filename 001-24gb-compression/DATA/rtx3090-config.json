@@ -1,0 +1,30 @@
+{
+  "suite": "phase2_original_rtx3090_v1",
+  "purpose": "Repeat the original task suite and schedule on RTX 3090 with reasoning history preserved. Task definitions, seeds, scoring, model artifacts, sampling, inference engine, context length, cache, and tool budgets match Phase 1. Because the known adapter defect is corrected, report as a corrected-harness replication, not a byte-for-byte harness reproduction.",
+  "original_freeze": "../freeze.json",
+  "runner": "src.run_v2",
+  "runner_change": "Preserve assistant reasoning_content alongside content and tool_calls when replaying tool-call history.",
+  "models": ["nemotron", "qwen"],
+  "gpu": "NVIDIA GeForce RTX 3090 24GB",
+  "context_tokens": 16384,
+  "kv_cache": "Q8_0",
+  "gpu_layers": "all",
+  "cpu_layer_offload": false,
+  "parallel_slots": 1,
+  "sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "top_k": {"nemotron": 40, "qwen": 20},
+    "seed_rule": "Frozen assignment seed plus zero-based tool turn index",
+    "enable_thinking": true
+  },
+  "generation_limits": {
+    "tool_tasks_max_tokens_per_turn": 512,
+    "single_turn_tasks_max_tokens": 2048,
+    "tool_turn_limit": 6
+  },
+  "system_ram_measurement": "Container cgroup v2 memory.current or cgroup v1 memory.usage_in_bytes; host MemAvailable fallback only if no cgroup counter exists.",
+  "schedule": "../schedule.json",
+  "scored_trials": 240,
+  "checkpointing": "Original run.py-compatible SQLite schema and at-most-once interruption handling; separate Phase 2 database and raw-trace directory."
+}
