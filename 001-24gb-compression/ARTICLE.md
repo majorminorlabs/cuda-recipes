@@ -34,6 +34,62 @@ Update: CUDA Recipes 001 ran at 16K context. Context scaling on the same card an
 
 All data, charts, and scripts are downloadable at the bottom.
 
+## The recipe
+
+Tested on an RTX 3090 24GB and RTX 5090 32GB, one model at a time, at 16K context.
+
+**Build llama.cpp at the tested commit**
+
+Set `LLAMA_CPP_DIR` to your llama.cpp checkout, `LLAMA_CPP_REV` to `620d2225cc436ab0b001e3200e590e3b286ef9ab`, `CUDA_ARCHITECTURE` to `86` for the 3090 or `120` for the 5090, `CUDA_TOOLKIT_ROOT` to your CUDA 12.8 installation, and `CUDACXX` to its `bin/nvcc`. These are the build commands from the study runner:
+
+```sh
+git -C "$LLAMA_CPP_DIR" checkout --detach "$LLAMA_CPP_REV"
+rm -rf "$LLAMA_CPP_DIR/build"
+cmake -S "$LLAMA_CPP_DIR" -B "$LLAMA_CPP_DIR/build" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CUDA_COMPILER="$CUDACXX" \
+  -DCUDAToolkit_ROOT="$CUDA_TOOLKIT_ROOT" \
+  -DCMAKE_CUDA_ARCHITECTURES="$CUDA_ARCHITECTURE" \
+  -DGGML_CUDA=ON -DGGML_NATIVE=ON \
+  -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=ON
+cmake --build "$LLAMA_CPP_DIR/build" --parallel "$(nproc)" --target llama-server llama-cli
+```
+
+**Download the exact files**
+
+Set `MODEL_DIR` to the directory where you want the weights. The download commands below are copied from the study runner:
+
+```sh
+mkdir -p "$MODEL_DIR"
+python3 -m venv "$MODEL_DIR/hf-venv"
+"$MODEL_DIR/hf-venv/bin/pip" install --disable-pip-version-check huggingface_hub
+HF="$MODEL_DIR/hf-venv/bin/hf"
+mkdir -p "$MODEL_DIR/nemotron" "$MODEL_DIR/qwen"
+"$HF" download nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-GGUF \
+  NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf \
+  --revision e0fecb69cb3e5e4c5e8a056fa2aec98c78e91246 --local-dir "$MODEL_DIR/nemotron"
+"$HF" download Abiray/Qwen3.8-27B-Q4_K_M-GGUF \
+  Qwen3.8-27B-Q4_K_M.gguf \
+  --revision f7a1cda580fe828415151042bf9f3dc5bb8b0d76 --local-dir "$MODEL_DIR/qwen"
+```
+
+**Serve either model at 16K**
+
+Set `MODEL_FILE` to `$MODEL_DIR/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf` or `$MODEL_DIR/qwen/Qwen3.8-27B-Q4_K_M.gguf`. The same command served both files; all flags below are copied from the study runner and checked against the scored server logs.
+
+```sh
+export LD_LIBRARY_PATH="/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+"$LLAMA_CPP_DIR/build/bin/llama-server" \
+  --model "$MODEL_FILE" --host 127.0.0.1 --port 8000 \
+  --ctx-size 16384 --parallel 1 --batch-size 512 --ubatch-size 128 \
+  --cache-type-k q8_0 --cache-type-v q8_0 -ngl 999 \
+  --flash-attn on --jinja --verbose
+```
+
+Nemotron peaked at 21,339 MiB on the 3090 and 21,865 MiB on the 5090; Qwen peaked at 16,481 and 16,514 MiB. Decode was about twice as fast for Nemotron, but median time to a finished task was a tie.
+
+For another NVIDIA GPU, set `CUDA_ARCHITECTURE` for that device and remeasure memory headroom before raising context or adding parallel slots.
+
 ## Why we ran this
 
 The 24GB card is the most common "serious" local setup, and it sits right on the line where you start trading things off. More parameters, or more bits per parameter? More tokens per second, or more tasks done right?
