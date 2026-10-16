@@ -20,6 +20,8 @@ What we wanted to know was whether that speed gets work done faster, and what yo
 
 Mostly, the speed didn't turn into faster tasks. Bolt wrote about 1.5x more tokens per task, so median time to a finished task came out even. The two models were level on single-turn work, but Qwen won tool calling by a wide margin, and local agents are exactly what Bolt is being pitched for.
 
+Update: CUDA Recipes 001 ran at 16K context. Context scaling on the same card and files is covered in [CUDA Recipes 002](/research/cuda-recipes-002).
+
 ## TL;DR
 
 - **2x the tok/s, same time to done.** Bolt decoded at 85.2 vs 41.5 tok/s on the 3090 (148.3 vs 72.5 on the 5090), but generated ~1.5x more tokens per trial. Median trial time: 5.68 s vs 5.37 s on the 3090, 3.44 s vs 3.47 s on the 5090.
