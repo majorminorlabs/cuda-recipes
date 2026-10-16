@@ -1,0 +1,74 @@
+{
+  "study": "CUDA Recipes 002: Context Ceiling on 24GB",
+  "status": "planned",
+  "frozen": false,
+  "carried_over_from": "001-24gb-compression",
+  "gpu": "NVIDIA GeForce RTX 3090 24GB",
+  "llama_cpp_revision": "620d2225cc436ab0b001e3200e590e3b286ef9ab",
+  "cuda_architecture": "86",
+  "models": {
+    "nemotron": {
+      "artifact_sha256": "91d63363e782c8a3d5f4be42816eba8e0d42dd2530bd07a7d0d2dc440599af75"
+    },
+    "qwen": {
+      "artifact_sha256": "6a96cc760fc65cc6b9ea7f1922e3ff8b2a48c09f209456f23bbae9ef7032c867"
+    }
+  },
+  "fixed_server_flags": [
+    "--parallel 1",
+    "--batch-size 512",
+    "--ubatch-size 128",
+    "--cache-type-k q8_0",
+    "--cache-type-v q8_0",
+    "-ngl 999",
+    "--flash-attn on",
+    "--jinja"
+  ],
+  "cpu_layer_offload": false,
+  "variable": "ctx_size",
+  "ctx_sizes": [
+    16384,
+    65536,
+    131072,
+    262144
+  ],
+  "ceiling_search": {
+    "rule": "per model, ascending grid; stop at first full-GPU load failure, then binary-search the largest multiple of 8192 that loads with every layer on CUDA. Never exceed native_ctx_max; if native_ctx_max loads, the ceiling is reported as native_ctx_max (fits at native max).",
+    "step": 8192
+  },
+  "bench": {
+    "tool": "llama-bench",
+    "prompt_tokens": 512,
+    "generated_tokens": 128,
+    "depths_tokens": [
+      0,
+      65536,
+      131072
+    ],
+    "extra_depth": "ceiling90 = round(0.9 * model ceiling); the deep-fill point (235,930 if the ceiling is 262,144). Run last; skip only if the budget hard stop would be hit.",
+    "depth_limit_rule": "depth + prompt_tokens + generated_tokens must be <= that model ceiling",
+    "repetitions": {
+      "depth_0": 3,
+      "depth_gt_0": 1
+    },
+    "one_invocation_per_depth": true,
+    "note": "llama-bench sizes its own context to depth + prompt + generated; bench speed is a function of fill depth, not of the server window. Window VRAM comes from the load sweep."
+  },
+  "vram_sampling_hz_min": 2,
+  "budget_gpu_hours_max": 1.0,
+  "cost_rule": "actual running GPU-hours x RunPod advertised list price for the RTX 3090; estimate, not invoice",
+  "out_of_scope": [
+    "KV cache type comparison",
+    "speculative decoding / DFlash",
+    "other GPUs",
+    "other models",
+    "long-context quality or retrieval benchmarks"
+  ],
+  "native_ctx_max": {
+    "nemotron": 262144,
+    "qwen": 262144
+  },
+  "readiness": "model counts as loaded only when llama-server /health returns HTTP 200 (not when the HTTP listener starts)",
+  "budget_hard_stop_gpu_hours": 0.9,
+  "ctx_note": "16384 is a single anchor load tying back to CUDA Recipes 001; the study focus is 64K, 128K and 256K."
+}
