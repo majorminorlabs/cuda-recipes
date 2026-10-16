@@ -2,6 +2,8 @@
 
 *CUDA Recipes 001 · MAJOR//MINOR*
 
+Update: CUDA Recipes 001 ran at 16K context. Context scaling on the same card and files is covered in [CUDA Recipes 002](/research/cuda-recipes-002).
+
 ## Question
 
 On a single 24GB RTX 3090, how does NVIDIA's native 2-bit Nemotron 3.5 Bolt 74B-A9B GGUF compare with Qwen3.8 27B Q4_K_M? The same frozen suite was also run on an RTX 5090.
