@@ -8,7 +8,7 @@ On a single 24GB RTX 3090, how does NVIDIA's native 2-bit Nemotron 3.5 Bolt 74B-
 
 ## Headline
 
-Nemotron fit fully on the 3090 at 16K context and decoded about 2.05× faster, but Qwen passed more strict tasks on both GPUs. Across the two cards, the single-turn scores were close; the strict tool-calling gap favored Qwen. See [KEY_FINDINGS.md](KEY_FINDINGS.md) and [LIMITATIONS.md](LIMITATIONS.md) before interpreting the scores.
+Median time to a finished task was a tie on both GPUs, even though Nemotron decoded about 2× faster and wrote more tokens per task. Qwen passed more strict tasks, with the pooled gap concentrated in tool calling. See [KEY_FINDINGS.md](KEY_FINDINGS.md) and [LIMITATIONS.md](LIMITATIONS.md) before interpreting the scores.
 
 ## Setup
 
