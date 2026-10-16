@@ -47,6 +47,44 @@ Two separate measurements:
 1. **Does it fit?** Load llama-server at 16K (an anchor back to 001), 64K, 128K and 256K, and record the VRAM it takes. If a size fails, binary-search for the largest size that still loads.
 2. **How fast is it as the context fills?** llama-bench with the context pre-filled to 0, 64K and 128K tokens, plus a deep fill at 90% of each model's ceiling. At each depth we measure prompt processing (a 512-token prompt) and decode (128 generated tokens).
 
+## The recipe
+
+Tested on an RTX 3090 24GB (headless, nothing else on the GPU).
+
+**Build llama.cpp at the tested commit**
+```sh
+git clone https://github.com/ggml-org/llama.cpp && cd llama.cpp
+git checkout 620d2225cc436ab0b001e3200e590e3b286ef9ab
+cmake -B build -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=86
+cmake --build build --config Release -j
+```
+
+**Download the exact files**
+```sh
+huggingface-cli download nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-GGUF \
+  NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf \
+  --revision e0fecb69cb3e5e4c5e8a056fa2aec98c78e91246 --local-dir models
+huggingface-cli download Abiray/Qwen3.8-27B-Q4_K_M-GGUF \
+  Qwen3.8-27B-Q4_K_M.gguf \
+  --revision f7a1cda580fe828415151042bf9f3dc5bb8b0d76 --local-dir models
+```
+
+**Nemotron Bolt at its full 256K context** (peaked at 22,366 MiB)
+```sh
+./build/bin/llama-server -m models/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf \
+  --ctx-size 262144 --parallel 1 -b 512 -ub 128 \
+  --cache-type-k q8_0 --cache-type-v q8_0 -ngl 999 --flash-attn on --jinja
+```
+
+**Qwen3.8 27B Q4_K_M at 192K** (peaked at 22,908 MiB)
+```sh
+./build/bin/llama-server -m models/Qwen3.8-27B-Q4_K_M.gguf \
+  --ctx-size 196608 --parallel 1 -b 512 -ub 128 \
+  --cache-type-k q8_0 --cache-type-v q8_0 -ngl 999 --flash-attn on --jinja
+```
+
+Qwen's ceiling was 221,184 tokens, but that left only 782 MiB free on a headless card. If your 3090 also drives a display, 196,608 is the safer setting. If you're on a newer card than a 3090, change `CMAKE_CUDA_ARCHITECTURES` (e.g. 89 for 40-series, 120 for 50-series).
+
 ## Result 1: how much context fits
 
 ![Peak VRAM vs context window](CHARTS/fig1-peak-vram-context.svg)
