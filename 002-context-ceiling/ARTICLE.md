@@ -117,7 +117,7 @@ Scoped to these two files on a 3090:
 1. **If you want 128K+ context on one 24GB card, Bolt has a lot more room.** It fits its full native 256K with 2.2 GB to spare. At 128K it peaked at 21,662 MiB (about 21.2 GB).
 2. **Qwen3.8 27B Q4_K_M still fits 128K comfortably** (20,460 MiB, about 20 GB) and works up to about 216K with a Q8_0 KV cache. A smaller KV cache type would likely push that further. We didn't test that.
 3. **For long agent sessions, Bolt's speed holds up better,** especially prompt processing. But remember [001](/research/cuda-recipes-001): Qwen was much more reliable at tool calling. Fitting more context doesn't fix that.
-4. **Expect both to be roughly half as fast at 128K as they are empty.** That's normal, and worth knowing before you judge a model by its empty-context tok/s.
+4. **Expect generation to slow down a lot by 128K.** Bolt kept 60% of its empty-context decode speed and Qwen kept 55%. Prompt processing held up much better on Bolt (82%) than on Qwen (36%). Judge a model by its speed at the context you'll actually use, not by its empty-context tok/s.
 
 ## What this doesn't tell you
 
