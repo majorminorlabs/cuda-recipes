@@ -22,14 +22,18 @@ GPU = {"rtx3090": "RTX 3090", "rtx5090": "RTX 5090"}
 INK, MUTED, GRID, SURF = "#0a0a08", "#514e44", "#b8ad96", "#e7dfcc"
 plt.rcParams.update({"font.family": "IBM Plex Mono", "font.size": 10, "axes.edgecolor": GRID,
     "axes.labelcolor": MUTED, "xtick.color": MUTED, "ytick.color": MUTED, "text.color": INK,
-    "figure.facecolor": SURF, "axes.facecolor": SURF, "svg.fonttype": "none"})
+    "figure.facecolor": SURF, "axes.facecolor": SURF, "svg.fonttype": "path"})
 
 def clean(ax, grid="x"):
     for s in ("top", "right", "left"): ax.spines[s].set_visible(False)
     ax.grid(axis=grid, color=GRID, lw=0.8); ax.set_axisbelow(True); ax.tick_params(length=0)
 
 def save(fig, name):
-    fig.savefig(OUT / name, bbox_inches="tight"); fig.savefig(OUT / name.replace(".svg", ".png"), dpi=200, bbox_inches="tight"); plt.close(fig)
+    svg = OUT / name
+    fig.savefig(svg, bbox_inches="tight")
+    svg.write_text("\n".join(line.rstrip() for line in svg.read_text().splitlines()) + "\n")
+    fig.savefig(OUT / name.replace(".svg", ".png"), dpi=200, bbox_inches="tight")
+    plt.close(fig)
 
 # 1. Strict success with task-cluster bootstrap CI
 cat_ci = {}
