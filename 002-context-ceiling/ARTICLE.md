@@ -16,6 +16,8 @@ reddit_image: SOCIAL/reddit-share.png
 
 *CUDA Recipes 002*
 
+Update: whether these models can use long context is tested in [CUDA Recipes 003](https://majorminor.xyz/research/cuda-recipes-003).
+
 [CUDA Recipes 001](/research/cuda-recipes-001) ran both models at 16K context, and the first thing people asked was what happens at real context sizes. Fair question. Most people running these for coding or agents want 64K, 128K, or as much as they can get.
 
 So we took the exact same two files, the same llama.cpp build and the same settings, put them back on an RTX 3090, and changed one thing: the context window. Then we filled it up and watched what happened to speed.
