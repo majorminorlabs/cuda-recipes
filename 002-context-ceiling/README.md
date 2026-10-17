@@ -1,5 +1,7 @@
 # Context Ceiling on 24GB
 
+Update: whether these models can use long context is tested in [CUDA Recipes 003](https://majorminor.xyz/research/cuda-recipes-003).
+
 *CUDA Recipes 002 · MAJOR//MINOR* · **Complete**
 
 CUDA Recipes 002 measures context fit and synthetic fill speed for Nemotron 3.5 Bolt 74B-A9B (native 2-bit GGUF) and Qwen3.8 27B Q4_K_M on one RTX 3090 24GB. Nemotron loaded fully at its 262,144-token native maximum; Qwen's largest full-GPU load was 221,184 tokens. At 131K fill, Nemotron decoded at 52.2 tok/s and processed prompts at 671.5 tok/s; Qwen measured 23.3 decode and 449.8 prompt tok/s. At empty context Qwen processed prompts faster (1,236.9 tok/s mean versus Nemotron 821.9), so prompt throughput crossed over with deeper fill.
