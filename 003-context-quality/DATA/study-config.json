@@ -1,0 +1,91 @@
+{
+  "study": "CUDA Recipes 003: Long-Context Quality on 24GB",
+  "status": "phase0b_ready",
+  "frozen": true,
+  "question": "Past 32K, can these models find and use information in a long context on one RTX 3090 24GB, and how fast do they answer?",
+  "gpu": "NVIDIA GeForce RTX 3090 24GB",
+  "llama_cpp_revision": "620d2225cc436ab0b001e3200e590e3b286ef9ab",
+  "cuda_architecture": "86",
+  "models": {
+    "nemotron": {
+      "artifact_sha256": "91d63363e782c8a3d5f4be42816eba8e0d42dd2530bd07a7d0d2dc440599af75",
+      "carried_over_from": "001/002"
+    },
+    "qwen38_27b": {
+      "artifact_sha256": "6a96cc760fc65cc6b9ea7f1922e3ff8b2a48c09f209456f23bbae9ef7032c867",
+      "carried_over_from": "001/002"
+    },
+    "qwen36_35b_a3b": {
+      "artifact_sha256": "671e47e0ec53c665d048b98c3ecbfd5236b5ca9c3e02ed19fc8f81f7b85140c7",
+      "quant": "Q4_K_M",
+      "note": "pin repo, revision, SHA-256 and verify chat template in Phase 0"
+    }
+  },
+  "fixed_server_flags": [
+    "--parallel 1",
+    "--batch-size 512",
+    "--ubatch-size 128",
+    "--cache-type-k q8_0",
+    "--cache-type-v q8_0",
+    "-ngl 999",
+    "--flash-attn on",
+    "--jinja"
+  ],
+  "ctx_size": 131072,
+  "cpu_layer_offload": false,
+  "lengths": {
+    "control": 8192,
+    "long_64k": 65536,
+    "long_128k": 131072
+  },
+  "length_rule": "size each document so every model's tokenized prompt (document + question + chat template) stays at least 2,048 tokens under ctx_size; record actual per-model token counts",
+  "fit_fallback": "if a model cannot load ctx_size fully on GPU, record it as not fitting and test that model's long_128k documents truncated to the largest multiple of 8192 it loads; label clearly",
+  "task_types": [
+    "single_retrieval",
+    "multi_retrieval",
+    "aggregation",
+    "multi_hop"
+  ],
+  "positions": [
+    "early",
+    "middle",
+    "late",
+    "spread"
+  ],
+  "questions_per_task_type_per_length_min": 15,
+  "generation": {
+    "thinking": "off",
+    "max_generated_tokens": 256,
+    "sampling": "each model's recommended settings, recorded in DATA/sampling.json",
+    "seed_rule": "fixed seed per question, identical across models",
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    },
+    "preflight_control_questions_per_model": 3,
+    "preflight_max_generated_tokens": 128
+  },
+  "answer_format": "single short JSON object per question",
+  "scoring": "deterministic exact match after case/whitespace normalization; multi_retrieval uses set equality; no model judge; every question has a reference answer and a negative control the scorer must reject",
+  "prompt_cache": "document prefix processed once per document per model; cache reuse verified per request from llama.cpp prompt-token counts",
+  "haystack": "public-domain long-form text with synthetic facts inserted at recorded positions; source and license cited",
+  "budget_gpu_hours_target": 1.0,
+  "budget_hard_stop_gpu_hours": 1.2,
+  "cost_rule": "actual running GPU-hours x RunPod advertised RTX 3090 list price; estimate, not invoice",
+  "out_of_scope": [
+    "context-length speed sweeps (002)",
+    "KV cache type comparison",
+    "speculative decoding / DFlash",
+    "other GPUs",
+    "001 task suite"
+  ],
+  "position_rule": "single_retrieval nominal bands early \u2248 first third, middle \u2248 second third, late \u2248 last third; actual planted character fractions published per question in fact_fractions. Other facts spread across 5\u201395%.",
+  "budget_checkpoint": "after the first model finishes all lengths, project the total from measured generated tokens and speeds; if the projection exceeds the hard stop, stop and report before starting the next model",
+  "dataset_rules": [
+    "answer values are random strings with no shared number, word or pattern with the question key (no ID-number echo)",
+    "entity names are randomized, not sequential (no -001, -002 numbering)",
+    "facts are written as plain sentences that fit the surrounding prose; no \"synthetic\", \"record\" or other marker labels",
+    "near-miss distractor facts (same entity type, different entity) are planted so retrieval requires matching the exact entity",
+    "aggregation counts vary between 2 and 8, with distractor occurrences of other markers",
+    "multi-hop chains use randomized names at each hop, placed at different positions"
+  ]
+}
