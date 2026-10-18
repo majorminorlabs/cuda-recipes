@@ -7,9 +7,9 @@ status: DRAFT (not published)
 summary: "On one RTX 3090, Nemotron 3.5 Bolt, Qwen3.8 27B and Qwen3.6 35B-A3B all found a single planted fact in a 128K-token document most of the time. Asked for four facts from the same document, they went from 13 to 15 out of 15 at 8K to 4 out of 15 or fewer at 128K. Counting and multi-step lookups were weak even in short documents."
 meta_description: "Long-context quality on a 24GB RTX 3090: Nemotron 3.5 Bolt, Qwen3.8 27B and Qwen3.6 35B-A3B find single facts at 128K but fail to collect four, count, or follow chains. 540 scored answers, all data published."
 og_description: "All three find one fact in 128K on a 3090. Ask for four and they fall apart."
-og_image: SOCIAL/og-share.png
-twitter_image: SOCIAL/x-share.png
-reddit_image: SOCIAL/reddit-share.png
+og_image: https://majorminor.xyz/research/cuda-recipes-003/social/cuda-recipes-003-og-share.png
+twitter_image: https://majorminor.xyz/research/cuda-recipes-003/social/cuda-recipes-003-x-share.png
+reddit_image: https://majorminor.xyz/research/cuda-recipes-003/social/cuda-recipes-003-reddit-share.png
 ---
 
 # Every model on a 3090 can find one fact in 128K of text. Ask for four and they fall apart.
