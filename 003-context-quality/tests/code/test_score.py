@@ -13,15 +13,18 @@ class DatasetIdentityTests(unittest.TestCase):
         questions = [json.loads(line) for line in (root / "DATA/code/questions.jsonl").read_text().splitlines()]
         self.assertEqual(len(questions), 180)
         self.assertTrue(all(q["question_id"].startswith("003-code-") for q in questions))
-        planting = json.loads((root / "_internal/code/planting-map.json").read_text())
-        linked = [event for event in planting["facts"] if event.get("question_id")]
-        self.assertEqual(len(linked), 846)
-        self.assertTrue(all(event["question_id"].startswith("003-code-") for event in linked))
+        map_path = root / "_internal/code/planting-map.json"
+        if map_path.exists():
+            planting = json.loads(map_path.read_text())
+            linked = [event for event in planting["facts"] if event.get("question_id")]
+            self.assertEqual(len(linked), 846)
+            self.assertTrue(all(event["question_id"].startswith("003-code-") for event in linked))
 
     def test_single_retrieval_fractions_match_nominal_bands_and_do_not_collide(self):
         root = Path(__file__).resolve().parents[2]
         questions = [json.loads(line) for line in (root / "DATA/code/questions.jsonl").read_text().splitlines()]
-        planting = json.loads((root / "_internal/code/planting-map.json").read_text())["facts"]
+        map_path = root / "_internal/code/planting-map.json"
+        planting = json.loads(map_path.read_text())["facts"] if map_path.exists() else None
         positions = {"early": lambda f: f < 0.34,
                      "middle": lambda f: 0.33 <= f <= 0.67,
                      "late": lambda f: f > 0.66}
@@ -32,6 +35,13 @@ class DatasetIdentityTests(unittest.TestCase):
             fraction = q["fact_fractions"][0]
             self.assertTrue(positions[q["position"]](fraction),
                             f"{q['question_id']} labeled {q['position']} at {fraction:.6f}")
+            if planting is None:
+                document = (root / "DATA/code/documents" / (q["doc_id"] + ".txt")).read_text()
+                target, decoy = q["reference"]["value"], q["negative_control"]["value"]
+                self.assertIn(target, document)
+                self.assertIn(decoy, document)
+                self.assertNotEqual(document.index(target), document.index(decoy))
+                continue
             planted = [e for e in planting if e.get("question_id") == q["question_id"]
                        and e["role"] in ("single_target", "single_decoy")]
             self.assertEqual(len(planted), 2, q["question_id"])

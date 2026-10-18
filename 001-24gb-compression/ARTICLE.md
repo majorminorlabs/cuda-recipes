@@ -2,14 +2,13 @@
 title: "Nemotron 3.5 Bolt 24GB decodes 2x faster than Qwen3.8 27B. It didn't finish tasks any faster."
 slug: cuda-recipes-001
 series: CUDA Recipes 001 (MAJOR//MINOR 24GB Compression Study)
-date: 2026-10-XX
-status: DRAFT (not published)
+date: 2026-10-16
 summary: "On an RTX 3090 and RTX 5090, NVIDIA's Nemotron 3.5 Bolt 24GB generated tokens about 2x faster than Qwen3.8 27B Q4_K_M but wrote about 1.5x more per task, so median time to a finished task was a tie. Qwen passed more strict tasks on both GPUs, and almost all of that gap was tool calling."
 meta_description: "On an RTX 3090 and RTX 5090, NVIDIA's Nemotron 3.5 Bolt 24GB generated tokens about 2x faster than Qwen3.8 27B Q4_K_M but wrote about 1.5x more per task, so median time to a finished task was a tie. Qwen passed more strict tasks on both GPUs, and almost all of that gap was tool calling."
 og_description: "On an RTX 3090 and RTX 5090, NVIDIA's Nemotron 3.5 Bolt 24GB generated tokens about 2x faster than Qwen3.8 27B Q4_K_M but wrote about 1.5x more per task, so median time to a finished task was a tie. Qwen passed more strict tasks on both GPUs, and almost all of that gap was tool calling."
-og_image: https://majorminor.xyz/research/cuda-recipes-001/social/cuda-recipes-001-og-share.png
-twitter_image: https://majorminor.xyz/research/cuda-recipes-001/social/cuda-recipes-001-x-share.png
-reddit_image: https://majorminor.xyz/research/cuda-recipes-001/social/cuda-recipes-001-reddit-share.png
+og_image: https://majorminor.xyz/social/research/cuda-recipes-001.png
+twitter_image: https://majorminor.xyz/social/research/cuda-recipes-001.png
+reddit_image: https://majorminor.xyz/social/research/cuda-recipes-001.png
 ---
 
 # Nemotron 3.5 Bolt 24GB decodes 2x faster than Qwen3.8 27B. It didn't finish tasks any faster.
