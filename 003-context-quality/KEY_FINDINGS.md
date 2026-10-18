@@ -6,3 +6,12 @@
 - The thinking-on Qwen3.6 arm is budget-bound and separate. Its high generation cap confounded context quality with long reasoning/output.
 
 See [RESULTS.md](RESULTS.md) for all task-level accuracy, position, speed and cost numbers, and [CHARTS](CHARTS/) for figures.
+
+## Code arm
+
+- Single retrieval scored 15/15 at both 64K and 128K for all three models. Four-fact retrieval was lower (8/15, 8/15 and 10/15 at 128K for Qwen3.6, Nemotron and Qwen3.8). Aggregation remained difficult (1/15, 2/15 and 4/15 at 128K); multi-hop was 8/15, 6/15 and 10/15.
+- At control, Qwen3.6 included the exact aggregation count and the `_near` decoy in 9/15 answers, illustrating the challenge of distinguishing near-miss identifiers.
+- Twelve answers reached the 256-token cap while emitting visible reasoning: Qwen3.6 control multi-hop 01, 04, 07, 13 and 15; Qwen3.8 multi-retrieval control 04 and 14, 64K 03/08/13, and 128K 05/13. Two additional Qwen3.8 multi-retrieval responses had invalid JSON (one at 64K and one at 128K).
+- Prefill rose from 4.8–9.6 seconds on control to 48.6–88.5 seconds at 64K and 103.3–189.4 seconds at 128K. Compare 64K with 128K for context-length results; control is a short, dense task variant.
+
+See [RESULTS.md](RESULTS.md) for complete tables and [CHARTS](CHARTS/) for figures.

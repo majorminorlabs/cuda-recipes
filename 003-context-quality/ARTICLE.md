@@ -1,36 +1,34 @@
 ---
-title: "Every model on a 3090 can find one fact in 128K of text. Ask for four and they fall apart."
+title: "Long context on a 3090: code holds up, prose falls apart, and none of them can count"
 slug: cuda-recipes-003
 series: CUDA Recipes 003 (Long-Context Quality on 24GB)
-date: 2026-10-XX
-status: DRAFT (not published)
-summary: "On one RTX 3090, Nemotron 3.5 Bolt, Qwen3.8 27B and Qwen3.6 35B-A3B all found a single planted fact in a 128K-token document most of the time. Asked for four facts from the same document, they went from 13 to 15 out of 15 at 8K to 4 out of 15 or fewer at 128K. Counting and multi-step lookups were weak even in short documents."
-meta_description: "Long-context quality on a 24GB RTX 3090: Nemotron 3.5 Bolt, Qwen3.8 27B and Qwen3.6 35B-A3B find single facts at 128K but fail to collect four, count, or follow chains. 540 scored answers, all data published."
-og_description: "All three find one fact in 128K on a 3090. Ask for four and they fall apart."
+date: 2026-10-17
+status: PUBLISHED
+summary: "On one RTX 3090, Nemotron 3.5 Bolt, Qwen3.8 27B and Qwen3.6 35B-A3B found a single planted item in 128K tokens of prose or Django source almost every time. Collecting four items or tracing a short call chain held up much better in code than in prose. Counting call sites failed in both, at every length."
+meta_description: "Long-context quality on a 24GB RTX 3090, tested on prose (Moby-Dick) and code (Django): single lookups work at 128K, code tracing holds up better than prose, counting fails everywhere. 1,080 scored answers, all data published."
+og_description: "128K on a 3090: finds one thing every time, traces code okay, can't count."
 og_image: https://majorminor.xyz/research/cuda-recipes-003/social/cuda-recipes-003-og-share.png
 twitter_image: https://majorminor.xyz/research/cuda-recipes-003/social/cuda-recipes-003-x-share.png
 reddit_image: https://majorminor.xyz/research/cuda-recipes-003/social/cuda-recipes-003-reddit-share.png
 ---
 
-# Every model on a 3090 can find one fact in 128K of text. Ask for four and they fall apart.
+# Long context on a 3090: code holds up, prose falls apart, and none of them can count
 
 *CUDA Recipes 003*
 
-After [002](/research/cuda-recipes-002) showed how much context fits on a 24GB card, the obvious next question in the comments was: fine, but can the model actually *use* it? So we tested that.
+[002](/research/cuda-recipes-002) showed how much context fits on a 24GB card. The obvious follow-up in the comments was whether the model can actually *use* it. So we tested that, twice: once on a long novel and once on a real codebase, because most people running 128K locally are pasting in code, not books.
 
-Three models, one RTX 3090, documents of about 8K, 64K and 128K tokens. We planted made-up facts at known spots inside Moby-Dick and asked questions only those facts could answer. 540 scored answers, all scored by exact match, no AI judge.
-
-Short version: all three are good at finding one thing in a long document. Ask them to find four things, count something, or follow a chain of facts, and it falls apart, mostly as the document gets longer, but in some cases even in short ones.
+Three models, one RTX 3090, documents of about 8K, 64K and 128K tokens. We planted made-up items at known positions and asked questions only those items could answer. 1,080 answers, all scored by exact match, no AI judge.
 
 ## TL;DR
 
 - **All three fit 128K on a 3090** with every layer on the GPU (20,476 to 21,658 MiB peak).
-- **Single fact at 128K:** Qwen3.8 27B 14/15, Nemotron Bolt 12/15, Qwen3.6 35B-A3B 11/15.
-- **Four facts from the same document:** 13 to 15 out of 15 at 8K, 3 to 7 at 64K, 0 to 4 at 128K. Every model drops hard.
-- **Counting and multi-step lookups are weak everywhere**, including the short 8K document (2 to 6 out of 15). That's a reasoning problem, not just a length problem.
-- **Qwen3.6 reads long documents about twice as fast:** 96 seconds to read 128K tokens vs 180 to 193 for the other two. It also answered fastest.
-- **Thinking mode backfired** in our first attempt. Qwen3.6 averaged 1,632 tokens of thinking per lookup and ran out of room on 100 of 180 questions. Details below.
-- **Cost:** about $0.31 for the main run, plus about $0.75 for the thinking-mode attempt.
+- **Finding one thing at 128K works.** In code, all three were 15/15 at every length. In prose, 11 to 14 out of 15.
+- **Collecting four things is where prose falls apart.** At 128K: 0 to 4 out of 15 in prose, 8 to 10 out of 15 in code.
+- **Tracing a short call chain through 128K of Django:** Qwen3.8 27B 10/15, Qwen3.6 8/15, Nemotron 6/15. The prose chain questions scored 0 to 2.
+- **Nobody can count.** "How many times is this helper called?" scored 1 to 4 out of 15 at 128K, and wasn't much better in short documents.
+- **Qwen3.6 35B-A3B reads long documents about twice as fast** (about 100 seconds for 128K vs about 3 minutes for the others).
+- **Cost:** about $1.36 in rented GPU time for everything, including a thinking-mode attempt that didn't work out.
 
 ## The models
 
@@ -38,105 +36,120 @@ Short version: all three are good at finding one thing in a long document. Ask t
 |---|---|---|
 | Nemotron 3.5 Bolt 74B-A9B | NVIDIA's native 2-bit GGUF | Same file as 001 and 002 |
 | Qwen3.8 27B | Q4_K_M | Same file as 001 and 002 |
-| Qwen3.6 35B-A3B | Q4_K_M | New. A mixture-of-experts model with about 3B active parameters |
+| Qwen3.6 35B-A3B | Q4_K_M | Mixture-of-experts, about 3B active parameters |
 
-Same llama.cpp build (`620d2225`) and server flags as 002, 131,072-token context window, Q8_0 KV cache, no CPU offload. All three loaded fully on the GPU at that window.
+Same llama.cpp build (`620d2225`) and server flags as 002, 131,072-token context window, Q8_0 KV cache, no CPU offload. Thinking off, answers capped at 256 tokens. Each document was read once per model and reused for every question through llama.cpp prompt caching.
 
 ## How the test works
 
-**The documents.** Text from Moby-Dick (public domain, Project Gutenberg), starting at Chapter 1 with no table of contents or front matter. We planted short made-up facts into the prose at recorded positions, like "The harbor pilot said that Ulma Wero was known for the quiet call upshzjdfsxkypca." The answers are random strings, so no model can know them from training or guess them from the question.
+Two haystacks, same four kinds of question, 15 of each per length.
 
-**Four kinds of question, 15 of each per document length:**
+**Prose:** Moby-Dick (public domain), with short made-up facts planted into the text, like "The harbor pilot said that Ulma Wero was known for the quiet call upshzjdfsxkypca."
 
-| Task | What it asks |
-|---|---|
-| Single retrieval | Find one planted fact |
-| Multi retrieval | Find four planted facts scattered through the document |
-| Aggregation | Count how many times a name appears |
-| Multi-hop | Follow a three-step chain: person → berth → cove → signal |
+**Code:** Django source (BSD-3-Clause, commit `d4300847`), whole files concatenated with a `# file: path` header on each. We planted small Python snippets at boundaries between top-level statements, and every modified file still parses.
 
-The planted facts include near-miss decoys, so a model has to match the exact name. Every question was checked to make sure its answer can't be guessed from the question text.
-
-**Scoring.** Exact match after trimming case and whitespace. Thinking was off, and answers were capped at 256 tokens. No answer came close to the cap. The document was read once per model and reused for every question (llama.cpp prompt caching, confirmed on all 177 follow-up questions per model).
-
-## Result 1: finding one fact holds up well
-
-![Single fact vs four facts at 128K](CHARTS/fig2-single-vs-four-fact-128k.svg)
-
-| Single retrieval | 8K | 64K | 128K |
-|---|---:|---:|---:|
-| Qwen3.8 27B | 15/15 | 15/15 | 14/15 |
-| Nemotron Bolt | 15/15 | 13/15 | 12/15 |
-| Qwen3.6 35B-A3B | 13/15 | 14/15 | 11/15 |
-
-If what you need is "find the clause in this contract" or "where did the logs mention X," all three handle it at 128K most of the time. Qwen3.8 27B was the most reliable. Position in the document didn't matter much. The worst case was Qwen3.6 on facts late in the document (11/15 across all lengths).
-
-## Result 2: four facts at once collapses
-
-![Accuracy vs length by task](CHARTS/fig1-accuracy-vs-length.svg)
-
-| Multi retrieval (all 4 right) | 8K | 64K | 128K |
-|---|---:|---:|---:|
-| Qwen3.6 35B-A3B | 15/15 | 6/15 | 4/15 |
-| Nemotron Bolt | 15/15 | 7/15 | 3/15 |
-| Qwen3.8 27B | 13/15 | 3/15 | 0/15 |
-
-This is the main finding. In a short document every model gets all four facts nearly every time. At 64K they get all four less than half the time, and at 128K almost never. Qwen3.8, the best at single facts, got zero at 128K.
-
-That matters for anyone pasting a whole codebase or a long report into a local model and asking it to "list every place that does X." Finding *one* thing at long context isn't the same as finding *all* of them.
-
-**A scoring note:** our prompt said `{"answers":[...]}` without saying whether the list should hold plain strings or objects. Many answers came back as objects like `{"shoal": "...", "tide_phrase": "..."}` with the right values in them. That ambiguity is ours, so these numbers count an answer as correct if the right four values are there in either format. Strict-format scores are published alongside them in the data. They're lower (0/3/0 at 128K), so under strict scoring the drop is even steeper.
-
-## Result 3: counting and chaining are weak even when short
-
-| | Aggregation 8K / 64K / 128K | Multi-hop 8K / 64K / 128K |
+| Task | Prose version | Code version |
 |---|---|---|
-| Qwen3.6 35B-A3B | 3 / 5 / 2 | 2 / 0 / 0 |
-| Nemotron Bolt | 3 / 2 / 2 | 3 / 0 / 0 |
-| Qwen3.8 27B | 6 / 4 / 5 | 2 / 2 / 2 |
+| Single retrieval | Find one planted fact | What string is assigned to `SETTING_x`? |
+| Multi retrieval | Find four facts scattered through the document | Name the four functions decorated with `@register_x('tag_y')` |
+| Aggregation | Count how many times a name appears | How many times is `lookup_x()` called? |
+| Multi-hop | Follow a three-step chain: person → berth → cove → signal | `resolve_a()` calls `lookup_b()`, which returns `VALUE_c`. What's the string? |
 
-All out of 15. These are low across the board, including at 8K, so length isn't the main problem here. Without thinking, none of these models reliably counts mentions of a name or follows a three-step chain. About two-thirds of the wrong counts were off by one or two, and they undercounted more often than they overcounted. On multi-hop they mix up chains: Qwen3.8 swapped the answers to two different chain questions, and Nemotron gave the same wrong signal to two different ones.
+Every task has look-alike decoys: similar names in prose, and things like `lookup_x_near()` and `SETTING_x_ALT` in code. Answers are random strings, so nothing can come from training data, and every question was checked to make sure its answer can't be guessed from the question.
 
-One thing makes these tasks harder than real text: our made-up names are built from a small set of syllables, so "Havi Lumo" and "Lumo Havi" are both in the document as different entities. That's a deliberate decoy, but real documents are usually less confusing.
+One thing to know about the 8K documents: each one holds every planted item for its length, so it's crowded. About 47% of the prose 8K document and 77% of the code 8K document is planted text. Treat 8K as "can the model do this task at all," and compare 64K to 128K for the length effect.
 
-## Result 4: Qwen3.6 reads twice as fast
+## Result 1: finding one thing works
 
-![Prefill time by length](CHARTS/fig3-prefill-vs-length.svg)
+| Single retrieval | Prose 64K | Prose 128K | Code 64K | Code 128K |
+|---|---:|---:|---:|---:|
+| Qwen3.8 27B | 15/15 | 14/15 | 15/15 | 15/15 |
+| Nemotron Bolt | 13/15 | 12/15 | 15/15 | 15/15 |
+| Qwen3.6 35B-A3B | 14/15 | 11/15 | 15/15 | 15/15 |
 
-| Time to read the document | 8K | 64K | 128K |
-|---|---:|---:|---:|
-| Qwen3.6 35B-A3B | 5.7 s | 45.7 s | 96.1 s |
-| Nemotron Bolt | 11.6 s | 90.0 s | 180.0 s |
-| Qwen3.8 27B | 7.8 s | 79.6 s | 193.2 s |
+In code, every model found every constant, early, middle or late in the document, at every length. "Where is X defined, and what's its value" across 128K of source works on all three.
 
-Qwen3.6's 3B-active MoE design shows up clearly: it reads a 128K document in about a minute and a half, where the others take about three. After that first read, answers took 1.8 seconds on average (Qwen3.6), 2.5 (Bolt) and 3.2 (Qwen3.8).
+## Result 2: collecting four things holds up in code, not in prose
+
+![Prose vs code at 128K](CHARTS/fig5-prose-vs-code-128k.png)
+
+| Multi retrieval (all four right) | Prose 8K / 64K / 128K | Code 8K / 64K / 128K |
+|---|---|---|
+| Qwen3.6 35B-A3B | 15 / 6 / 4 | 12 / 11 / 8 |
+| Nemotron Bolt | 15 / 7 / 3 | 13 / 10 / 8 |
+| Qwen3.8 27B | 13 / 3 / 0 | 11 / 11 / 10 |
+
+In prose, all three collapse past 8K. Qwen3.8 goes from 13 to 0. In code, they slip but stay above half: 8 to 10 out of 15 at 128K.
+
+Our best guess is that code is easier to search. A decorator with a unique tag is a very distinctive string, and a sentence buried in a novel isn't. That also means this is somewhat optimistic for real code, where names repeat constantly (more under limits).
+
+A scoring note on prose: our prompt didn't say whether the list should hold plain strings or objects, and many prose answers came back as objects with the right values inside. That ambiguity is ours, so prose is scored on content, with strict-format scores published too (they're lower). We fixed the prompt for the code version, and there content and strict scores are identical.
+
+## Result 3: tracing code works, chains in prose don't
+
+![Code accuracy by task](CHARTS/fig4-code-accuracy-by-task.png)
+
+| Multi-hop | Prose 8K / 64K / 128K | Code 8K / 64K / 128K |
+|---|---|---|
+| Qwen3.6 35B-A3B | 2 / 0 / 0 | 6 / 6 / 8 |
+| Nemotron Bolt | 3 / 0 / 0 | 8 / 7 / 6 |
+| Qwen3.8 27B | 2 / 2 / 2 | 15 / 13 / 10 |
+
+Qwen3.8 27B is the standout here. It traced every call chain at 8K and 10 of 15 at 128K. The other two land around half.
+
+The prose and code numbers aren't a clean domain comparison. The prose chain has three steps with deliberately confusable names ("Havi Lumo" and "Lumo Havi" are different people), and the code chain has two steps with unique identifiers. Both differences make code easier. What we can say is that a short "this calls that, which returns what?" trace across a big codebase is workable on a 3090, especially with Qwen3.8.
+
+Qwen3.6's 8K score is dragged down by 5 answers where it started explaining its reasoning in plain text and ran out of its 256-token budget, which counts as wrong.
+
+## Result 4: nobody can count
+
+| Aggregation | Prose 8K / 64K / 128K | Code 8K / 64K / 128K |
+|---|---|---|
+| Qwen3.6 35B-A3B | 3 / 5 / 2 | 2 / 2 / 1 |
+| Nemotron Bolt | 3 / 2 / 2 | 0 / 1 / 2 |
+| Qwen3.8 27B | 6 / 4 / 5 | 6 / 5 / 4 |
+
+"How many times is `lookup_x()` called?" with 2 to 8 real call sites. All out of 15. It's bad at every length, so this isn't mainly a long-context problem.
+
+At 8K, a lot of the misses come from counting the decoy. Qwen3.6 counted calls to `lookup_x_near()` along with `lookup_x()` on 9 of 15. At 128K the counts look more like guesses. If you're asking a local model to "find all usages," use grep or your editor's references instead.
+
+## Result 5: Qwen3.6 reads twice as fast
+
+![Code prefill time](CHARTS/fig6-code-prefill-vs-length.png)
+
+| Time to read the document | Prose 64K / 128K | Code 64K / 128K |
+|---|---|---|
+| Qwen3.6 35B-A3B | 45.7 s / 96.1 s | 48.6 s / 103.3 s |
+| Nemotron Bolt | 90.0 s / 180.0 s | 88.5 s / 173.6 s |
+| Qwen3.8 27B | 79.6 s / 193.2 s | 77.8 s / 189.4 s |
+
+After that first read, answers came fast because the document stays cached: about 2.5 seconds for Qwen3.6, 3.8 for Bolt and 5.0 for Qwen3.8 at 128K on code. So the choice is real: Qwen3.6 is about twice as fast to load a big context, and Qwen3.8 is the better tracer.
 
 ## The thinking-mode attempt
 
-Our first run had thinking on with a 2,048-token answer budget. Qwen3.6 went first. It averaged **1,632 tokens of thinking per question**, for lookups whose answer is one short string. It hit the cap on 100 of 180 questions. When it did finish with valid JSON, it was right 43 of 49 times. At that rate the other two models would have pushed the run to about 5.6 GPU-hours, so the run stopped itself after the first model, as designed.
+Our first prose run had thinking on with a 2,048-token answer budget. Qwen3.6 went first and averaged **1,632 tokens of thinking per question**, for lookups whose answer is one short string. It ran out of room on 100 of 180 questions. When it did finish with valid JSON, it was right 43 of 49 times. Finishing the other two models would have taken about 5.6 GPU-hours, so the run stopped itself after the first model, as designed. We kept it as a labeled exploratory result (`DATA/exploratory-thinking-on/`) and ran everything else with thinking off.
 
-We kept that run as a labeled exploratory result (`DATA/exploratory-thinking-on/`). We didn't save raw responses on that pass, so it can't be rescored. It's a real practical point, though: for simple lookups in long documents, thinking mode can burn your whole token budget before it answers.
+## What this means if you code with a local model
 
-## What this means if you run models locally
-
-1. **One-fact lookups at 128K work** on all three, on a 3090.
-2. **Don't trust any of them to find *everything*** in a 64K+ document in one shot. If you need every match, chunk the document or use search or tool-based retrieval.
-3. **Counting and multi-step questions need help** even in short documents: thinking with a big budget, tools, or breaking the question into steps.
-4. **For long-document speed, Qwen3.6 35B-A3B is the pick.** About half the read time of the others.
-5. **For single-fact accuracy, Qwen3.8 27B was the most reliable** here.
+1. **"Where is X and what is it" at 128K works** on all three, on a 3090.
+2. **Short call-chain tracing is usable.** Qwen3.8 27B was best (10/15 at 128K). Check its answers anyway.
+3. **"Find all the places that do X" is hit or miss.** 8 to 10 out of 15 at 128K in code, much worse in prose.
+4. **Never trust a count.** Use grep, an LSP or a tool call.
+5. **For speed, Qwen3.6 35B-A3B.** About half the read time. **For tracing, Qwen3.8 27B.**
 
 ## What this doesn't tell you
 
-- **Planted facts in a novel**, not your contracts or code. Real documents could be easier or harder.
-- **15 questions per cell**, one sample each. One question is 6.7 points, so a one-or-two-question gap between models is noise.
-- **Thinking off.** Thinking might help counting and chaining, if you give it a much bigger budget than we could afford here.
-- **One card, one llama.cpp build, Q8_0 KV cache, no speculative decoding.**
-- **These exact GGUF files**, not every quantization of these models.
+- **Planted items, not your real code.** The code identifiers are random strings like `lookup_wfwpewed`, which are easier to find than real names that repeat everywhere. This measures finding and tracing in a large codebase, not code understanding or writing code.
+- **Prose and code tasks differ** in chain length and decoy style, so the gap between them isn't a pure "code vs prose" effect.
+- **The 8K documents are crowded** with planted items (about 47% prose, 77% code), so they're a dense short version of the task, not a clean short-context baseline.
+- **15 questions per cell**, one sample each. One question is 6.7 points, so a one-or-two-question gap is noise.
+- **Thinking off.** Thinking might help counting and chaining, given a much bigger budget than we used.
+- **One card, one llama.cpp build, Q8_0 KV cache, these exact GGUF files.**
 
 ## Cost
 
-Main run: 0.624 GPU-hours on a RunPod RTX 3090 at the advertised $0.50/hour, about **$0.31**. Thinking-mode attempt: about 1.49 GPU-hours, about **$0.75**. Both are estimated from uptime and list price.
+Prose run: 0.624 GPU-hours. Code run: 0.61 GPU-hours, including setup. Thinking-mode attempt: about 1.49 GPU-hours. On a RunPod RTX 3090 at the advertised $0.50/hour, that's about **$0.31 + $0.31 + $0.75 ≈ $1.36** total, estimated from uptime and list price.
 
 ## Data and reproducibility
 
-Everything is in the [cuda-recipes repo, study 003](https://github.com/majorminorlabs/cuda-recipes/tree/main/003-context-quality): the frozen documents and questions with hashes, every planted fact's position, all 540 scored answers (content and strict-format), prefill and fit results, the scorer with its tests, `validate.py`, and `derived_stats.py`, which reproduces every number here.
+Everything is in the [cuda-recipes repo, study 003](https://github.com/majorminorlabs/cuda-recipes/tree/main/003-context-quality): both frozen document sets and question sets with hashes, every planted item's position, all 1,080 scored answers (content and strict-format), prefill and fit results, the scorers with their tests, and `validate.py`. Django source is included under its BSD-3-Clause license, pinned to commit `d430084791a61b31cecec132bce3dca19194f7f2`.

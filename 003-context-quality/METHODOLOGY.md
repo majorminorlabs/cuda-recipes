@@ -10,6 +10,10 @@ llama.cpp `620d2225cc436ab0b001e3200e590e3b286ef9ab`, built for sm_86, one RunPo
 ## Documents
 Public-domain long-form text, beginning at the narrative's first chapter, with synthetic facts inserted at recorded positions so no answer can come from training data. Three lengths: about 8K tokens (control), 64K and 128K. Each document is sized so every model's full prompt stays at least 2,048 tokens under the window; actual per-model token counts are reported because tokenizers differ. Position bands are nominal: early is approximately the first third, middle approximately the second third, and late approximately the last third. `fact_fractions` in each question row publishes the actual character fraction(s) of its planted fact(s).
 
+Control documents include all planted facts for their length: approximately 47% of the prose control and 77% of the code control is planted text. Control is a short, dense version of the task, not a clean short-context baseline. Length comparisons in this write-up use 64K versus 128K.
+
+Control documents include all planted facts for their length: approximately 47% of the prose control and 77% of the code control is planted text. Control is a short, dense version of the task, not a clean short-context baseline. Length comparisons in this write-up use 64K versus 128K.
+
 ## Tasks
 | Task | What it tests |
 |---|---|
@@ -36,3 +40,11 @@ Accuracy overall, by task type and by fact position; document prefill time; per-
 
 ## Fit fallback
 If a model cannot load a 131,072-token window fully on the GPU, that is recorded, and its 128K documents are run truncated to the largest 8,192 multiple it can load, labeled as such.
+
+## Code arm
+
+The code arm ports the 003 harness to Django at `d430084791a61b31cecec132bce3dca19194f7f2` (BSD-3-Clause). Source files are whole, concatenated in fixed order with `# file: path/to/file.py` headers; control combines compact files while 64K and 128K follow the normal source order. Every planted Python file passes `ast.parse`. Each length has 15 questions per task type. Single retrieval is balanced 5/5/5 by nominal early/middle/late label, while each question publishes actual `fact_fractions`. The compact-control fallback previously discarded its forward-position constraint when boundaries were exhausted, wrapping early and middle facts to the opposite end. The corrected allocator keeps control insertions monotonic and constrains single-retrieval targets to their nominal bands. Now 0 of 45 single-retrieval rows are outside their nominal third (early <34%, middle 33–67%, late >66%). Thirteen control target facts are above 95%, including five single-retrieval targets; this count excludes decoys. All 64K and 128K task facts fall within 5–95%.
+
+The code runner uses llama.cpp `620d2225cc436ab0b001e3200e590e3b286ef9ab`, sm_86, one RTX 3090 24GB, context 131,072, Q8_0 KV cache, no thinking, model-recommended sampling, a 256-token cap, fixed per-question seed, prompt caching and raw response capture. It gates requests on `/health`, performs a three-question no-thinking preflight per model, and checkpoints the budget after Qwen3.6.
+
+Responses accept bare JSON objects, JSON code fences, or the last top-level JSON object in surrounding text. For multi retrieval, content scoring collects normalized string list items and string fields of object items, excluding entity-name fields, and compares the resulting set to references. `correct` is the content score; `format_strict_correct` captures exact shape.
