@@ -17,3 +17,7 @@ At 128K, single-fact retrieval remained 73–93% across the models, while four-f
 - Run `python3 -m unittest discover -s tests -v`, `python3 scripts/derived_stats.py`, `python3 scripts/make_charts.py`, and `python3 validate.py` from this directory.
 
 See [METHODOLOGY.md](METHODOLOGY.md), [SOURCES.md](SOURCES.md), [DATA/SCHEMA.md](DATA/SCHEMA.md), the manifests, and [SHA256SUMS](SHA256SUMS) for exact details. Raw inference responses remain in `_internal/` and are intentionally excluded from public outputs.
+
+## Code arm
+
+Phase 0 frozen; GPU run pending. The code arm uses the pinned Django BSD-3-Clause snapshot at `d430084791a61b31cecec132bce3dca19194f7f2`. It adds control, 64K and 128K code haystacks with 180 questions. Its estimated inference time is 0.575 GPU-hours (0.775 including allowance); target is 0.7 hours and hard stop is 0.9 hours. See `DATA/code/documents/manifest.json` and `DATA/code/questions.jsonl`.

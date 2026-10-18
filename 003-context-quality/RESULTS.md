@@ -65,3 +65,57 @@ Primary arm: 0.624 GPU-hours × $0.50/hour = **$0.312 estimated**. Exploratory Q
 ## Exploratory arm
 
 The separate Qwen3.6 thinking-on run averaged 1,632 generated tokens per answer and hit its 2,048-token cap on 100/180 questions. Among 49 completed valid-JSON answers, 43 were correct. It is budget-bound exploratory evidence, not a long-context quality result. It used the old strict parser and retained no raw responses, so its multi-retrieval answers cannot be rescored.
+
+## Code arm
+
+The code arm uses the same 540-answer design (three models × 180 questions). Counts are correct answers out of 15. Control is listed for completeness; context-length comparisons use 64K versus 128K.
+
+### Accuracy by model, length and task
+
+| Model | Length | Single retrieval | Multi retrieval | Aggregation | Multi-hop |
+|---|---|---:|---:|---:|---:|
+| Qwen3.6 35B-A3B | Control | 15/15 | 12/15 | 2/15 | 6/15 |
+| Qwen3.6 35B-A3B | 64K | 15/15 | 11/15 | 2/15 | 6/15 |
+| Qwen3.6 35B-A3B | 128K | 15/15 | 8/15 | 1/15 | 8/15 |
+| Nemotron 3.5 Bolt | Control | 15/15 | 13/15 | 0/15 | 8/15 |
+| Nemotron 3.5 Bolt | 64K | 15/15 | 10/15 | 1/15 | 7/15 |
+| Nemotron 3.5 Bolt | 128K | 15/15 | 8/15 | 2/15 | 6/15 |
+| Qwen3.8 27B | Control | 15/15 | 11/15 | 6/15 | 15/15 |
+| Qwen3.8 27B | 64K | 15/15 | 11/15 | 5/15 | 13/15 |
+| Qwen3.8 27B | 128K | 15/15 | 10/15 | 4/15 | 10/15 |
+
+### Single retrieval by nominal position
+
+| Model | 64K early | 64K middle | 64K late | 128K early | 128K middle | 128K late |
+|---|---:|---:|---:|---:|---:|---:|
+| Qwen3.6 35B-A3B | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| Nemotron 3.5 Bolt | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+| Qwen3.8 27B | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 | 5/5 |
+
+### Multi-retrieval content and format scores
+
+| Model | Length | Content `correct` | `format_strict_correct` |
+|---|---|---:|---:|
+| Qwen3.6 35B-A3B | Control | 12/15 | 1/15 |
+| Qwen3.6 35B-A3B | 64K | 11/15 | 0/15 |
+| Qwen3.6 35B-A3B | 128K | 8/15 | 0/15 |
+| Nemotron 3.5 Bolt | Control | 13/15 | 12/15 |
+| Nemotron 3.5 Bolt | 64K | 10/15 | 5/15 |
+| Nemotron 3.5 Bolt | 128K | 8/15 | 3/15 |
+| Qwen3.8 27B | Control | 11/15 | 7/15 |
+| Qwen3.8 27B | 64K | 11/15 | 2/15 |
+| Qwen3.8 27B | 128K | 10/15 | 0/15 |
+
+At control, Qwen3.6 counted the exact aggregation target plus its `_near` decoy in 9/15 answers; those are not content-correct aggregation answers under exact scoring.
+
+### Prefill and answer output
+
+| Model | Prefill control / 64K / 128K (s) | Mean answer time (s) | Mean generated tokens | Truncated at cap | Invalid JSON |
+|---|---|---:|---:|---:|---:|
+| Qwen3.6 35B-A3B | 4.769 / 48.616 / 103.307 | 1.494 | 27.65 | 5 | 0 |
+| Nemotron 3.5 Bolt | 9.627 / 88.468 / 173.639 | 2.243 | 17.38 | 0 | 0 |
+| Qwen3.8 27B | 6.680 / 77.786 / 189.425 | 3.055 | 29.16 | 7 | 2 |
+
+Twelve answers hit the 256-token generation cap while producing visible reasoning: `003-code-control-mh-01`, `-mh-04`, `-mh-07`, `-mh-13`, `-mh-15` (Qwen3.6); `003-code-control-mr-04`, `-mr-14`, `003-code-long_64k-mr-03`, `-mr-08`, `-mr-13`, `003-code-long_128k-mr-05`, `-mr-13` (Qwen3.8). The Qwen3.8 128K multi-retrieval cell also has one invalid JSON response in addition to the two capped responses.
+
+All models fit fully on GPU at 131,072 context, with no fallback. Prompt cache reuse was confirmed on all follow-up questions (177/177 per model). The run used 0.61 GPU-hours at the $0.50/hour advertised rate (approximately $0.305). Figures: [fig4](CHARTS/fig4-code-accuracy-by-task.png), [fig5](CHARTS/fig5-prose-vs-code-128k.png), [fig6](CHARTS/fig6-code-prefill-vs-length.png).
