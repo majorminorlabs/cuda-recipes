@@ -1,6 +1,6 @@
 # CUDA Recipes
 
-Reproducible inference tests on NVIDIA CUDA GPUs, by MAJOR//MINOR.
+I run reproducible inference tests on NVIDIA CUDA GPUs and publish the write-ups in [CUDA Recipes](https://majorminor.xyz/research/cuda-recipes).
 
 Each folder is one study: the frozen task suite, validation scripts, sanitized trial results, environment records, charts, and a summary of findings.
 
