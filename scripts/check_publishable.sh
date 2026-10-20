@@ -29,8 +29,11 @@ operational = re.compile(
 article_files = re.compile(r'(?i)(?:^|/)ARTICLE(?:\.md|-METADATA\.json)$')
 publication_metadata = re.compile(r'(?:^|/)[^/]+-METADATA\.json$')
 data_names = re.compile(r'(?i)prompt|responses')
+allowed_article_sources = {'005-ornith-122b-offload/ARTICLE.md'}
 blocked = [path for path in paths if path and (
-    operational.search(path) or article_files.search(path) or publication_metadata.search(path)
+    operational.search(path)
+    or (article_files.search(path) and path not in allowed_article_sources)
+    or publication_metadata.search(path)
     or (data_names.search(path) and path not in allowed)
 )]
 if blocked:
