@@ -21,3 +21,9 @@
 - Cells contain 15 questions per model, length and task type.
 - Multi-retrieval content scoring accepts string or object list items; strict format is reported separately.
 - Aggregation call sites and multi-hop links are synthetic and locally verifiable.
+
+
+## Scratchpad counting addendum
+
+- Each scratchpad model × arm × length cell has 15 answers. The retained raw responses have 29 `finish_reason=length` entries (Qwen3.6 6, Nemotron 13, Qwen3.8 10). Qwen3.8 produced no tally in 8 answers.
+- Extraction rules were changed after inspecting raw outputs: adjacent code continuation lines now join a `found N:` item; the literal `found N:` placeholder is accepted; and exact recorded planted/decoy lines are recovered from pre-JSON text when no prefix is used. These post-hoc changes may affect scoring and are fully listed in `DATA/scratchpad/SCHEMA.md`; item-level outputs preserve what was credited.

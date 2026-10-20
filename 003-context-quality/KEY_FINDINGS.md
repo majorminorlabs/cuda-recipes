@@ -15,3 +15,12 @@ See [RESULTS.md](RESULTS.md) for all task-level accuracy, position, speed and co
 - Prefill rose from 4.8–9.6 seconds on control to 48.6–88.5 seconds at 64K and 103.3–189.4 seconds at 128K. Compare 64K with 128K for context-length results; control is a short, dense task variant.
 
 See [RESULTS.md](RESULTS.md) for complete tables and [CHARTS](CHARTS/) for figures.
+
+
+## Scratchpad counting addendum
+
+- Pooling the two arms (n=30 per model × length), final-count accuracy was Qwen3.6 17/30, 11/30, 9/30; Nemotron 15/30, 6/30, 3/30; and Qwen3.8 17/30, 8/30 for control, 64K and 128K.
+- Qwen3.8 returned no tally in 8 answers. Reading the raw responses recovered line lists that lacked `found N:` labels; eight other responses contained only a JSON count.
+- The corrected repetition-loop flag is set for 9 Qwen3.6, 25 Nemotron and 7 Qwen3.8 answers; it subtracts the expected multiplicity of identical planted target lines. The `found N:` form appears in 90, 90 and 61 answers, respectively.
+- Preserved raw metadata marks 29 answers as `finish_reason=length` (Qwen3.6 6, Nemotron 13, Qwen3.8 10); these count as wrong.
+- Extraction was widened after output review: code continuations are joined to found entries, the literal `found N:` placeholder is accepted, and exact planted/decoy source quotes are recovered when labels are absent. See [`DATA/scratchpad/SCHEMA.md`](DATA/scratchpad/SCHEMA.md) and the three scratchpad charts in `CHARTS/`.
