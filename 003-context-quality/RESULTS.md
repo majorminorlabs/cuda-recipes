@@ -119,3 +119,22 @@ At control, Qwen3.6 counted the exact aggregation target plus its `_near` decoy 
 Twelve answers hit the 256-token generation cap while producing visible reasoning: `003-code-control-mh-01`, `-mh-04`, `-mh-07`, `-mh-13`, `-mh-15` (Qwen3.6); `003-code-control-mr-04`, `-mr-14`, `003-code-long_64k-mr-03`, `-mr-08`, `-mr-13`, `003-code-long_128k-mr-05`, `-mr-13` (Qwen3.8). The Qwen3.8 128K multi-retrieval cell also has one invalid JSON response in addition to the two capped responses.
 
 All models fit fully on GPU at 131,072 context, with no fallback. Prompt cache reuse was confirmed on all follow-up questions (177/177 per model). The run used 0.61 GPU-hours at the $0.50/hour advertised rate (approximately $0.305). Figures: [fig4](CHARTS/fig4-code-accuracy-by-task.png), [fig5](CHARTS/fig5-prose-vs-code-128k.png), [fig6](CHARTS/fig6-code-prefill-vs-length.png).
+
+
+## Scratchpad counting addendum
+
+The scratchpad changes only the aggregation prompt by asking for a line-by-line tally before the count. Each model × arm × length cell has **n=15**. The primary response-list cap was 1,024 generated tokens. The raw response metadata records 29 `finish_reason=length` answers (Qwen3.6 6, Nemotron 13, Qwen3.8 10); these are counted as wrong. Qwen3.8 omitted the tally entirely in 8 answers after extraction was widened.
+
+| Model | Control final count | 64K final count | 128K final count |
+|---|---:|---:|---:|
+| Qwen3.6 35B-A3B | 17/30 | 11/30 | 9/30 |
+| Nemotron 3.5 Bolt | 15/30 | 6/30 | 3/30 |
+| Qwen3.8 27B | 17/30 | 8/30 | 9/30 |
+
+The corrected `repetition_loop` flag is set for Qwen3.6 9/90 answers, Nemotron 25/90 and Qwen3.8 7/90; it requires at least two repeated listings beyond identical planted-target multiplicity. `followed_format` is set for 90/90, 90/90 and 61/90 answers, respectively.
+
+Scratchpad cost estimate: **1.421 GPU-hours** (0.356 + 1.065) × **$0.50/hour** = approximately **$0.71**. The scratchpad package includes per-answer/item CSVs and column definitions in [`DATA/scratchpad/SCHEMA.md`](DATA/scratchpad/SCHEMA.md).
+
+The extraction rules were widened after inspecting raw outputs: (1) attach adjacent code continuation lines to a `found N:` entry; (2) accept the literal placeholder `found N:` and assign sequential item numbers; and (3) if no `found` label exists, recover exact recorded target/decoy source lines quoted in the pre-JSON text, including bare prose lines and numbered code explanations. Matching and accepted formats are documented in the scratchpad schema.
+
+Figures: [final-count baseline comparison](CHARTS/scratchpad-final-count-baseline.png), [failure classes](CHARTS/scratchpad-failure-classes.png), and [planted-item recall](CHARTS/scratchpad-planted-recall.png).
