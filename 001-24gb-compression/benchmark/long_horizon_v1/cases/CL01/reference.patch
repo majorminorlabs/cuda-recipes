@@ -1,0 +1,25 @@
+--- a/src/click/termui.py
++++ b/src/click/termui.py
+@@ -269,7 +269,7 @@
+                 value = t.cast("str", default)
+                 break
+         try:
+-            result = value
++            result = value_proc(value)
+         except UsageError as e:
+             message = _mask_hidden_input(e.message, value) if hide_input else e.message
+             echo(_("Error: {message}").format(message=message), err=err)
+--- a/tests/test_termui.py
++++ b/tests/test_termui.py
+@@ -1982,3 +1982,11 @@
+     result = runner.invoke(cli, input="leaky\n", mix_stderr=False)
+     assert "leaky" not in result.stdout
+     assert "leaky" not in result.stderr
++
++
++import click
++
++def test_long_horizon_cl01(monkeypatch):
++    monkeypatch.setattr(click.termui, "_readline_prompt", lambda *args, **kwargs: "")
++    assert click.prompt("Count", default="7", type=int) == 7
++    assert type(click.prompt("Count", default="7", type=int)) is int

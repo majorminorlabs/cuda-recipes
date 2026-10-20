@@ -1,0 +1,24 @@
+--- a/src/packaging/utils.py
++++ b/src/packaging/utils.py
+@@ -194,7 +194,7 @@
+             version = Version(version)
+         except InvalidVersion:
+             return str(version)
+-    return str(_TrimmedRelease(version))
++    return str(_TrimmedRelease(version) if strip_trailing_zero else version)
+ 
+ 
+ def parse_wheel_filename(
+--- a/tests/test_utils.py
++++ b/tests/test_utils.py
+@@ -255,3 +255,10 @@
+ def test_parse_sdist_invalid_filename(filename: str) -> None:
+     with pytest.raises(InvalidSdistFilename):
+         parse_sdist_filename(filename)
++
++
++from packaging.utils import canonicalize_version
++
++def test_long_horizon_pk02():
++    assert canonicalize_version("1.4.0.0", strip_trailing_zero=False) == "1.4.0.0"
++    assert canonicalize_version("1.4.0.0", strip_trailing_zero=True) == "1.4"

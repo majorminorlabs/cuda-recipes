@@ -18,3 +18,7 @@ Each study records pinned model artifacts, runtime and hardware manifests, froze
 ## License
 
 Code: MIT. Results and data: CC BY 4.0. Model and runtime license notices are in [NOTICE.md](NOTICE.md).
+
+Tier 1 evidence added after the tagged release (2026-10-20): [source, protocols, historical audits and small run records](supplements/tier1-20261020/README.md).
+
+Plans, handoffs and drafts live in _private/ and are never published.

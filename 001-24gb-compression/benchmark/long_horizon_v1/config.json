@@ -1,0 +1,56 @@
+{
+  "models": {
+    "nemotron": {
+      "top_k": 40
+    },
+    "qwen": {
+      "top_k": 20
+    }
+  },
+  "common_sampling": {
+    "temperature": 1.0,
+    "top_p": 0.95,
+    "enable_thinking": true
+  },
+  "inference": {
+    "engine": "llama.cpp",
+    "context_tokens": 16384,
+    "parallel_slots": 1,
+    "gpu_layers": "all",
+    "cpu_offload": false,
+    "kv_cache_type": "Q8_0",
+    "tool_turn_limit": 16,
+    "max_tokens_per_tool_turn": 1024,
+    "trial_wall_timeout_seconds": 900,
+    "temperature_seed_rule": "frozen trial seed plus zero-based tool turn index"
+  },
+  "execution": {
+    "models_loaded_one_at_a_time": true,
+    "scored_trials": 60,
+    "pilot_trials": 10,
+    "repetitions_per_task_model": 3,
+    "model_batch_order": [
+      "qwen",
+      "nemotron"
+    ],
+    "budget_gpu_hours_combined": 10.0,
+    "runtime_estimate_hours_planning_range": [
+      6.0,
+      9.0
+    ],
+    "runtime_estimate_basis": "60 repository-agent trials targeted at 2-5 minutes each, plus 10 pilot trials, RTX 5090 deployment, RTX 3090 qualification and one original-size 240-trial comparison; refine from pilot before any full scored run",
+    "price_snapshot_utc": "2026-10-15",
+    "runpod_secure_cloud_usd_per_hour": {
+      "rtx_5090": 1.19,
+      "rtx_3090": 0.5
+    },
+    "price_snapshot_source": "runpodctl gpu list -o json; query returned Low stock for both cards"
+  },
+  "outcome_scoring": {
+    "success": "challenge regression tests pass; candidate code changes the designated production file; candidate adds a test in the designated repository test file",
+    "final_text_is_not_scored": true,
+    "model_generated_test_must_be_present": true,
+    "tool_call_rejections_are_logged_but_do_not_automatically_fail_if_the_agent_recovers": true,
+    "language_model_judge": false
+  }
+}

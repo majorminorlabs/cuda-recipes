@@ -1,0 +1,28 @@
+--- a/more_itertools/more.py
++++ b/more_itertools/more.py
+@@ -241,7 +241,7 @@
+ 
+         def ret():
+             for chunk in iterator:
+-                if len(chunk) > n:
++                if len(chunk) != n:
+                     raise ValueError('iterable is not divisible by n.')
+                 yield chunk
+ 
+--- a/tests/test_more.py
++++ b/tests/test_more.py
+@@ -7442,3 +7442,14 @@
+         # Without mitigation the LCG doesn't produce many distinct permutations
+         perms = set(tuple(mi.random_ordered_range(6)) for _ in range(10**5))
+         self.assertEqual(len(perms), factorial(6))
++
++
++import pytest
++from more_itertools import chunked
++
++def test_long_horizon_mi01():
++    chunks = iter(chunked([1, 2, 3, 4, 5], 2, strict=True))
++    assert next(chunks) == [1, 2]
++    assert next(chunks) == [3, 4]
++    with pytest.raises(ValueError, match="not divisible"):
++        next(chunks)

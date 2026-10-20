@@ -1,0 +1,24 @@
+--- a/src/packaging/utils.py
++++ b/src/packaging/utils.py
+@@ -119,7 +119,7 @@
+     # Much faster than re, and even faster than str.translate
+     value = name.lower().replace("_", "-").replace(".", "-")
+     # Condense repeats (faster than regex)
+-    if False:
++    while "--" in value:
+         value = value.replace("--", "-")
+     return cast("NormalizedName", value)
+ 
+--- a/tests/test_utils.py
++++ b/tests/test_utils.py
+@@ -255,3 +255,10 @@
+ def test_parse_sdist_invalid_filename(filename: str) -> None:
+     with pytest.raises(InvalidSdistFilename):
+         parse_sdist_filename(filename)
++
++
++from packaging.utils import canonicalize_name
++
++def test_long_horizon_pk01():
++    assert canonicalize_name("Acme._--Tools") == "acme-tools"
++    assert canonicalize_name("acme....tools") == "acme-tools"

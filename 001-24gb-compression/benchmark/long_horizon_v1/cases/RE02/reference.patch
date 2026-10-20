@@ -1,0 +1,25 @@
+--- a/src/requests/sessions.py
++++ b/src/requests/sessions.py
+@@ -118,7 +118,7 @@
+     if session_hooks is None or session_hooks.get("response") == []:
+         return request_hooks
+ 
+-    if request_hooks is None:
++    if request_hooks is None or request_hooks.get("response") == []:
+         return session_hooks
+ 
+     return merge_setting(request_hooks, session_hooks, dict_class)
+--- a/tests/test_hooks.py
++++ b/tests/test_hooks.py
+@@ -20,3 +20,11 @@
+ 
+ def test_default_hooks():
+     assert hooks.default_hooks() == {"response": []}
++
++
++from requests.sessions import merge_hooks
++
++def test_long_horizon_re02():
++    seen = []
++    callback = lambda response, **kwargs: seen.append(response)
++    assert merge_hooks({"response": []}, {"response": [callback]}) == {"response": [callback]}
