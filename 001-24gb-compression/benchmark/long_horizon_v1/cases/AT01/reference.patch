@@ -1,0 +1,29 @@
+--- a/src/attr/_funcs.py
++++ b/src/attr/_funcs.py
+@@ -85,7 +85,7 @@
+         if value_serializer is not None:
+             v = value_serializer(inst, a, v)
+ 
+-        if False:
++        if recurse is True:
+             value_type = type(v)
+             if value_type in _ATOMIC_TYPES:
+                 rv[a.name] = v
+--- a/tests/test_funcs.py
++++ b/tests/test_funcs.py
+@@ -848,3 +848,15 @@
+             inst: int
+ 
+         assert C(42) == evolve(C(23), inst=42)
++
++
++import attr
++
++def test_long_horizon_at01():
++    @attr.define
++    class Child:
++        value: int
++    @attr.define
++    class Parent:
++        child: Child
++    assert attr.asdict(Parent(Child(8))) == {"child": {"value": 8}}

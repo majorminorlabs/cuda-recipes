@@ -1,0 +1,25 @@
+--- a/src/click/termui.py
++++ b/src/click/termui.py
+@@ -327,7 +327,7 @@
+ 
+     while True:
+         try:
+-            value = _readline_prompt(visible_prompt_func, prompt, err).lower()
++            value = _readline_prompt(visible_prompt_func, prompt, err).lower().strip()
+         except (KeyboardInterrupt, EOFError):
+             raise Abort() from None
+         if value in ("y", "yes"):
+--- a/tests/test_termui.py
++++ b/tests/test_termui.py
+@@ -1982,3 +1982,11 @@
+     result = runner.invoke(cli, input="leaky\n", mix_stderr=False)
+     assert "leaky" not in result.stdout
+     assert "leaky" not in result.stderr
++
++
++import click
++
++def test_long_horizon_cl02(monkeypatch):
++    values = iter(["  YES  "])
++    monkeypatch.setattr(click.termui, "_readline_prompt", lambda *args, **kwargs: next(values))
++    assert click.confirm("Continue?") is True
