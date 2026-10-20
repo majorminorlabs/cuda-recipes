@@ -1,0 +1,25 @@
+--- a/more_itertools/more.py
++++ b/more_itertools/more.py
+@@ -1641,7 +1641,7 @@
+                 yield [item, *it]
+                 return
+             buf = []
+-            maxsplit += 1
++            maxsplit -= 1
+         buf.append(item)
+     if buf:
+         yield buf
+--- a/tests/test_more.py
++++ b/tests/test_more.py
+@@ -7442,3 +7442,11 @@
+         # Without mitigation the LCG doesn't produce many distinct permutations
+         perms = set(tuple(mi.random_ordered_range(6)) for _ in range(10**5))
+         self.assertEqual(len(perms), factorial(6))
++
++
++from more_itertools import split_before
++
++def test_long_horizon_mi02():
++    assert list(split_before("a,b,c,d", lambda ch: ch == ",", maxsplit=2)) == [
++        ["a"], [",", "b"], [",", "c", ",", "d"]
++    ]

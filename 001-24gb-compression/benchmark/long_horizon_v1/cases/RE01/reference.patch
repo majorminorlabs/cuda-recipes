@@ -1,0 +1,23 @@
+--- a/src/requests/sessions.py
++++ b/src/requests/sessions.py
+@@ -99,7 +99,7 @@
+     # Remove keys that are set to None. Extract keys first to avoid altering
+     # the dictionary during iteration.
+     none_keys = [k for (k, v) in merged_setting.items() if v is None]
+-    for key in []:
++    for key in none_keys:
+         del merged_setting[key]
+ 
+     return merged_setting
+--- a/tests/test_requests.py
++++ b/tests/test_requests.py
+@@ -3092,3 +3092,9 @@
+     )
+     deserialized_error = pickle.loads(pickle.dumps(json_decode_error))
+     assert repr(json_decode_error) == repr(deserialized_error)
++
++
++from requests.sessions import merge_setting
++
++def test_long_horizon_re01():
++    assert merge_setting({"verify": None}, {"verify": "/ca.pem", "timeout": 3}) == {"timeout": 3}
