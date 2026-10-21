@@ -1,0 +1,577 @@
+{
+  "trial": {
+    "model": "qwen",
+    "task_id": "TO02",
+    "repetition": 1,
+    "seed": 910581335
+  },
+  "task": {
+    "id": "TO02",
+    "category": "tool_use",
+    "prompt": "A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "add",
+        "a": 17,
+        "b": 24
+      }
+    ],
+    "scorer": "canonical-json-equality-v1",
+    "expected_calls": [
+      {
+        "tool": "add",
+        "a": 17,
+        "b": 25
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "add",
+          "description": "Perform the add operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "a": {
+                "type": "integer"
+              },
+              "b": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "a",
+              "b"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "add",
+                    "arguments": "{\"a\":17,\"b\":25}"
+                  },
+                  "id": "1k85YSouDwDo48s6lyxrRtB3A4is5fOY"
+                }
+              ],
+              "reasoning_content": "We need respond to user. They want use add tool compute 17+25. Respond with JSON only and no markdown. Also after requested outcome complete, return JSON exactly {\"done\":true} and no markdown. Need likely call add first, then final JSON? The instruction: Use available tools; after requested outcome is complete, return JSON exactly {\"done\":true} and no markdown. We need produce only JSON no markdown. But we need maybe output result? They ask compute 17+25, respond with JSON only. Then says after requested outcome complete return JSON exactly {\"done\":true}. Conflict: maybe final answer must be {\"done\":true} only? Let's parse: \"A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\" So need call tool add(17,25), then final output exactly {\"done\":true}. But they also might expect computation result? \"Respond with JSON only\" could be {\"sum\":42}? But explicit final: return JSON exactly {\"done\":true}. In these tasks likely require tool use and final done. Need ensure no markdown. We can call function. Then final exact.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "1k85YSouDwDo48s6lyxrRtB3A4is5fOY",
+              "content": "{\"value\": 42}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 910581335,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "add",
+                "description": "Perform the add operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "a": {
+                      "type": "integer"
+                    },
+                    "b": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "a",
+                    "b"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "We need respond to user. They want use add tool compute 17+25. Respond with JSON only and no markdown. Also after requested outcome complete, return JSON exactly {\"done\":true} and no markdown. Need likely call add first, then final JSON? The instruction: Use available tools; after requested outcome is complete, return JSON exactly {\"done\":true} and no markdown. We need produce only JSON no markdown. But we need maybe output result? They ask compute 17+25, respond with JSON only. Then says after requested outcome complete return JSON exactly {\"done\":true}. Conflict: maybe final answer must be {\"done\":true} only? Let's parse: \"A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\" So need call tool add(17,25), then final output exactly {\"done\":true}. But they also might expect computation result? \"Respond with JSON only\" could be {\"sum\":42}? But explicit final: return JSON exactly {\"done\":true}. In these tasks likely require tool use and final done. Need ensure no markdown. We can call function. Then final exact.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "add",
+                      "arguments": "{\"a\":17,\"b\":25}"
+                    },
+                    "id": "1k85YSouDwDo48s6lyxrRtB3A4is5fOY"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111302,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 316,
+            "prompt_tokens": 377,
+            "total_tokens": 693,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          },
+          "id": "chatcmpl-WSE9dtM8GtpZK4FutSVZJXBYMxJRC6Cm",
+          "__verbose": {
+            "index": 0,
+            "content": "We need respond to user. They want use add tool compute 17+25. Respond with JSON only and no markdown. Also after requested outcome complete, return JSON exactly {\"done\":true} and no markdown. Need likely call add first, then final JSON? The instruction: Use available tools; after requested outcome is complete, return JSON exactly {\"done\":true} and no markdown. We need produce only JSON no markdown. But we need maybe output result? They ask compute 17+25, respond with JSON only. Then says after requested outcome complete return JSON exactly {\"done\":true}. Conflict: maybe final answer must be {\"done\":true} only? Let's parse: \"A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\" So need call tool add(17,25), then final output exactly {\"done\":true}. But they also might expect computation result? \"Respond with JSON only\" could be {\"sum\":42}? But explicit final: return JSON exactly {\"done\":true}. In these tasks likely require tool use and final done. Need ensure no markdown. We can call function. Then final exact.\n</think>\n\n<tool_call>\n<function=add>\n<parameter=a>\n17\n</parameter>\n<parameter=b>\n25\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 316,
+            "tokens_evaluated": 377,
+            "generation_settings": {
+              "seed": 910581335,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "integer ::= (\"-\"? integral-part)\nintegral-part ::= [0] | [1-9] [0-9]{0,15}\njson-array ::= \"[\" space (\"]\" | json-value (space \",\" space json-value)* space \"]\")\njson-bool ::= \"true\" | \"false\"\njson-null ::= \"null\"\njson-number ::= \"-\"? (\"0\" | [1-9] [0-9]*) (\".\" [0-9]+)? ((\"e\" | \"E\") [+-]? [0-9]+)?\njson-object ::= \"{\" space (\"}\" | json-string space \":\" space json-value (space \",\" space json-string space \":\" space json-value)* space \"}\")\njson-string ::= \"\\\"\" ( [^\"\\\\] | \"\\\\\" ( [\"\\\\/ bfnrt] | \"u\" [0-9a-fA-F]{4} ) )* \"\\\"\"\njson-value ::= json-object | json-array | json-string | json-number | json-bool | json-null\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"add\" \">\\n\") tool-0-args-3 \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"a\" \">\\n\") integer \"\\n</parameter>\\n\"\ntool-0-arg-1 ::= (\"<parameter=\" \"b\" \">\\n\") integer \"\\n</parameter>\\n\"\ntool-0-args-1 ::= tool-0-arg-0\ntool-0-args-2 ::= tool-0-arg-1\ntool-0-args-3 ::= tool-0-arg-0 tool-0-args-2 | tool-0-arg-1 tool-0-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"add\", \"description\": \"Perform the add operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"a\": {\"type\": \"integer\"}, \"b\": {\"type\": \"integer\"}}, \"required\": [\"a\", \"b\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 692,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 377,
+              "prompt_ms": 721.769,
+              "prompt_per_token_ms": 1.9145066312997348,
+              "prompt_per_second": 522.3277807719645,
+              "predicted_n": 316,
+              "predicted_ms": 7661.343,
+              "predicted_per_token_ms": 24.32172380952381,
+              "predicted_per_second": 41.115506772115545
+            }
+          },
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 377,
+            "prompt_ms": 721.769,
+            "prompt_per_token_ms": 1.9145066312997348,
+            "prompt_per_second": 522.3277807719645,
+            "predicted_n": 316,
+            "predicted_ms": 7661.343,
+            "predicted_per_token_ms": 24.32172380952381,
+            "predicted_per_second": 41.115506772115545
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "add",
+                    "arguments": "{\"a\":17,\"b\":25}"
+                  },
+                  "id": "1k85YSouDwDo48s6lyxrRtB3A4is5fOY"
+                }
+              ],
+              "reasoning_content": "We need respond to user. They want use add tool compute 17+25. Respond with JSON only and no markdown. Also after requested outcome complete, return JSON exactly {\"done\":true} and no markdown. Need likely call add first, then final JSON? The instruction: Use available tools; after requested outcome is complete, return JSON exactly {\"done\":true} and no markdown. We need produce only JSON no markdown. But we need maybe output result? They ask compute 17+25, respond with JSON only. Then says after requested outcome complete return JSON exactly {\"done\":true}. Conflict: maybe final answer must be {\"done\":true} only? Let's parse: \"A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\" So need call tool add(17,25), then final output exactly {\"done\":true}. But they also might expect computation result? \"Respond with JSON only\" could be {\"sum\":42}? But explicit final: return JSON exactly {\"done\":true}. In these tasks likely require tool use and final done. Need ensure no markdown. We can call function. Then final exact.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "1k85YSouDwDo48s6lyxrRtB3A4is5fOY",
+              "content": "{\"value\": 42}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 910581336,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "add",
+                "description": "Perform the add operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "a": {
+                      "type": "integer"
+                    },
+                    "b": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "a",
+                    "b"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "We called add and got 42. Need final exactly {\"done\":true} no markdown.\n"
+              }
+            }
+          ],
+          "created": 1792111303,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 29,
+            "prompt_tokens": 715,
+            "total_tokens": 744,
+            "prompt_tokens_details": {
+              "cached_tokens": 692
+            }
+          },
+          "id": "chatcmpl-8IZBE2e1hoI2x8VKm4WyMbosFxnvGGGu",
+          "__verbose": {
+            "index": 0,
+            "content": "We called add and got 42. Need final exactly {\"done\":true} no markdown.\n</think>\n\n{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 29,
+            "tokens_evaluated": 715,
+            "generation_settings": {
+              "seed": 910581336,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "integer ::= (\"-\"? integral-part)\nintegral-part ::= [0] | [1-9] [0-9]{0,15}\njson-array ::= \"[\" space (\"]\" | json-value (space \",\" space json-value)* space \"]\")\njson-bool ::= \"true\" | \"false\"\njson-null ::= \"null\"\njson-number ::= \"-\"? (\"0\" | [1-9] [0-9]*) (\".\" [0-9]+)? ((\"e\" | \"E\") [+-]? [0-9]+)?\njson-object ::= \"{\" space (\"}\" | json-string space \":\" space json-value (space \",\" space json-string space \":\" space json-value)* space \"}\")\njson-string ::= \"\\\"\" ( [^\"\\\\] | \"\\\\\" ( [\"\\\\/ bfnrt] | \"u\" [0-9a-fA-F]{4} ) )* \"\\\"\"\njson-value ::= json-object | json-array | json-string | json-number | json-bool | json-null\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"add\" \">\\n\") tool-0-args-3 \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"a\" \">\\n\") integer \"\\n</parameter>\\n\"\ntool-0-arg-1 ::= (\"<parameter=\" \"b\" \">\\n\") integer \"\\n</parameter>\\n\"\ntool-0-args-1 ::= tool-0-arg-0\ntool-0-args-2 ::= tool-0-arg-1\ntool-0-args-3 ::= tool-0-arg-0 tool-0-args-2 | tool-0-arg-1 tool-0-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"add\", \"description\": \"Perform the add operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"a\": {\"type\": \"integer\"}, \"b\": {\"type\": \"integer\"}}, \"required\": [\"a\", \"b\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nWe need respond to user. They want use add tool compute 17+25. Respond with JSON only and no markdown. Also after requested outcome complete, return JSON exactly {\"done\":true} and no markdown. Need likely call add first, then final JSON? The instruction: Use available tools; after requested outcome is complete, return JSON exactly {\"done\":true} and no markdown. We need produce only JSON no markdown. But we need maybe output result? They ask compute 17+25, respond with JSON only. Then says after requested outcome complete return JSON exactly {\"done\":true}. Conflict: maybe final answer must be {\"done\":true} only? Let's parse: \"A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\" So need call tool add(17,25), then final output exactly {\"done\":true}. But they also might expect computation result? \"Respond with JSON only\" could be {\"sum\":42}? But explicit final: return JSON exactly {\"done\":true}. In these tasks likely require tool use and final done. Need ensure no markdown. We can call function. Then final exact.\n</think>\n\n<tool_call>\n<function=add>\n<parameter=a>\n17\n</parameter>\n<parameter=b>\n25\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"value\": 42}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 743,
+            "timings": {
+              "cache_n": 692,
+              "prompt_n": 23,
+              "prompt_ms": 271.09,
+              "prompt_per_token_ms": 11.786521739130434,
+              "prompt_per_second": 84.84267217529235,
+              "predicted_n": 29,
+              "predicted_ms": 687.793,
+              "predicted_per_token_ms": 24.564035714285716,
+              "predicted_per_second": 40.70992289831388
+            }
+          },
+          "timings": {
+            "cache_n": 692,
+            "prompt_n": 23,
+            "prompt_ms": 271.09,
+            "prompt_per_token_ms": 11.786521739130434,
+            "prompt_per_second": 84.84267217529235,
+            "predicted_n": 29,
+            "predicted_ms": 687.793,
+            "predicted_per_token_ms": 24.564035714285716,
+            "predicted_per_second": 40.70992289831388
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "add",
+              "arguments": "{\"a\":17,\"b\":25}"
+            },
+            "id": "1k85YSouDwDo48s6lyxrRtB3A4is5fOY"
+          }
+        ],
+        "reasoning_content": "We need respond to user. They want use add tool compute 17+25. Respond with JSON only and no markdown. Also after requested outcome complete, return JSON exactly {\"done\":true} and no markdown. Need likely call add first, then final JSON? The instruction: Use available tools; after requested outcome is complete, return JSON exactly {\"done\":true} and no markdown. We need produce only JSON no markdown. But we need maybe output result? They ask compute 17+25, respond with JSON only. Then says after requested outcome complete return JSON exactly {\"done\":true}. Conflict: maybe final answer must be {\"done\":true} only? Let's parse: \"A calculator tool exposes add(a,b). Use it to compute 17 + 25. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\" So need call tool add(17,25), then final output exactly {\"done\":true}. But they also might expect computation result? \"Respond with JSON only\" could be {\"sum\":42}? But explicit final: return JSON exactly {\"done\":true}. In these tasks likely require tool use and final done. Need ensure no markdown. We can call function. Then final exact.\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "1k85YSouDwDo48s6lyxrRtB3A4is5fOY",
+        "content": "{\"value\": 42}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "add",
+          "a": 17,
+          "b": 25
+        },
+        "result": {
+          "value": 42
+        },
+        "ok": true,
+        "tool_call_id": "1k85YSouDwDo48s6lyxrRtB3A4is5fOY"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1092,
+      "completion_tokens": 345
+    },
+    "timings": [
+      {
+        "cache_n": 0,
+        "prompt_n": 377,
+        "prompt_ms": 721.769,
+        "prompt_per_token_ms": 1.9145066312997348,
+        "prompt_per_second": 522.3277807719645,
+        "predicted_n": 316,
+        "predicted_ms": 7661.343,
+        "predicted_per_token_ms": 24.32172380952381,
+        "predicted_per_second": 41.115506772115545
+      },
+      {
+        "cache_n": 692,
+        "prompt_n": 23,
+        "prompt_ms": 271.09,
+        "prompt_per_token_ms": 11.786521739130434,
+        "prompt_per_second": 84.84267217529235,
+        "predicted_n": 29,
+        "predicted_ms": 687.793,
+        "predicted_per_token_ms": 24.564035714285716,
+        "predicted_per_second": 40.70992289831388
+      }
+    ],
+    "prompt_tps": 1099.8540578269424,
+    "decode_tps": 41.32164094584158
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "add",
+        "a": 17,
+        "b": 25
+      },
+      "result": {
+        "value": 42
+      },
+      "ok": true,
+      "tool_call_id": "1k85YSouDwDo48s6lyxrRtB3A4is5fOY"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 1092,
+    "completion_tokens": 345
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

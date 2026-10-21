@@ -1,0 +1,1680 @@
+{
+  "trial": {
+    "model": "nemotron",
+    "task_id": "MU03",
+    "repetition": 2,
+    "seed": 2577633007
+  },
+  "task": {
+    "id": "MU03",
+    "category": "multi_step",
+    "prompt": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "complete_task",
+        "id": "A"
+      },
+      {
+        "tool": "complete_task",
+        "id": "B"
+      },
+      {
+        "tool": "complete_task",
+        "id": "C"
+      },
+      {
+        "tool": "complete_task",
+        "id": "D"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "complete_task",
+        "id": "D"
+      },
+      {
+        "tool": "complete_task",
+        "id": "B"
+      },
+      {
+        "tool": "complete_task",
+        "id": "C"
+      },
+      {
+        "tool": "complete_task",
+        "id": "A"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "complete_task",
+          "description": "Perform the complete_task operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc"
+                }
+              ],
+              "reasoning_content": "The user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK"
+                }
+              ],
+              "reasoning_content": "D is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB"
+                }
+              ],
+              "reasoning_content": "B is completed. Now C (requires D, which is done). Let me complete C."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm"
+                }
+              ],
+              "reasoning_content": "C is completed. Now A requires both B and C, which are both done. Let me complete A."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 2577633007,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"D\"}"
+                    },
+                    "id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112488,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 279,
+            "prompt_tokens": 357,
+            "total_tokens": 636,
+            "prompt_tokens_details": {
+              "cached_tokens": 353
+            }
+          },
+          "id": "chatcmpl-Zg1W2ZCBjSVMQi6I7wdI64yPEvuhGeuW",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nD\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 279,
+            "tokens_evaluated": 357,
+            "generation_settings": {
+              "seed": 2577633007,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"complete_task\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"id\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>complete_task</name>\n<description>Perform the complete_task operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>id</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"id\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nComplete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 635,
+            "timings": {
+              "cache_n": 353,
+              "prompt_n": 4,
+              "prompt_ms": 333.018,
+              "prompt_per_token_ms": 83.2545,
+              "prompt_per_second": 12.011362749160707,
+              "predicted_n": 279,
+              "predicted_ms": 3301.754,
+              "predicted_per_token_ms": 11.876812949640287,
+              "predicted_per_second": 84.19767190408493
+            }
+          },
+          "timings": {
+            "cache_n": 353,
+            "prompt_n": 4,
+            "prompt_ms": 333.018,
+            "prompt_per_token_ms": 83.2545,
+            "prompt_per_second": 12.011362749160707,
+            "predicted_n": 279,
+            "predicted_ms": 3301.754,
+            "predicted_per_token_ms": 11.876812949640287,
+            "predicted_per_second": 84.19767190408493
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc"
+                }
+              ],
+              "reasoning_content": "The user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK"
+                }
+              ],
+              "reasoning_content": "D is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB"
+                }
+              ],
+              "reasoning_content": "B is completed. Now C (requires D, which is done). Let me complete C."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm"
+                }
+              ],
+              "reasoning_content": "C is completed. Now A requires both B and C, which are both done. Let me complete A."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 2577633008,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "D is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"B\"}"
+                    },
+                    "id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112489,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 51,
+            "prompt_tokens": 658,
+            "total_tokens": 709,
+            "prompt_tokens_details": {
+              "cached_tokens": 635
+            }
+          },
+          "id": "chatcmpl-bnWHLW2v8LKSAFltKth9BmwFMqY2uxgt",
+          "__verbose": {
+            "index": 0,
+            "content": "D is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nB\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 51,
+            "tokens_evaluated": 658,
+            "generation_settings": {
+              "seed": 2577633008,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"complete_task\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"id\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>complete_task</name>\n<description>Perform the complete_task operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>id</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"id\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nComplete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nD\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"D\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 708,
+            "timings": {
+              "cache_n": 635,
+              "prompt_n": 23,
+              "prompt_ms": 292.008,
+              "prompt_per_token_ms": 12.696,
+              "prompt_per_second": 78.76496534341526,
+              "predicted_n": 51,
+              "predicted_ms": 593.004,
+              "predicted_per_token_ms": 11.86008,
+              "predicted_per_second": 84.3164632953572
+            }
+          },
+          "timings": {
+            "cache_n": 635,
+            "prompt_n": 23,
+            "prompt_ms": 292.008,
+            "prompt_per_token_ms": 12.696,
+            "prompt_per_second": 78.76496534341526,
+            "predicted_n": 51,
+            "predicted_ms": 593.004,
+            "predicted_per_token_ms": 11.86008,
+            "predicted_per_second": 84.3164632953572
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc"
+                }
+              ],
+              "reasoning_content": "The user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK"
+                }
+              ],
+              "reasoning_content": "D is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB"
+                }
+              ],
+              "reasoning_content": "B is completed. Now C (requires D, which is done). Let me complete C."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm"
+                }
+              ],
+              "reasoning_content": "C is completed. Now A requires both B and C, which are both done. Let me complete A."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 2577633009,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "B is completed. Now C (requires D, which is done). Let me complete C.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"C\"}"
+                    },
+                    "id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112490,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 44,
+            "prompt_tokens": 731,
+            "total_tokens": 775,
+            "prompt_tokens_details": {
+              "cached_tokens": 708
+            }
+          },
+          "id": "chatcmpl-htFcmt4w6Xer56Qv87zqxcEUWR14N2Zf",
+          "__verbose": {
+            "index": 0,
+            "content": "B is completed. Now C (requires D, which is done). Let me complete C.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nC\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 44,
+            "tokens_evaluated": 731,
+            "generation_settings": {
+              "seed": 2577633009,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"complete_task\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"id\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>complete_task</name>\n<description>Perform the complete_task operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>id</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"id\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nComplete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nD\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"D\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nD is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nB\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"B\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 774,
+            "timings": {
+              "cache_n": 708,
+              "prompt_n": 23,
+              "prompt_ms": 276.144,
+              "prompt_per_token_ms": 12.006260869565217,
+              "prompt_per_second": 83.28987774494466,
+              "predicted_n": 44,
+              "predicted_ms": 523.121,
+              "predicted_per_token_ms": 12.16560465116279,
+              "predicted_per_second": 82.19895588209994
+            }
+          },
+          "timings": {
+            "cache_n": 708,
+            "prompt_n": 23,
+            "prompt_ms": 276.144,
+            "prompt_per_token_ms": 12.006260869565217,
+            "prompt_per_second": 83.28987774494466,
+            "predicted_n": 44,
+            "predicted_ms": 523.121,
+            "predicted_per_token_ms": 12.16560465116279,
+            "predicted_per_second": 82.19895588209994
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc"
+                }
+              ],
+              "reasoning_content": "The user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK"
+                }
+              ],
+              "reasoning_content": "D is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB"
+                }
+              ],
+              "reasoning_content": "B is completed. Now C (requires D, which is done). Let me complete C."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm"
+                }
+              ],
+              "reasoning_content": "C is completed. Now A requires both B and C, which are both done. Let me complete A."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 2577633010,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "C is completed. Now A requires both B and C, which are both done. Let me complete A.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"A\"}"
+                    },
+                    "id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112491,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 47,
+            "prompt_tokens": 797,
+            "total_tokens": 844,
+            "prompt_tokens_details": {
+              "cached_tokens": 774
+            }
+          },
+          "id": "chatcmpl-V0DSHJWj5GBxEJbeI6SM0zVBTFSruFGY",
+          "__verbose": {
+            "index": 0,
+            "content": "C is completed. Now A requires both B and C, which are both done. Let me complete A.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nA\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 47,
+            "tokens_evaluated": 797,
+            "generation_settings": {
+              "seed": 2577633010,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"complete_task\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"id\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>complete_task</name>\n<description>Perform the complete_task operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>id</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"id\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nComplete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nD\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"D\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nD is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nB\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"B\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nB is completed. Now C (requires D, which is done). Let me complete C.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nC\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"C\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 843,
+            "timings": {
+              "cache_n": 774,
+              "prompt_n": 23,
+              "prompt_ms": 287.23,
+              "prompt_per_token_ms": 12.488260869565218,
+              "prompt_per_second": 80.07520105838526,
+              "predicted_n": 47,
+              "predicted_ms": 546.258,
+              "predicted_per_token_ms": 11.87517391304348,
+              "predicted_per_second": 84.20929304467852
+            }
+          },
+          "timings": {
+            "cache_n": 774,
+            "prompt_n": 23,
+            "prompt_ms": 287.23,
+            "prompt_per_token_ms": 12.488260869565218,
+            "prompt_per_second": 80.07520105838526,
+            "predicted_n": 47,
+            "predicted_ms": 546.258,
+            "predicted_per_token_ms": 11.87517391304348,
+            "predicted_per_second": 84.20929304467852
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc"
+                }
+              ],
+              "reasoning_content": "The user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK"
+                }
+              ],
+              "reasoning_content": "D is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB"
+                }
+              ],
+              "reasoning_content": "B is completed. Now C (requires D, which is done). Let me complete C."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm"
+                }
+              ],
+              "reasoning_content": "C is completed. Now A requires both B and C, which are both done. Let me complete A."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 2577633011,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "All tasks are completed in the correct dependency order: D → B → C → A. Now I need to return JSON exactly {\"done\":true} with no markdown."
+              }
+            }
+          ],
+          "created": 1792112492,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 41,
+            "prompt_tokens": 866,
+            "total_tokens": 907,
+            "prompt_tokens_details": {
+              "cached_tokens": 843
+            }
+          },
+          "id": "chatcmpl-JWLDrxDfS9Zn8O5Nt79ijDNIOFGXvGAq",
+          "__verbose": {
+            "index": 0,
+            "content": "All tasks are completed in the correct dependency order: D → B → C → A. Now I need to return JSON exactly {\"done\":true} with no markdown.</think>{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 41,
+            "tokens_evaluated": 866,
+            "generation_settings": {
+              "seed": 2577633011,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"complete_task\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"id\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>complete_task</name>\n<description>Perform the complete_task operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>id</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"id\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nComplete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nD\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"D\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nD is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nB\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"B\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nB is completed. Now C (requires D, which is done). Let me complete C.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nC\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"C\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nC is completed. Now A requires both B and C, which are both done. Let me complete A.</think>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nA\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"A\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": false,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 906,
+            "timings": {
+              "cache_n": 843,
+              "prompt_n": 23,
+              "prompt_ms": 299.104,
+              "prompt_per_token_ms": 13.004521739130434,
+              "prompt_per_second": 76.89633037338184,
+              "predicted_n": 41,
+              "predicted_ms": 476.565,
+              "predicted_per_token_ms": 11.914125,
+              "predicted_per_second": 83.93398592007387
+            }
+          },
+          "timings": {
+            "cache_n": 843,
+            "prompt_n": 23,
+            "prompt_ms": 299.104,
+            "prompt_per_token_ms": 13.004521739130434,
+            "prompt_per_second": 76.89633037338184,
+            "predicted_n": 41,
+            "predicted_ms": 476.565,
+            "predicted_per_token_ms": 11.914125,
+            "predicted_per_second": 83.93398592007387
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"D\"}"
+            },
+            "id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc"
+          }
+        ],
+        "reasoning_content": "The user wants me to complete project tasks with dependencies:\n- D is required by B and C\n- Both B and C are required by A\n\nSo the dependency order should be:\n1. D first (no prerequisites mentioned)\n2. B (requires D)\n3. C (requires D)\n4. A (requires B and C)\n\nWait, let me re-read: \"D is required by B and C\" means B requires D, and C requires D. \"both B and C are required by A\" means A requires B and C.\n\nSo I need to complete tasks in order: D, then B and C (they can be in any order relative to each other but both after D), then A.\n\nBut I only have one tool: complete_task(id). I need to figure out what IDs to use. The user mentions tasks A, B, C, D. I should complete them in the correct dependency order.\n\nLet me complete D first, then B, then C, then A. Or I could do D, then B and C in parallel, but since I'm making sequential calls, I'll do them one by one.\n\nActually, I should call complete_task for each task in dependency order. Let me start with D."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc",
+        "content": "{\"completed\": \"D\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"B\"}"
+            },
+            "id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK"
+          }
+        ],
+        "reasoning_content": "D is completed. Now I need to complete B (requires D) and C (requires D). Let me do B next."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK",
+        "content": "{\"completed\": \"B\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"C\"}"
+            },
+            "id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB"
+          }
+        ],
+        "reasoning_content": "B is completed. Now C (requires D, which is done). Let me complete C."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB",
+        "content": "{\"completed\": \"C\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"A\"}"
+            },
+            "id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm"
+          }
+        ],
+        "reasoning_content": "C is completed. Now A requires both B and C, which are both done. Let me complete A."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm",
+        "content": "{\"completed\": \"A\"}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "D"
+        },
+        "result": {
+          "completed": "D"
+        },
+        "ok": true,
+        "tool_call_id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc"
+      },
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "B"
+        },
+        "result": {
+          "completed": "B"
+        },
+        "ok": true,
+        "tool_call_id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK"
+      },
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "C"
+        },
+        "result": {
+          "completed": "C"
+        },
+        "ok": true,
+        "tool_call_id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB"
+      },
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "A"
+        },
+        "result": {
+          "completed": "A"
+        },
+        "ok": true,
+        "tool_call_id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 3409,
+      "completion_tokens": 462
+    },
+    "timings": [
+      {
+        "cache_n": 353,
+        "prompt_n": 4,
+        "prompt_ms": 333.018,
+        "prompt_per_token_ms": 83.2545,
+        "prompt_per_second": 12.011362749160707,
+        "predicted_n": 279,
+        "predicted_ms": 3301.754,
+        "predicted_per_token_ms": 11.876812949640287,
+        "predicted_per_second": 84.19767190408493
+      },
+      {
+        "cache_n": 635,
+        "prompt_n": 23,
+        "prompt_ms": 292.008,
+        "prompt_per_token_ms": 12.696,
+        "prompt_per_second": 78.76496534341526,
+        "predicted_n": 51,
+        "predicted_ms": 593.004,
+        "predicted_per_token_ms": 11.86008,
+        "predicted_per_second": 84.3164632953572
+      },
+      {
+        "cache_n": 708,
+        "prompt_n": 23,
+        "prompt_ms": 276.144,
+        "prompt_per_token_ms": 12.006260869565217,
+        "prompt_per_second": 83.28987774494466,
+        "predicted_n": 44,
+        "predicted_ms": 523.121,
+        "predicted_per_token_ms": 12.16560465116279,
+        "predicted_per_second": 82.19895588209994
+      },
+      {
+        "cache_n": 774,
+        "prompt_n": 23,
+        "prompt_ms": 287.23,
+        "prompt_per_token_ms": 12.488260869565218,
+        "prompt_per_second": 80.07520105838526,
+        "predicted_n": 47,
+        "predicted_ms": 546.258,
+        "predicted_per_token_ms": 11.87517391304348,
+        "predicted_per_second": 84.20929304467852
+      },
+      {
+        "cache_n": 843,
+        "prompt_n": 23,
+        "prompt_ms": 299.104,
+        "prompt_per_token_ms": 13.004521739130434,
+        "prompt_per_second": 76.89633037338184,
+        "predicted_n": 41,
+        "predicted_ms": 476.565,
+        "predicted_per_token_ms": 11.914125,
+        "predicted_per_second": 83.93398592007387
+      }
+    ],
+    "prompt_tps": 2291.758543170304,
+    "decode_tps": 84.91551274081911
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "D"
+      },
+      "result": {
+        "completed": "D"
+      },
+      "ok": true,
+      "tool_call_id": "cTHFhkklWOyXqhOPZpNJHIxFDRYz7DRc"
+    },
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "B"
+      },
+      "result": {
+        "completed": "B"
+      },
+      "ok": true,
+      "tool_call_id": "zy7eIFXyOrlb3KLt2aNytcrV2aJxvBfK"
+    },
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "C"
+      },
+      "result": {
+        "completed": "C"
+      },
+      "ok": true,
+      "tool_call_id": "stkAec04IvD0HAbEfB0VJ0ykUDUXc1LB"
+    },
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "A"
+      },
+      "result": {
+        "completed": "A"
+      },
+      "ok": true,
+      "tool_call_id": "QfLu6drP2nVOstirDep1B4rrNqhpphNm"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 3409,
+    "completion_tokens": 462
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

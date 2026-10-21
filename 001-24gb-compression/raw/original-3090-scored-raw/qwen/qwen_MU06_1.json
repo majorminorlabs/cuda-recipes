@@ -1,0 +1,1904 @@
+{
+  "trial": {
+    "model": "qwen",
+    "task_id": "MU06",
+    "repetition": 1,
+    "seed": 205232695
+  },
+  "task": {
+    "id": "MU06",
+    "category": "multi_step",
+    "prompt": "Prepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "build_package",
+        "project": "app"
+      },
+      {
+        "tool": "run_tests",
+        "project": "app"
+      },
+      {
+        "tool": "verify_package",
+        "project": "app"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "run_tests",
+        "project": "app"
+      },
+      {
+        "tool": "build_package",
+        "project": "app"
+      },
+      {
+        "tool": "verify_package",
+        "project": "app"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "run_tests",
+          "description": "Perform the run_tests operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "build_package",
+          "description": "Perform the build_package operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "verify_package",
+          "description": "Perform the verify_package operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "project": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "project"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"project\"}"
+                  },
+                  "id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF"
+                }
+              ],
+              "reasoning_content": "The user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0"
+                }
+              ],
+              "reasoning_content": "The response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0",
+              "content": "{\"passed\": true, \"failed\": 0}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "build_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn"
+                }
+              ],
+              "reasoning_content": "The test for the project \"app\" succeeded. Next, build the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn",
+              "content": "{\"package\": \"app-rc.tar.gz\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "verify_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb"
+                }
+              ],
+              "reasoning_content": "The package has been built: app-rc.tar.gz. Next, I'll verify the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb",
+              "content": "{\"valid\": true, \"deployed\": false}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 205232695,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Perform the run_tests operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "build_package",
+                "description": "Perform the build_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_package",
+                "description": "Perform the verify_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "run_tests",
+                      "arguments": "{\"project\":\"project\"}"
+                    },
+                    "id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111752,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 262,
+            "prompt_tokens": 527,
+            "total_tokens": 789,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          },
+          "id": "chatcmpl-236x2MGCqqWqL2PgIcKeqTfE10sOJqQa",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n</think>\n\n<tool_call>\n<function=run_tests>\n<parameter=project>\nproject\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 262,
+            "tokens_evaluated": 527,
+            "generation_settings": {
+              "seed": 205232695,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"run_tests\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"build_package\" \">\\n\") (tool-1-arg-0) \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-2 ::= (\"<function=\" \"verify_package\" \">\\n\") (tool-2-arg-0) \"</function>\\n\"\ntool-2-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1 | tool-2) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"run_tests\", \"description\": \"Perform the run_tests operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"build_package\", \"description\": \"Perform the build_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"verify_package\", \"description\": \"Perform the verify_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nPrepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 788,
+            "timings": {
+              "cache_n": 0,
+              "prompt_n": 527,
+              "prompt_ms": 1005.431,
+              "prompt_per_token_ms": 1.9078387096774194,
+              "prompt_per_second": 524.1533233011514,
+              "predicted_n": 262,
+              "predicted_ms": 6370.18,
+              "predicted_per_token_ms": 24.40681992337165,
+              "predicted_per_second": 40.9721546329931
+            }
+          },
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 527,
+            "prompt_ms": 1005.431,
+            "prompt_per_token_ms": 1.9078387096774194,
+            "prompt_per_second": 524.1533233011514,
+            "predicted_n": 262,
+            "predicted_ms": 6370.18,
+            "predicted_per_token_ms": 24.40681992337165,
+            "predicted_per_second": 40.9721546329931
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"project\"}"
+                  },
+                  "id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF"
+                }
+              ],
+              "reasoning_content": "The user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0"
+                }
+              ],
+              "reasoning_content": "The response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0",
+              "content": "{\"passed\": true, \"failed\": 0}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "build_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn"
+                }
+              ],
+              "reasoning_content": "The test for the project \"app\" succeeded. Next, build the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn",
+              "content": "{\"package\": \"app-rc.tar.gz\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "verify_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb"
+                }
+              ],
+              "reasoning_content": "The package has been built: app-rc.tar.gz. Next, I'll verify the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb",
+              "content": "{\"valid\": true, \"deployed\": false}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 205232696,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Perform the run_tests operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "build_package",
+                "description": "Perform the build_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_package",
+                "description": "Perform the verify_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "run_tests",
+                      "arguments": "{\"project\":\"app\"}"
+                    },
+                    "id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111755,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 119,
+            "prompt_tokens": 819,
+            "total_tokens": 938,
+            "prompt_tokens_details": {
+              "cached_tokens": 788
+            }
+          },
+          "id": "chatcmpl-Y2ujURy5qyd2gAtG1xebWijuqWdgyR8x",
+          "__verbose": {
+            "index": 0,
+            "content": "The response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n</think>\n\n<tool_call>\n<function=run_tests>\n<parameter=project>\napp\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 119,
+            "tokens_evaluated": 819,
+            "generation_settings": {
+              "seed": 205232696,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"run_tests\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"build_package\" \">\\n\") (tool-1-arg-0) \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-2 ::= (\"<function=\" \"verify_package\" \">\\n\") (tool-2-arg-0) \"</function>\\n\"\ntool-2-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1 | tool-2) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"run_tests\", \"description\": \"Perform the run_tests operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"build_package\", \"description\": \"Perform the build_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"verify_package\", \"description\": \"Perform the verify_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nPrepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n</think>\n\n<tool_call>\n<function=run_tests>\n<parameter=project>\nproject\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 937,
+            "timings": {
+              "cache_n": 788,
+              "prompt_n": 31,
+              "prompt_ms": 279.73,
+              "prompt_per_token_ms": 9.023548387096774,
+              "prompt_per_second": 110.82114896507346,
+              "predicted_n": 119,
+              "predicted_ms": 2877.765,
+              "predicted_per_token_ms": 24.387838983050845,
+              "predicted_per_second": 41.004043068144895
+            }
+          },
+          "timings": {
+            "cache_n": 788,
+            "prompt_n": 31,
+            "prompt_ms": 279.73,
+            "prompt_per_token_ms": 9.023548387096774,
+            "prompt_per_second": 110.82114896507346,
+            "predicted_n": 119,
+            "predicted_ms": 2877.765,
+            "predicted_per_token_ms": 24.387838983050845,
+            "predicted_per_second": 41.004043068144895
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"project\"}"
+                  },
+                  "id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF"
+                }
+              ],
+              "reasoning_content": "The user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0"
+                }
+              ],
+              "reasoning_content": "The response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0",
+              "content": "{\"passed\": true, \"failed\": 0}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "build_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn"
+                }
+              ],
+              "reasoning_content": "The test for the project \"app\" succeeded. Next, build the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn",
+              "content": "{\"package\": \"app-rc.tar.gz\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "verify_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb"
+                }
+              ],
+              "reasoning_content": "The package has been built: app-rc.tar.gz. Next, I'll verify the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb",
+              "content": "{\"valid\": true, \"deployed\": false}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 205232697,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Perform the run_tests operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "build_package",
+                "description": "Perform the build_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_package",
+                "description": "Perform the verify_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The test for the project \"app\" succeeded. Next, build the package.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "build_package",
+                      "arguments": "{\"project\":\"app\"}"
+                    },
+                    "id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111757,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 46,
+            "prompt_tokens": 964,
+            "total_tokens": 1010,
+            "prompt_tokens_details": {
+              "cached_tokens": 937
+            }
+          },
+          "id": "chatcmpl-fcqEwfvjBRm8SHJAg9fIkl1XWcrnMUzl",
+          "__verbose": {
+            "index": 0,
+            "content": "The test for the project \"app\" succeeded. Next, build the package.\n</think>\n\n<tool_call>\n<function=build_package>\n<parameter=project>\napp\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 46,
+            "tokens_evaluated": 964,
+            "generation_settings": {
+              "seed": 205232697,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"run_tests\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"build_package\" \">\\n\") (tool-1-arg-0) \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-2 ::= (\"<function=\" \"verify_package\" \">\\n\") (tool-2-arg-0) \"</function>\\n\"\ntool-2-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1 | tool-2) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"run_tests\", \"description\": \"Perform the run_tests operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"build_package\", \"description\": \"Perform the build_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"verify_package\", \"description\": \"Perform the verify_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nPrepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n</think>\n\n<tool_call>\n<function=run_tests>\n<parameter=project>\nproject\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nThe response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n</think>\n\n<tool_call>\n<function=run_tests>\n<parameter=project>\napp\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"passed\": true, \"failed\": 0}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 1009,
+            "timings": {
+              "cache_n": 937,
+              "prompt_n": 27,
+              "prompt_ms": 278.324,
+              "prompt_per_token_ms": 10.308296296296296,
+              "prompt_per_second": 97.00924102844166,
+              "predicted_n": 46,
+              "predicted_ms": 1107.156,
+              "predicted_per_token_ms": 24.603466666666666,
+              "predicted_per_second": 40.64467879865168
+            }
+          },
+          "timings": {
+            "cache_n": 937,
+            "prompt_n": 27,
+            "prompt_ms": 278.324,
+            "prompt_per_token_ms": 10.308296296296296,
+            "prompt_per_second": 97.00924102844166,
+            "predicted_n": 46,
+            "predicted_ms": 1107.156,
+            "predicted_per_token_ms": 24.603466666666666,
+            "predicted_per_second": 40.64467879865168
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"project\"}"
+                  },
+                  "id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF"
+                }
+              ],
+              "reasoning_content": "The user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0"
+                }
+              ],
+              "reasoning_content": "The response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0",
+              "content": "{\"passed\": true, \"failed\": 0}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "build_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn"
+                }
+              ],
+              "reasoning_content": "The test for the project \"app\" succeeded. Next, build the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn",
+              "content": "{\"package\": \"app-rc.tar.gz\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "verify_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb"
+                }
+              ],
+              "reasoning_content": "The package has been built: app-rc.tar.gz. Next, I'll verify the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb",
+              "content": "{\"valid\": true, \"deployed\": false}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 205232698,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Perform the run_tests operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "build_package",
+                "description": "Perform the build_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_package",
+                "description": "Perform the verify_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The package has been built: app-rc.tar.gz. Next, I'll verify the package.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "verify_package",
+                      "arguments": "{\"project\":\"app\"}"
+                    },
+                    "id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111758,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 50,
+            "prompt_tokens": 1035,
+            "total_tokens": 1085,
+            "prompt_tokens_details": {
+              "cached_tokens": 1009
+            }
+          },
+          "id": "chatcmpl-9HuCo6HmOT1VDEOIPNoupk0lcqiFa0Je",
+          "__verbose": {
+            "index": 0,
+            "content": "The package has been built: app-rc.tar.gz. Next, I'll verify the package.\n</think>\n\n<tool_call>\n<function=verify_package>\n<parameter=project>\napp\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 50,
+            "tokens_evaluated": 1035,
+            "generation_settings": {
+              "seed": 205232698,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"run_tests\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"build_package\" \">\\n\") (tool-1-arg-0) \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-2 ::= (\"<function=\" \"verify_package\" \">\\n\") (tool-2-arg-0) \"</function>\\n\"\ntool-2-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1 | tool-2) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"run_tests\", \"description\": \"Perform the run_tests operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"build_package\", \"description\": \"Perform the build_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"verify_package\", \"description\": \"Perform the verify_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nPrepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n</think>\n\n<tool_call>\n<function=run_tests>\n<parameter=project>\nproject\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nThe response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n</think>\n\n<tool_call>\n<function=run_tests>\n<parameter=project>\napp\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"passed\": true, \"failed\": 0}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nThe test for the project \"app\" succeeded. Next, build the package.\n</think>\n\n<tool_call>\n<function=build_package>\n<parameter=project>\napp\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"package\": \"app-rc.tar.gz\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 1084,
+            "timings": {
+              "cache_n": 1009,
+              "prompt_n": 26,
+              "prompt_ms": 271.87,
+              "prompt_per_token_ms": 10.456538461538461,
+              "prompt_per_second": 95.63394269319895,
+              "predicted_n": 50,
+              "predicted_ms": 1203.094,
+              "predicted_per_token_ms": 24.552938775510206,
+              "predicted_per_second": 40.72832214274196
+            }
+          },
+          "timings": {
+            "cache_n": 1009,
+            "prompt_n": 26,
+            "prompt_ms": 271.87,
+            "prompt_per_token_ms": 10.456538461538461,
+            "prompt_per_second": 95.63394269319895,
+            "predicted_n": 50,
+            "predicted_ms": 1203.094,
+            "predicted_per_token_ms": 24.552938775510206,
+            "predicted_per_second": 40.72832214274196
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"project\"}"
+                  },
+                  "id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF"
+                }
+              ],
+              "reasoning_content": "The user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "run_tests",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0"
+                }
+              ],
+              "reasoning_content": "The response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0",
+              "content": "{\"passed\": true, \"failed\": 0}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "build_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn"
+                }
+              ],
+              "reasoning_content": "The test for the project \"app\" succeeded. Next, build the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn",
+              "content": "{\"package\": \"app-rc.tar.gz\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "verify_package",
+                    "arguments": "{\"project\":\"app\"}"
+                  },
+                  "id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb"
+                }
+              ],
+              "reasoning_content": "The package has been built: app-rc.tar.gz. Next, I'll verify the package.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb",
+              "content": "{\"valid\": true, \"deployed\": false}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 205232699,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "run_tests",
+                "description": "Perform the run_tests operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "build_package",
+                "description": "Perform the build_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_package",
+                "description": "Perform the verify_package operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "project": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "project"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "The package is valid and undeployed, matching the request \"prepare a release candidate without deploying it.\" Next, return exactly {\"done\":true} in JSON, with no markdown.\n"
+              }
+            }
+          ],
+          "created": 1792111760,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 47,
+            "prompt_tokens": 1111,
+            "total_tokens": 1158,
+            "prompt_tokens_details": {
+              "cached_tokens": 1084
+            }
+          },
+          "id": "chatcmpl-2kJma6deXozLeHgQehtjhqqsLbKV1q92",
+          "__verbose": {
+            "index": 0,
+            "content": "The package is valid and undeployed, matching the request \"prepare a release candidate without deploying it.\" Next, return exactly {\"done\":true} in JSON, with no markdown.\n</think>\n\n{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 47,
+            "tokens_evaluated": 1111,
+            "generation_settings": {
+              "seed": 205232699,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"run_tests\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"build_package\" \">\\n\") (tool-1-arg-0) \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-2 ::= (\"<function=\" \"verify_package\" \">\\n\") (tool-2-arg-0) \"</function>\\n\"\ntool-2-arg-0 ::= (\"<parameter=\" \"project\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1 | tool-2) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"run_tests\", \"description\": \"Perform the run_tests operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"build_package\", \"description\": \"Perform the build_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"verify_package\", \"description\": \"Perform the verify_package operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"project\": {\"type\": \"string\"}}, \"required\": [\"project\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nPrepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n</think>\n\n<tool_call>\n<function=run_tests>\n<parameter=project>\nproject\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nThe response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n</think>\n\n<tool_call>\n<function=run_tests>\n<parameter=project>\napp\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"passed\": true, \"failed\": 0}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nThe test for the project \"app\" succeeded. Next, build the package.\n</think>\n\n<tool_call>\n<function=build_package>\n<parameter=project>\napp\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"package\": \"app-rc.tar.gz\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nThe package has been built: app-rc.tar.gz. Next, I'll verify the package.\n</think>\n\n<tool_call>\n<function=verify_package>\n<parameter=project>\napp\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"valid\": true, \"deployed\": false}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 1157,
+            "timings": {
+              "cache_n": 1084,
+              "prompt_n": 27,
+              "prompt_ms": 294.235,
+              "prompt_per_token_ms": 10.897592592592593,
+              "prompt_per_second": 91.76338640882288,
+              "predicted_n": 47,
+              "predicted_ms": 1127.414,
+              "predicted_per_token_ms": 24.509,
+              "predicted_per_second": 40.80133828389571
+            }
+          },
+          "timings": {
+            "cache_n": 1084,
+            "prompt_n": 27,
+            "prompt_ms": 294.235,
+            "prompt_per_token_ms": 10.897592592592593,
+            "prompt_per_second": 91.76338640882288,
+            "predicted_n": 47,
+            "predicted_ms": 1127.414,
+            "predicted_per_token_ms": 24.509,
+            "predicted_per_second": 40.80133828389571
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Prepare a release candidate without deploying it. Tools: run_tests(project), build_package(project), verify_package(project). Run tests first; package only after tests pass; verify the package. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "run_tests",
+              "arguments": "{\"project\":\"project\"}"
+            },
+            "id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF"
+          }
+        ],
+        "reasoning_content": "The user wants me to:\n1. First run the tests\n2. Package only if the tests pass\n3. Verify the package\n4. Return exactly {\"done\":true} as JSON, with no markdown\n\nThe project name isn't specified. Let me try with a generic name… hmm, the tools require a \"project\" parameter. Let me think about what the project name should be. It's not given. Maybe I should try \"project\" or a common name.\n\nLet me start with run_tests first. I need to guess the project name. Perhaps the task fixture is using a default. Let me try run_tests(project=\"project\")? That's a guess. Or maybe I should try \"release-candidate\"? Hmm.\n\nActually, the task says \"Prepare a release candidate without deploying it.\" The tools are run_tests(project), build_package(project), verify_package(project). The project name isn't given. Common fixtures might use \"app\" or \"project\" or \"main\". Let me try \"project\" first. If it fails, I'll try others.\n\nLet me call run_tests with project=\"project\".\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "run_tests",
+              "arguments": "{\"project\":\"app\"}"
+            },
+            "id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0"
+          }
+        ],
+        "reasoning_content": "The response says \"unsupported, unsafe, or out-of-order simulated action.\" Hmm. Maybe the project name is wrong. Let me try other project names. \"app\", \"main\", \"release\", \"rc\".\n\nWait, could it be that out-of-order means something else? No, I ran the test first, so it should be in the correct order. So maybe the project name is the problem. Let me try \"app\".\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0",
+        "content": "{\"passed\": true, \"failed\": 0}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "build_package",
+              "arguments": "{\"project\":\"app\"}"
+            },
+            "id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn"
+          }
+        ],
+        "reasoning_content": "The test for the project \"app\" succeeded. Next, build the package.\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn",
+        "content": "{\"package\": \"app-rc.tar.gz\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "verify_package",
+              "arguments": "{\"project\":\"app\"}"
+            },
+            "id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb"
+          }
+        ],
+        "reasoning_content": "The package has been built: app-rc.tar.gz. Next, I'll verify the package.\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb",
+        "content": "{\"valid\": true, \"deployed\": false}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "run_tests",
+          "project": "project"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF"
+      },
+      {
+        "action": {
+          "tool": "run_tests",
+          "project": "app"
+        },
+        "result": {
+          "passed": true,
+          "failed": 0
+        },
+        "ok": true,
+        "tool_call_id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0"
+      },
+      {
+        "action": {
+          "tool": "build_package",
+          "project": "app"
+        },
+        "result": {
+          "package": "app-rc.tar.gz"
+        },
+        "ok": true,
+        "tool_call_id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn"
+      },
+      {
+        "action": {
+          "tool": "verify_package",
+          "project": "app"
+        },
+        "result": {
+          "valid": true,
+          "deployed": false
+        },
+        "ok": true,
+        "tool_call_id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 4456,
+      "completion_tokens": 524
+    },
+    "timings": [
+      {
+        "cache_n": 0,
+        "prompt_n": 527,
+        "prompt_ms": 1005.431,
+        "prompt_per_token_ms": 1.9078387096774194,
+        "prompt_per_second": 524.1533233011514,
+        "predicted_n": 262,
+        "predicted_ms": 6370.18,
+        "predicted_per_token_ms": 24.40681992337165,
+        "predicted_per_second": 40.9721546329931
+      },
+      {
+        "cache_n": 788,
+        "prompt_n": 31,
+        "prompt_ms": 279.73,
+        "prompt_per_token_ms": 9.023548387096774,
+        "prompt_per_second": 110.82114896507346,
+        "predicted_n": 119,
+        "predicted_ms": 2877.765,
+        "predicted_per_token_ms": 24.387838983050845,
+        "predicted_per_second": 41.004043068144895
+      },
+      {
+        "cache_n": 937,
+        "prompt_n": 27,
+        "prompt_ms": 278.324,
+        "prompt_per_token_ms": 10.308296296296296,
+        "prompt_per_second": 97.00924102844166,
+        "predicted_n": 46,
+        "predicted_ms": 1107.156,
+        "predicted_per_token_ms": 24.603466666666666,
+        "predicted_per_second": 40.64467879865168
+      },
+      {
+        "cache_n": 1009,
+        "prompt_n": 26,
+        "prompt_ms": 271.87,
+        "prompt_per_token_ms": 10.456538461538461,
+        "prompt_per_second": 95.63394269319895,
+        "predicted_n": 50,
+        "predicted_ms": 1203.094,
+        "predicted_per_token_ms": 24.552938775510206,
+        "predicted_per_second": 40.72832214274196
+      },
+      {
+        "cache_n": 1084,
+        "prompt_n": 27,
+        "prompt_ms": 294.235,
+        "prompt_per_token_ms": 10.897592592592593,
+        "prompt_per_second": 91.76338640882288,
+        "predicted_n": 47,
+        "predicted_ms": 1127.414,
+        "predicted_per_token_ms": 24.509,
+        "predicted_per_second": 40.80133828389571
+      }
+    ],
+    "prompt_tps": 2092.4215459313764,
+    "decode_tps": 41.30664913288751
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "run_tests",
+        "project": "project"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "40J0ARWuxSUtf8miSmhVVCmXsnhzBtBF"
+    },
+    {
+      "action": {
+        "tool": "run_tests",
+        "project": "app"
+      },
+      "result": {
+        "passed": true,
+        "failed": 0
+      },
+      "ok": true,
+      "tool_call_id": "LNSKULFslO9BiOHYyXf19BYXkGx6Dxi0"
+    },
+    {
+      "action": {
+        "tool": "build_package",
+        "project": "app"
+      },
+      "result": {
+        "package": "app-rc.tar.gz"
+      },
+      "ok": true,
+      "tool_call_id": "Cja3zTfEhvYfTtPL97llLrYrjhQwfhdn"
+    },
+    {
+      "action": {
+        "tool": "verify_package",
+        "project": "app"
+      },
+      "result": {
+        "valid": true,
+        "deployed": false
+      },
+      "ok": true,
+      "tool_call_id": "LLXx7xFDoIFD5aE2BgK0AA8i9AA5tVWb"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 4456,
+    "completion_tokens": 524
+  },
+  "success": 0,
+  "failure_class": "tool_action_or_final_mismatch",
+  "failure_detail": null
+}

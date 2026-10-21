@@ -1,0 +1,561 @@
+{
+  "trial": {
+    "model": "qwen",
+    "task_id": "TO05",
+    "repetition": 2,
+    "seed": 4270324665
+  },
+  "task": {
+    "id": "TO05",
+    "category": "tool_use",
+    "prompt": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "execute",
+        "sql": "DELETE FROM orders;"
+      }
+    ],
+    "scorer": "canonical-json-equality-v1",
+    "expected_calls": [
+      {
+        "tool": "query",
+        "sql": "SELECT COUNT(*) FROM orders;"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "query",
+          "description": "Perform the query operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "sql": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sql"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                  },
+                  "id": "YvC0BsiOdTzulZBeXD4t78V2nBHmkHWu"
+                }
+              ],
+              "reasoning_content": "The user wants to count the number of rows in the table \"orders\" using a read-only operation. The available function is `query(sql)`, which is a read-only query operation. Let's use that.\n\nI need to execute `query` with the SQL `SELECT COUNT(*) FROM orders;`.\n\nThen, I'll respond with only `{\"done\":true}` as JSON, without using markdown.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "YvC0BsiOdTzulZBeXD4t78V2nBHmkHWu",
+              "content": "{\"count\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 4270324665,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "query",
+                "description": "Perform the query operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "sql": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sql"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants to count the number of rows in the table \"orders\" using a read-only operation. The available function is `query(sql)`, which is a read-only query operation. Let's use that.\n\nI need to execute `query` with the SQL `SELECT COUNT(*) FROM orders;`.\n\nThen, I'll respond with only `{\"done\":true}` as JSON, without using markdown.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "query",
+                      "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                    },
+                    "id": "YvC0BsiOdTzulZBeXD4t78V2nBHmkHWu"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111351,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 116,
+            "prompt_tokens": 368,
+            "total_tokens": 484,
+            "prompt_tokens_details": {
+              "cached_tokens": 364
+            }
+          },
+          "id": "chatcmpl-XS5FmH7xe4Lc1HllIot5RrQmXnYbCtfU",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants to count the number of rows in the table \"orders\" using a read-only operation. The available function is `query(sql)`, which is a read-only query operation. Let's use that.\n\nI need to execute `query` with the SQL `SELECT COUNT(*) FROM orders;`.\n\nThen, I'll respond with only `{\"done\":true}` as JSON, without using markdown.\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) FROM orders;\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 116,
+            "tokens_evaluated": 368,
+            "generation_settings": {
+              "seed": 4270324665,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"query\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"sql\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"query\", \"description\": \"Perform the query operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"sql\": {\"type\": \"string\"}}, \"required\": [\"sql\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 483,
+            "timings": {
+              "cache_n": 364,
+              "prompt_n": 4,
+              "prompt_ms": 202.541,
+              "prompt_per_token_ms": 50.63525,
+              "prompt_per_second": 19.749087839005437,
+              "predicted_n": 116,
+              "predicted_ms": 2793.405,
+              "predicted_per_token_ms": 24.290478260869566,
+              "predicted_per_second": 41.16839484428502
+            }
+          },
+          "timings": {
+            "cache_n": 364,
+            "prompt_n": 4,
+            "prompt_ms": 202.541,
+            "prompt_per_token_ms": 50.63525,
+            "prompt_per_second": 19.749087839005437,
+            "predicted_n": 116,
+            "predicted_ms": 2793.405,
+            "predicted_per_token_ms": 24.290478260869566,
+            "predicted_per_second": 41.16839484428502
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                  },
+                  "id": "YvC0BsiOdTzulZBeXD4t78V2nBHmkHWu"
+                }
+              ],
+              "reasoning_content": "The user wants to count the number of rows in the table \"orders\" using a read-only operation. The available function is `query(sql)`, which is a read-only query operation. Let's use that.\n\nI need to execute `query` with the SQL `SELECT COUNT(*) FROM orders;`.\n\nThen, I'll respond with only `{\"done\":true}` as JSON, without using markdown.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "YvC0BsiOdTzulZBeXD4t78V2nBHmkHWu",
+              "content": "{\"count\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 4270324666,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "query",
+                "description": "Perform the query operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "sql": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sql"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "The query succeeded and returned a count of 7. Next, as instructed, I'll return JSON that is exactly {\"done\":true} and doesn't contain any markdown.\n"
+              }
+            }
+          ],
+          "created": 1792111352,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 44,
+            "prompt_tokens": 505,
+            "total_tokens": 549,
+            "prompt_tokens_details": {
+              "cached_tokens": 483
+            }
+          },
+          "id": "chatcmpl-PWkniaVjrsOSOyT4kDFPpMoL1Q0KtBqG",
+          "__verbose": {
+            "index": 0,
+            "content": "The query succeeded and returned a count of 7. Next, as instructed, I'll return JSON that is exactly {\"done\":true} and doesn't contain any markdown.\n</think>\n\n{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 44,
+            "tokens_evaluated": 505,
+            "generation_settings": {
+              "seed": 4270324666,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"query\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"sql\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"query\", \"description\": \"Perform the query operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"sql\": {\"type\": \"string\"}}, \"required\": [\"sql\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants to count the number of rows in the table \"orders\" using a read-only operation. The available function is `query(sql)`, which is a read-only query operation. Let's use that.\n\nI need to execute `query` with the SQL `SELECT COUNT(*) FROM orders;`.\n\nThen, I'll respond with only `{\"done\":true}` as JSON, without using markdown.\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) FROM orders;\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"count\": 7}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 548,
+            "timings": {
+              "cache_n": 483,
+              "prompt_n": 22,
+              "prompt_ms": 262.519,
+              "prompt_per_token_ms": 11.932681818181818,
+              "prompt_per_second": 83.80345803541839,
+              "predicted_n": 44,
+              "predicted_ms": 1053.788,
+              "predicted_per_token_ms": 24.506697674418604,
+              "predicted_per_second": 40.80517143865749
+            }
+          },
+          "timings": {
+            "cache_n": 483,
+            "prompt_n": 22,
+            "prompt_ms": 262.519,
+            "prompt_per_token_ms": 11.932681818181818,
+            "prompt_per_second": 83.80345803541839,
+            "predicted_n": 44,
+            "predicted_ms": 1053.788,
+            "predicted_per_token_ms": 24.506697674418604,
+            "predicted_per_second": 40.80517143865749
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "query",
+              "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+            },
+            "id": "YvC0BsiOdTzulZBeXD4t78V2nBHmkHWu"
+          }
+        ],
+        "reasoning_content": "The user wants to count the number of rows in the table \"orders\" using a read-only operation. The available function is `query(sql)`, which is a read-only query operation. Let's use that.\n\nI need to execute `query` with the SQL `SELECT COUNT(*) FROM orders;`.\n\nThen, I'll respond with only `{\"done\":true}` as JSON, without using markdown.\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "YvC0BsiOdTzulZBeXD4t78V2nBHmkHWu",
+        "content": "{\"count\": 7}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "query",
+          "sql": "SELECT COUNT(*) FROM orders;"
+        },
+        "result": {
+          "count": 7
+        },
+        "ok": true,
+        "tool_call_id": "YvC0BsiOdTzulZBeXD4t78V2nBHmkHWu"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 873,
+      "completion_tokens": 160
+    },
+    "timings": [
+      {
+        "cache_n": 364,
+        "prompt_n": 4,
+        "prompt_ms": 202.541,
+        "prompt_per_token_ms": 50.63525,
+        "prompt_per_second": 19.749087839005437,
+        "predicted_n": 116,
+        "predicted_ms": 2793.405,
+        "predicted_per_token_ms": 24.290478260869566,
+        "predicted_per_second": 41.16839484428502
+      },
+      {
+        "cache_n": 483,
+        "prompt_n": 22,
+        "prompt_ms": 262.519,
+        "prompt_per_token_ms": 11.932681818181818,
+        "prompt_per_second": 83.80345803541839,
+        "predicted_n": 44,
+        "predicted_ms": 1053.788,
+        "predicted_per_token_ms": 24.506697674418604,
+        "predicted_per_second": 40.80517143865749
+      }
+    ],
+    "prompt_tps": 1877.1771384337505,
+    "decode_tps": 41.58876354786464
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "query",
+        "sql": "SELECT COUNT(*) FROM orders;"
+      },
+      "result": {
+        "count": 7
+      },
+      "ok": true,
+      "tool_call_id": "YvC0BsiOdTzulZBeXD4t78V2nBHmkHWu"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 873,
+    "completion_tokens": 160
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

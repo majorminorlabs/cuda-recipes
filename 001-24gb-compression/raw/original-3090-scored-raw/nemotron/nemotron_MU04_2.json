@@ -1,0 +1,1064 @@
+{
+  "trial": {
+    "model": "nemotron",
+    "task_id": "MU04",
+    "repetition": 2,
+    "seed": 2944703273
+  },
+  "task": {
+    "id": "MU04",
+    "category": "multi_step",
+    "prompt": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "create_event",
+        "date": "2026-11-03",
+        "start": "09:30",
+        "end": "10:30",
+        "title": "Review"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "find_availability",
+        "date": "2026-11-03",
+        "start": "10:00",
+        "end": "11:00"
+      },
+      {
+        "tool": "create_event",
+        "date": "2026-11-03",
+        "start": "10:00",
+        "end": "11:00",
+        "title": "Review"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "find_availability",
+          "description": "Perform the find_availability operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "date",
+              "start",
+              "end"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "create_event",
+          "description": "Perform the create_event operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "date",
+              "start",
+              "end",
+              "title"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "",
+    "finish_reason": "length",
+    "responses": [
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "find_availability",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+                  },
+                  "id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2"
+                }
+              ],
+              "reasoning_content": "The user wants me to schedule a review for 2026-11-03 from 10:00 to 11:00. There are existing events: 09:00-10:00 and 11:00-12:00. I need to check availability first using find_availability, then create the event if free.\n\nLet me first check availability for 2026-11-03 from 10:00 to 11:00."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2",
+              "content": "{\"available\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "create_event",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"review\"}"
+                  },
+                  "id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH"
+                }
+              ],
+              "reasoning_content": "The availability check returned true, meaning the slot is free. Now I need to create the event with title \"review\" (or something appropriate). The user said \"Schedule a review\" so I'll use title \"review\". Let me create the event."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 2944703273,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "find_availability",
+                "description": "Perform the find_availability operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "create_event",
+                "description": "Perform the create_event operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants me to schedule a review for 2026-11-03 from 10:00 to 11:00. There are existing events: 09:00-10:00 and 11:00-12:00. I need to check availability first using find_availability, then create the event if free.\n\nLet me first check availability for 2026-11-03 from 10:00 to 11:00.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "find_availability",
+                      "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+                    },
+                    "id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112519,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 180,
+            "prompt_tokens": 607,
+            "total_tokens": 787,
+            "prompt_tokens_details": {
+              "cached_tokens": 603
+            }
+          },
+          "id": "chatcmpl-BnrVECPEaIHCgz9MN6aPrBTGHWuuF9ya",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants me to schedule a review for 2026-11-03 from 10:00 to 11:00. There are existing events: 09:00-10:00 and 11:00-12:00. I need to check availability first using find_availability, then create the event if free.\n\nLet me first check availability for 2026-11-03 from 10:00 to 11:00.</think>\n<tool_call>\n<function=find_availability>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 180,
+            "tokens_evaluated": 607,
+            "generation_settings": {
+              "seed": 2944703273,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"find_availability\" \">\\n\") tool-0-args-7 \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-0-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-0-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-0-args-1 ::= tool-0-arg-0\ntool-0-args-2 ::= tool-0-arg-1\ntool-0-args-3 ::= tool-0-arg-0 tool-0-args-2 | tool-0-arg-1 tool-0-args-1\ntool-0-args-4 ::= tool-0-arg-2\ntool-0-args-5 ::= tool-0-arg-0 tool-0-args-4 | tool-0-arg-2 tool-0-args-1\ntool-0-args-6 ::= tool-0-arg-1 tool-0-args-4 | tool-0-arg-2 tool-0-args-2\ntool-0-args-7 ::= tool-0-arg-0 tool-0-args-6 | tool-0-arg-1 tool-0-args-5 | tool-0-arg-2 tool-0-args-3\ntool-1 ::= (\"<function=\" \"create_event\" \">\\n\") tool-1-args-15 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-1-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-1-arg-3 ::= (\"<parameter=\" \"title\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-10 ::= tool-1-arg-1 tool-1-args-8 | tool-1-arg-3 tool-1-args-2\ntool-1-args-11 ::= tool-1-arg-0 tool-1-args-10 | tool-1-arg-1 tool-1-args-9 | tool-1-arg-3 tool-1-args-3\ntool-1-args-12 ::= tool-1-arg-2 tool-1-args-8 | tool-1-arg-3 tool-1-args-4\ntool-1-args-13 ::= tool-1-arg-0 tool-1-args-12 | tool-1-arg-2 tool-1-args-9 | tool-1-arg-3 tool-1-args-5\ntool-1-args-14 ::= tool-1-arg-1 tool-1-args-12 | tool-1-arg-2 tool-1-args-10 | tool-1-arg-3 tool-1-args-6\ntool-1-args-15 ::= tool-1-arg-0 tool-1-args-14 | tool-1-arg-1 tool-1-args-13 | tool-1-arg-2 tool-1-args-11 | tool-1-arg-3 tool-1-args-7\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-1-args-4 ::= tool-1-arg-2\ntool-1-args-5 ::= tool-1-arg-0 tool-1-args-4 | tool-1-arg-2 tool-1-args-1\ntool-1-args-6 ::= tool-1-arg-1 tool-1-args-4 | tool-1-arg-2 tool-1-args-2\ntool-1-args-7 ::= tool-1-arg-0 tool-1-args-6 | tool-1-arg-1 tool-1-args-5 | tool-1-arg-2 tool-1-args-3\ntool-1-args-8 ::= tool-1-arg-3\ntool-1-args-9 ::= tool-1-arg-0 tool-1-args-8 | tool-1-arg-3 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>find_availability</name>\n<description>Perform the find_availability operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>date</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>start</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>end</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"date\", \"start\", \"end\"]</required>\n</parameters>\n</function>\n<function>\n<name>create_event</name>\n<description>Perform the create_event operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>date</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>start</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>end</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>title</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"date\", \"start\", \"end\", \"title\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nSchedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 786,
+            "timings": {
+              "cache_n": 603,
+              "prompt_n": 4,
+              "prompt_ms": 243.284,
+              "prompt_per_token_ms": 60.821,
+              "prompt_per_second": 16.441689548017955,
+              "predicted_n": 180,
+              "predicted_ms": 2114.225,
+              "predicted_per_token_ms": 11.811312849162011,
+              "predicted_per_second": 84.66459340893236
+            }
+          },
+          "timings": {
+            "cache_n": 603,
+            "prompt_n": 4,
+            "prompt_ms": 243.284,
+            "prompt_per_token_ms": 60.821,
+            "prompt_per_second": 16.441689548017955,
+            "predicted_n": 180,
+            "predicted_ms": 2114.225,
+            "predicted_per_token_ms": 11.811312849162011,
+            "predicted_per_second": 84.66459340893236
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "find_availability",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+                  },
+                  "id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2"
+                }
+              ],
+              "reasoning_content": "The user wants me to schedule a review for 2026-11-03 from 10:00 to 11:00. There are existing events: 09:00-10:00 and 11:00-12:00. I need to check availability first using find_availability, then create the event if free.\n\nLet me first check availability for 2026-11-03 from 10:00 to 11:00."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2",
+              "content": "{\"available\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "create_event",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"review\"}"
+                  },
+                  "id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH"
+                }
+              ],
+              "reasoning_content": "The availability check returned true, meaning the slot is free. Now I need to create the event with title \"review\" (or something appropriate). The user said \"Schedule a review\" so I'll use title \"review\". Let me create the event."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 2944703274,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "find_availability",
+                "description": "Perform the find_availability operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "create_event",
+                "description": "Perform the create_event operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The availability check returned true, meaning the slot is free. Now I need to create the event with title \"review\" (or something appropriate). The user said \"Schedule a review\" so I'll use title \"review\". Let me create the event.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "create_event",
+                      "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"review\"}"
+                    },
+                    "id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112521,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 124,
+            "prompt_tokens": 808,
+            "total_tokens": 932,
+            "prompt_tokens_details": {
+              "cached_tokens": 786
+            }
+          },
+          "id": "chatcmpl-bl3aUmVm4E1ccAPa5eBN5AXnBpOnWBva",
+          "__verbose": {
+            "index": 0,
+            "content": "The availability check returned true, meaning the slot is free. Now I need to create the event with title \"review\" (or something appropriate). The user said \"Schedule a review\" so I'll use title \"review\". Let me create the event.</think>\n<tool_call>\n<function=create_event>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n<parameter=title>\nreview\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 124,
+            "tokens_evaluated": 808,
+            "generation_settings": {
+              "seed": 2944703274,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"find_availability\" \">\\n\") tool-0-args-7 \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-0-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-0-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-0-args-1 ::= tool-0-arg-0\ntool-0-args-2 ::= tool-0-arg-1\ntool-0-args-3 ::= tool-0-arg-0 tool-0-args-2 | tool-0-arg-1 tool-0-args-1\ntool-0-args-4 ::= tool-0-arg-2\ntool-0-args-5 ::= tool-0-arg-0 tool-0-args-4 | tool-0-arg-2 tool-0-args-1\ntool-0-args-6 ::= tool-0-arg-1 tool-0-args-4 | tool-0-arg-2 tool-0-args-2\ntool-0-args-7 ::= tool-0-arg-0 tool-0-args-6 | tool-0-arg-1 tool-0-args-5 | tool-0-arg-2 tool-0-args-3\ntool-1 ::= (\"<function=\" \"create_event\" \">\\n\") tool-1-args-15 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-1-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-1-arg-3 ::= (\"<parameter=\" \"title\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-10 ::= tool-1-arg-1 tool-1-args-8 | tool-1-arg-3 tool-1-args-2\ntool-1-args-11 ::= tool-1-arg-0 tool-1-args-10 | tool-1-arg-1 tool-1-args-9 | tool-1-arg-3 tool-1-args-3\ntool-1-args-12 ::= tool-1-arg-2 tool-1-args-8 | tool-1-arg-3 tool-1-args-4\ntool-1-args-13 ::= tool-1-arg-0 tool-1-args-12 | tool-1-arg-2 tool-1-args-9 | tool-1-arg-3 tool-1-args-5\ntool-1-args-14 ::= tool-1-arg-1 tool-1-args-12 | tool-1-arg-2 tool-1-args-10 | tool-1-arg-3 tool-1-args-6\ntool-1-args-15 ::= tool-1-arg-0 tool-1-args-14 | tool-1-arg-1 tool-1-args-13 | tool-1-arg-2 tool-1-args-11 | tool-1-arg-3 tool-1-args-7\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-1-args-4 ::= tool-1-arg-2\ntool-1-args-5 ::= tool-1-arg-0 tool-1-args-4 | tool-1-arg-2 tool-1-args-1\ntool-1-args-6 ::= tool-1-arg-1 tool-1-args-4 | tool-1-arg-2 tool-1-args-2\ntool-1-args-7 ::= tool-1-arg-0 tool-1-args-6 | tool-1-arg-1 tool-1-args-5 | tool-1-arg-2 tool-1-args-3\ntool-1-args-8 ::= tool-1-arg-3\ntool-1-args-9 ::= tool-1-arg-0 tool-1-args-8 | tool-1-arg-3 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>find_availability</name>\n<description>Perform the find_availability operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>date</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>start</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>end</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"date\", \"start\", \"end\"]</required>\n</parameters>\n</function>\n<function>\n<name>create_event</name>\n<description>Perform the create_event operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>date</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>start</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>end</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>title</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"date\", \"start\", \"end\", \"title\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nSchedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to schedule a review for 2026-11-03 from 10:00 to 11:00. There are existing events: 09:00-10:00 and 11:00-12:00. I need to check availability first using find_availability, then create the event if free.\n\nLet me first check availability for 2026-11-03 from 10:00 to 11:00.</think>\n<tool_call>\n<function=find_availability>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"available\": true}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 931,
+            "timings": {
+              "cache_n": 786,
+              "prompt_n": 22,
+              "prompt_ms": 307.175,
+              "prompt_per_token_ms": 13.9625,
+              "prompt_per_second": 71.62041181736795,
+              "predicted_n": 124,
+              "predicted_ms": 1454.231,
+              "predicted_per_token_ms": 11.823016260162602,
+              "predicted_per_second": 84.58078530852389
+            }
+          },
+          "timings": {
+            "cache_n": 786,
+            "prompt_n": 22,
+            "prompt_ms": 307.175,
+            "prompt_per_token_ms": 13.9625,
+            "prompt_per_second": 71.62041181736795,
+            "predicted_n": 124,
+            "predicted_ms": 1454.231,
+            "predicted_per_token_ms": 11.823016260162602,
+            "predicted_per_second": 84.58078530852389
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "find_availability",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+                  },
+                  "id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2"
+                }
+              ],
+              "reasoning_content": "The user wants me to schedule a review for 2026-11-03 from 10:00 to 11:00. There are existing events: 09:00-10:00 and 11:00-12:00. I need to check availability first using find_availability, then create the event if free.\n\nLet me first check availability for 2026-11-03 from 10:00 to 11:00."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2",
+              "content": "{\"available\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "create_event",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"review\"}"
+                  },
+                  "id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH"
+                }
+              ],
+              "reasoning_content": "The availability check returned true, meaning the slot is free. Now I need to create the event with title \"review\" (or something appropriate). The user said \"Schedule a review\" so I'll use title \"review\". Let me create the event."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 2944703275,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "find_availability",
+                "description": "Perform the find_availability operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "create_event",
+                "description": "Perform the create_event operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "length",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The create_event returned an error. Let me think... The error says \"unsupported, unsafe, or out-of-order simulated action\". Maybe the title needs to be something specific? Or maybe I need to check if there's a conflict? The existing events are 09:00-10:00 and 11:00-12:00, so 10:00-11:00 should be free. \n\nWait, maybe the tool expects a specific title format? Or maybe the create_event is failing for some other reason. Let me re-read the task. The user said \"Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00.\"\n\nThe availability check returned true, so the slot is available. But create_event failed. Maybe I need to try again with a different title? Or maybe the system is simulating that it's not available? Let me check availability again to confirm.\n\nActually, looking at the error message \"unsupported, unsafe, or out-of-order simulated action\" - this might be a simulated response. Perhaps the create_event is not actually working in this environment, or there's a specific requirement I'm missing.\n\nWait, maybe the title should be \"Review\" with capital R? Or maybe it should be more descriptive? Let me try with a different title. But the instructions say to return JSON exactly {\"done\":true} after the requested outcome is complete. If the event creation failed, I should not return done:true.\n\nBut the user's instructions are clear: \"Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}.\" This implies I should return done:true only if successful. If creation failed, I might need to report that.\n\nHowever, looking at the tool results, find_availability returned {\"available\": true}. The create_event returned an error. Maybe I should try again? Or maybe the error indicates that the action is not supported in this simulation.\n\nLet me think about this differently. The task is a simulation. The find_availability worked. The create_event returned an error. Perhaps the system is designed to fail on create_event to test how I handle errors? Or maybe I need to check if there's a specific format.\n\nActually, re-read"
+              }
+            }
+          ],
+          "created": 1792112527,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 512,
+            "prompt_tokens": 964,
+            "total_tokens": 1476,
+            "prompt_tokens_details": {
+              "cached_tokens": 931
+            }
+          },
+          "id": "chatcmpl-IVd3m0EfgETWT1nUTmRTOm5DvYw5nzTg",
+          "__verbose": {
+            "index": 0,
+            "content": "The create_event returned an error. Let me think... The error says \"unsupported, unsafe, or out-of-order simulated action\". Maybe the title needs to be something specific? Or maybe I need to check if there's a conflict? The existing events are 09:00-10:00 and 11:00-12:00, so 10:00-11:00 should be free. \n\nWait, maybe the tool expects a specific title format? Or maybe the create_event is failing for some other reason. Let me re-read the task. The user said \"Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00.\"\n\nThe availability check returned true, so the slot is available. But create_event failed. Maybe I need to try again with a different title? Or maybe the system is simulating that it's not available? Let me check availability again to confirm.\n\nActually, looking at the error message \"unsupported, unsafe, or out-of-order simulated action\" - this might be a simulated response. Perhaps the create_event is not actually working in this environment, or there's a specific requirement I'm missing.\n\nWait, maybe the title should be \"Review\" with capital R? Or maybe it should be more descriptive? Let me try with a different title. But the instructions say to return JSON exactly {\"done\":true} after the requested outcome is complete. If the event creation failed, I should not return done:true.\n\nBut the user's instructions are clear: \"Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}.\" This implies I should return done:true only if successful. If creation failed, I might need to report that.\n\nHowever, looking at the tool results, find_availability returned {\"available\": true}. The create_event returned an error. Maybe I should try again? Or maybe the error indicates that the action is not supported in this simulation.\n\nLet me think about this differently. The task is a simulation. The find_availability worked. The create_event returned an error. Perhaps the system is designed to fail on create_event to test how I handle errors? Or maybe I need to check if there's a specific format.\n\nActually, re-read",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 512,
+            "tokens_evaluated": 964,
+            "generation_settings": {
+              "seed": 2944703275,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"find_availability\" \">\\n\") tool-0-args-7 \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-0-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-0-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-0-args-1 ::= tool-0-arg-0\ntool-0-args-2 ::= tool-0-arg-1\ntool-0-args-3 ::= tool-0-arg-0 tool-0-args-2 | tool-0-arg-1 tool-0-args-1\ntool-0-args-4 ::= tool-0-arg-2\ntool-0-args-5 ::= tool-0-arg-0 tool-0-args-4 | tool-0-arg-2 tool-0-args-1\ntool-0-args-6 ::= tool-0-arg-1 tool-0-args-4 | tool-0-arg-2 tool-0-args-2\ntool-0-args-7 ::= tool-0-arg-0 tool-0-args-6 | tool-0-arg-1 tool-0-args-5 | tool-0-arg-2 tool-0-args-3\ntool-1 ::= (\"<function=\" \"create_event\" \">\\n\") tool-1-args-15 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-1-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-1-arg-3 ::= (\"<parameter=\" \"title\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-10 ::= tool-1-arg-1 tool-1-args-8 | tool-1-arg-3 tool-1-args-2\ntool-1-args-11 ::= tool-1-arg-0 tool-1-args-10 | tool-1-arg-1 tool-1-args-9 | tool-1-arg-3 tool-1-args-3\ntool-1-args-12 ::= tool-1-arg-2 tool-1-args-8 | tool-1-arg-3 tool-1-args-4\ntool-1-args-13 ::= tool-1-arg-0 tool-1-args-12 | tool-1-arg-2 tool-1-args-9 | tool-1-arg-3 tool-1-args-5\ntool-1-args-14 ::= tool-1-arg-1 tool-1-args-12 | tool-1-arg-2 tool-1-args-10 | tool-1-arg-3 tool-1-args-6\ntool-1-args-15 ::= tool-1-arg-0 tool-1-args-14 | tool-1-arg-1 tool-1-args-13 | tool-1-arg-2 tool-1-args-11 | tool-1-arg-3 tool-1-args-7\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-1-args-4 ::= tool-1-arg-2\ntool-1-args-5 ::= tool-1-arg-0 tool-1-args-4 | tool-1-arg-2 tool-1-args-1\ntool-1-args-6 ::= tool-1-arg-1 tool-1-args-4 | tool-1-arg-2 tool-1-args-2\ntool-1-args-7 ::= tool-1-arg-0 tool-1-args-6 | tool-1-arg-1 tool-1-args-5 | tool-1-arg-2 tool-1-args-3\ntool-1-args-8 ::= tool-1-arg-3\ntool-1-args-9 ::= tool-1-arg-0 tool-1-args-8 | tool-1-arg-3 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>find_availability</name>\n<description>Perform the find_availability operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>date</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>start</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>end</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"date\", \"start\", \"end\"]</required>\n</parameters>\n</function>\n<function>\n<name>create_event</name>\n<description>Perform the create_event operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>date</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>start</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>end</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>title</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"date\", \"start\", \"end\", \"title\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nSchedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to schedule a review for 2026-11-03 from 10:00 to 11:00. There are existing events: 09:00-10:00 and 11:00-12:00. I need to check availability first using find_availability, then create the event if free.\n\nLet me first check availability for 2026-11-03 from 10:00 to 11:00.</think>\n<tool_call>\n<function=find_availability>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"available\": true}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nThe availability check returned true, meaning the slot is free. Now I need to create the event with title \"review\" (or something appropriate). The user said \"Schedule a review\" so I'll use title \"review\". Let me create the event.</think>\n<tool_call>\n<function=create_event>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n<parameter=title>\nreview\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "limit",
+            "stopping_word": "",
+            "tokens_cached": 1475,
+            "timings": {
+              "cache_n": 931,
+              "prompt_n": 33,
+              "prompt_ms": 285.23,
+              "prompt_per_token_ms": 8.643333333333334,
+              "prompt_per_second": 115.69610489780176,
+              "predicted_n": 512,
+              "predicted_ms": 6036.336,
+              "predicted_per_token_ms": 11.812790606653621,
+              "predicted_per_second": 84.65400203037073
+            }
+          },
+          "timings": {
+            "cache_n": 931,
+            "prompt_n": 33,
+            "prompt_ms": 285.23,
+            "prompt_per_token_ms": 8.643333333333334,
+            "prompt_per_second": 115.69610489780176,
+            "predicted_n": 512,
+            "predicted_ms": 6036.336,
+            "predicted_per_token_ms": 11.812790606653621,
+            "predicted_per_second": 84.65400203037073
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "find_availability",
+              "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+            },
+            "id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2"
+          }
+        ],
+        "reasoning_content": "The user wants me to schedule a review for 2026-11-03 from 10:00 to 11:00. There are existing events: 09:00-10:00 and 11:00-12:00. I need to check availability first using find_availability, then create the event if free.\n\nLet me first check availability for 2026-11-03 from 10:00 to 11:00."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2",
+        "content": "{\"available\": true}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "create_event",
+              "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"review\"}"
+            },
+            "id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH"
+          }
+        ],
+        "reasoning_content": "The availability check returned true, meaning the slot is free. Now I need to create the event with title \"review\" (or something appropriate). The user said \"Schedule a review\" so I'll use title \"review\". Let me create the event."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "find_availability",
+          "date": "2026-11-03",
+          "start": "10:00",
+          "end": "11:00"
+        },
+        "result": {
+          "available": true
+        },
+        "ok": true,
+        "tool_call_id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2"
+      },
+      {
+        "action": {
+          "tool": "create_event",
+          "date": "2026-11-03",
+          "start": "10:00",
+          "end": "11:00",
+          "title": "review"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2379,
+      "completion_tokens": 816
+    },
+    "timings": [
+      {
+        "cache_n": 603,
+        "prompt_n": 4,
+        "prompt_ms": 243.284,
+        "prompt_per_token_ms": 60.821,
+        "prompt_per_second": 16.441689548017955,
+        "predicted_n": 180,
+        "predicted_ms": 2114.225,
+        "predicted_per_token_ms": 11.811312849162011,
+        "predicted_per_second": 84.66459340893236
+      },
+      {
+        "cache_n": 786,
+        "prompt_n": 22,
+        "prompt_ms": 307.175,
+        "prompt_per_token_ms": 13.9625,
+        "prompt_per_second": 71.62041181736795,
+        "predicted_n": 124,
+        "predicted_ms": 1454.231,
+        "predicted_per_token_ms": 11.823016260162602,
+        "predicted_per_second": 84.58078530852389
+      },
+      {
+        "cache_n": 931,
+        "prompt_n": 33,
+        "prompt_ms": 285.23,
+        "prompt_per_token_ms": 8.643333333333334,
+        "prompt_per_second": 115.69610489780176,
+        "predicted_n": 512,
+        "predicted_ms": 6036.336,
+        "predicted_per_token_ms": 11.812790606653621,
+        "predicted_per_second": 84.65400203037073
+      }
+    ],
+    "prompt_tps": 2846.752799187257,
+    "decode_tps": 84.95759200199234
+  },
+  "finish_reason": "length",
+  "content": "",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "find_availability",
+        "date": "2026-11-03",
+        "start": "10:00",
+        "end": "11:00"
+      },
+      "result": {
+        "available": true
+      },
+      "ok": true,
+      "tool_call_id": "3OAr7xV1iTBQdf2yOZXrZgUEI2yLrgW2"
+    },
+    {
+      "action": {
+        "tool": "create_event",
+        "date": "2026-11-03",
+        "start": "10:00",
+        "end": "11:00",
+        "title": "review"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "TwyK9IqAalSCpTzcjJSH0z8mPz8T4eBH"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2379,
+    "completion_tokens": 816
+  },
+  "success": 0,
+  "failure_class": "truncated",
+  "failure_detail": null
+}

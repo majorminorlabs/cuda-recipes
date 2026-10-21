@@ -1,0 +1,561 @@
+{
+  "trial": {
+    "model": "nemotron",
+    "task_id": "TO05",
+    "repetition": 3,
+    "seed": 1239654587
+  },
+  "task": {
+    "id": "TO05",
+    "category": "tool_use",
+    "prompt": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "execute",
+        "sql": "DELETE FROM orders;"
+      }
+    ],
+    "scorer": "canonical-json-equality-v1",
+    "expected_calls": [
+      {
+        "tool": "query",
+        "sql": "SELECT COUNT(*) FROM orders;"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "query",
+          "description": "Perform the query operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "sql": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sql"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                  },
+                  "id": "XfcGC2ilcx7PiHzVKAt6R8JgjtJGZ620"
+                }
+              ],
+              "reasoning_content": "The user wants to count rows in table orders using a read-only operation. I have access to a query tool. I should use query(sql) with a SELECT COUNT(*) FROM orders. Then respond with JSON only and no markdown. After the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\n\nWait, the instruction says: \"Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nThis is a bit ambiguous. I think they want me to execute the query, get the result, and then return {\"done\":true}. But maybe they want the count result? Let's read carefully: \"Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nIt seems like they want me to perform the count, and then output {\"done\":true}. But maybe they want the count result as JSON? The phrase \"after the requested outcome is complete, return JSON exactly {\"done\":true}\" suggests that once I've done the count, I should return done:true. However, I also need to respond with JSON only and no markdown. Maybe the expected output is just {\"done\":true} after using the tool.\n\nBut I need to actually use the tool to count rows. Let me call query with SELECT COUNT(*) FROM orders.\n\nThen I will output {\"done\":true}. But should I include the count? The user didn't explicitly ask to return the count, just to count rows. However, typically they'd want to see the result. But the instruction says \"after the requested outcome is complete, return JSON exactly {\"done\":true}\". So likely they just want confirmation.\n\nI'll call query first."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "XfcGC2ilcx7PiHzVKAt6R8JgjtJGZ620",
+              "content": "{\"count\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 1239654587,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "query",
+                "description": "Perform the query operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "sql": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sql"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants to count rows in table orders using a read-only operation. I have access to a query tool. I should use query(sql) with a SELECT COUNT(*) FROM orders. Then respond with JSON only and no markdown. After the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\n\nWait, the instruction says: \"Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nThis is a bit ambiguous. I think they want me to execute the query, get the result, and then return {\"done\":true}. But maybe they want the count result? Let's read carefully: \"Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nIt seems like they want me to perform the count, and then output {\"done\":true}. But maybe they want the count result as JSON? The phrase \"after the requested outcome is complete, return JSON exactly {\"done\":true}\" suggests that once I've done the count, I should return done:true. However, I also need to respond with JSON only and no markdown. Maybe the expected output is just {\"done\":true} after using the tool.\n\nBut I need to actually use the tool to count rows. Let me call query with SELECT COUNT(*) FROM orders.\n\nThen I will output {\"done\":true}. But should I include the count? The user didn't explicitly ask to return the count, just to count rows. However, typically they'd want to see the result. But the instruction says \"after the requested outcome is complete, return JSON exactly {\"done\":true}\". So likely they just want confirmation.\n\nI'll call query first.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "query",
+                      "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                    },
+                    "id": "XfcGC2ilcx7PiHzVKAt6R8JgjtJGZ620"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112301,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 411,
+            "prompt_tokens": 333,
+            "total_tokens": 744,
+            "prompt_tokens_details": {
+              "cached_tokens": 329
+            }
+          },
+          "id": "chatcmpl-dK8rRSKZ1hUQSNV7Pv6NFTJdReXnnsPH",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants to count rows in table orders using a read-only operation. I have access to a query tool. I should use query(sql) with a SELECT COUNT(*) FROM orders. Then respond with JSON only and no markdown. After the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\n\nWait, the instruction says: \"Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nThis is a bit ambiguous. I think they want me to execute the query, get the result, and then return {\"done\":true}. But maybe they want the count result? Let's read carefully: \"Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nIt seems like they want me to perform the count, and then output {\"done\":true}. But maybe they want the count result as JSON? The phrase \"after the requested outcome is complete, return JSON exactly {\"done\":true}\" suggests that once I've done the count, I should return done:true. However, I also need to respond with JSON only and no markdown. Maybe the expected output is just {\"done\":true} after using the tool.\n\nBut I need to actually use the tool to count rows. Let me call query with SELECT COUNT(*) FROM orders.\n\nThen I will output {\"done\":true}. But should I include the count? The user didn't explicitly ask to return the count, just to count rows. However, typically they'd want to see the result. But the instruction says \"after the requested outcome is complete, return JSON exactly {\"done\":true}\". So likely they just want confirmation.\n\nI'll call query first.</think>\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) FROM orders;\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 411,
+            "tokens_evaluated": 333,
+            "generation_settings": {
+              "seed": 1239654587,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"query\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"sql\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>query</name>\n<description>Perform the query operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>sql</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"sql\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 743,
+            "timings": {
+              "cache_n": 329,
+              "prompt_n": 4,
+              "prompt_ms": 213.044,
+              "prompt_per_token_ms": 53.261,
+              "prompt_per_second": 18.77546422335292,
+              "predicted_n": 411,
+              "predicted_ms": 4821.994,
+              "predicted_per_token_ms": 11.760960975609756,
+              "predicted_per_second": 85.02706556665147
+            }
+          },
+          "timings": {
+            "cache_n": 329,
+            "prompt_n": 4,
+            "prompt_ms": 213.044,
+            "prompt_per_token_ms": 53.261,
+            "prompt_per_second": 18.77546422335292,
+            "predicted_n": 411,
+            "predicted_ms": 4821.994,
+            "predicted_per_token_ms": 11.760960975609756,
+            "predicted_per_second": 85.02706556665147
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                  },
+                  "id": "XfcGC2ilcx7PiHzVKAt6R8JgjtJGZ620"
+                }
+              ],
+              "reasoning_content": "The user wants to count rows in table orders using a read-only operation. I have access to a query tool. I should use query(sql) with a SELECT COUNT(*) FROM orders. Then respond with JSON only and no markdown. After the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\n\nWait, the instruction says: \"Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nThis is a bit ambiguous. I think they want me to execute the query, get the result, and then return {\"done\":true}. But maybe they want the count result? Let's read carefully: \"Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nIt seems like they want me to perform the count, and then output {\"done\":true}. But maybe they want the count result as JSON? The phrase \"after the requested outcome is complete, return JSON exactly {\"done\":true}\" suggests that once I've done the count, I should return done:true. However, I also need to respond with JSON only and no markdown. Maybe the expected output is just {\"done\":true} after using the tool.\n\nBut I need to actually use the tool to count rows. Let me call query with SELECT COUNT(*) FROM orders.\n\nThen I will output {\"done\":true}. But should I include the count? The user didn't explicitly ask to return the count, just to count rows. However, typically they'd want to see the result. But the instruction says \"after the requested outcome is complete, return JSON exactly {\"done\":true}\". So likely they just want confirmation.\n\nI'll call query first."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "XfcGC2ilcx7PiHzVKAt6R8JgjtJGZ620",
+              "content": "{\"count\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 1239654588,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "query",
+                "description": "Perform the query operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "sql": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sql"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "The query returned {\"count\": 7}. Now I need to respond with JSON only and no markdown. The instruction says after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\n\nSo I should output {\"done\":true}. But maybe I should also include the count? The user said \"Count rows in table orders\". They might want to know the count. However, the final instruction is explicit: return JSON exactly {\"done\":true}. I'll follow that.\n\nBut wait: \"Respond with JSON only and no markdown.\" That could mean the entire response should be JSON. If I output {\"done\":true}, that's JSON. I think that's what they want.\n\nI'll output {\"done\":true}."
+              }
+            }
+          ],
+          "created": 1792112303,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 158,
+            "prompt_tokens": 766,
+            "total_tokens": 924,
+            "prompt_tokens_details": {
+              "cached_tokens": 743
+            }
+          },
+          "id": "chatcmpl-NymWSX6tyB865E1pbImtU9fUCgNmkelU",
+          "__verbose": {
+            "index": 0,
+            "content": "The query returned {\"count\": 7}. Now I need to respond with JSON only and no markdown. The instruction says after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\n\nSo I should output {\"done\":true}. But maybe I should also include the count? The user said \"Count rows in table orders\". They might want to know the count. However, the final instruction is explicit: return JSON exactly {\"done\":true}. I'll follow that.\n\nBut wait: \"Respond with JSON only and no markdown.\" That could mean the entire response should be JSON. If I output {\"done\":true}, that's JSON. I think that's what they want.\n\nI'll output {\"done\":true}.</think>{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 158,
+            "tokens_evaluated": 766,
+            "generation_settings": {
+              "seed": 1239654588,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"query\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"sql\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>query</name>\n<description>Perform the query operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>sql</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"sql\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants to count rows in table orders using a read-only operation. I have access to a query tool. I should use query(sql) with a SELECT COUNT(*) FROM orders. Then respond with JSON only and no markdown. After the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\n\nWait, the instruction says: \"Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nThis is a bit ambiguous. I think they want me to execute the query, get the result, and then return {\"done\":true}. But maybe they want the count result? Let's read carefully: \"Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nIt seems like they want me to perform the count, and then output {\"done\":true}. But maybe they want the count result as JSON? The phrase \"after the requested outcome is complete, return JSON exactly {\"done\":true}\" suggests that once I've done the count, I should return done:true. However, I also need to respond with JSON only and no markdown. Maybe the expected output is just {\"done\":true} after using the tool.\n\nBut I need to actually use the tool to count rows. Let me call query with SELECT COUNT(*) FROM orders.\n\nThen I will output {\"done\":true}. But should I include the count? The user didn't explicitly ask to return the count, just to count rows. However, typically they'd want to see the result. But the instruction says \"after the requested outcome is complete, return JSON exactly {\"done\":true}\". So likely they just want confirmation.\n\nI'll call query first.</think>\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) FROM orders;\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"count\": 7}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 923,
+            "timings": {
+              "cache_n": 743,
+              "prompt_n": 23,
+              "prompt_ms": 281.712,
+              "prompt_per_token_ms": 12.248347826086956,
+              "prompt_per_second": 81.64366445163856,
+              "predicted_n": 158,
+              "predicted_ms": 1868.202,
+              "predicted_per_token_ms": 11.899375796178344,
+              "predicted_per_second": 84.0380215843897
+            }
+          },
+          "timings": {
+            "cache_n": 743,
+            "prompt_n": 23,
+            "prompt_ms": 281.712,
+            "prompt_per_token_ms": 12.248347826086956,
+            "prompt_per_second": 81.64366445163856,
+            "predicted_n": 158,
+            "predicted_ms": 1868.202,
+            "predicted_per_token_ms": 11.899375796178344,
+            "predicted_per_second": 84.0380215843897
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "query",
+              "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+            },
+            "id": "XfcGC2ilcx7PiHzVKAt6R8JgjtJGZ620"
+          }
+        ],
+        "reasoning_content": "The user wants to count rows in table orders using a read-only operation. I have access to a query tool. I should use query(sql) with a SELECT COUNT(*) FROM orders. Then respond with JSON only and no markdown. After the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\n\nWait, the instruction says: \"Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nThis is a bit ambiguous. I think they want me to execute the query, get the result, and then return {\"done\":true}. But maybe they want the count result? Let's read carefully: \"Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\"\n\nIt seems like they want me to perform the count, and then output {\"done\":true}. But maybe they want the count result as JSON? The phrase \"after the requested outcome is complete, return JSON exactly {\"done\":true}\" suggests that once I've done the count, I should return done:true. However, I also need to respond with JSON only and no markdown. Maybe the expected output is just {\"done\":true} after using the tool.\n\nBut I need to actually use the tool to count rows. Let me call query with SELECT COUNT(*) FROM orders.\n\nThen I will output {\"done\":true}. But should I include the count? The user didn't explicitly ask to return the count, just to count rows. However, typically they'd want to see the result. But the instruction says \"after the requested outcome is complete, return JSON exactly {\"done\":true}\". So likely they just want confirmation.\n\nI'll call query first."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "XfcGC2ilcx7PiHzVKAt6R8JgjtJGZ620",
+        "content": "{\"count\": 7}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "query",
+          "sql": "SELECT COUNT(*) FROM orders;"
+        },
+        "result": {
+          "count": 7
+        },
+        "ok": true,
+        "tool_call_id": "XfcGC2ilcx7PiHzVKAt6R8JgjtJGZ620"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1099,
+      "completion_tokens": 569
+    },
+    "timings": [
+      {
+        "cache_n": 329,
+        "prompt_n": 4,
+        "prompt_ms": 213.044,
+        "prompt_per_token_ms": 53.261,
+        "prompt_per_second": 18.77546422335292,
+        "predicted_n": 411,
+        "predicted_ms": 4821.994,
+        "predicted_per_token_ms": 11.760960975609756,
+        "predicted_per_second": 85.02706556665147
+      },
+      {
+        "cache_n": 743,
+        "prompt_n": 23,
+        "prompt_ms": 281.712,
+        "prompt_per_token_ms": 12.248347826086956,
+        "prompt_per_second": 81.64366445163856,
+        "predicted_n": 158,
+        "predicted_ms": 1868.202,
+        "predicted_per_token_ms": 11.899375796178344,
+        "predicted_per_second": 84.0380215843897
+      }
+    ],
+    "prompt_tps": 2221.296962543153,
+    "decode_tps": 85.04982514712573
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "query",
+        "sql": "SELECT COUNT(*) FROM orders;"
+      },
+      "result": {
+        "count": 7
+      },
+      "ok": true,
+      "tool_call_id": "XfcGC2ilcx7PiHzVKAt6R8JgjtJGZ620"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 1099,
+    "completion_tokens": 569
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

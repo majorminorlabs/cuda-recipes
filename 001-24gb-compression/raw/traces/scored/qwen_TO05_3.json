@@ -1,0 +1,1236 @@
+{
+  "trial": {
+    "model": "qwen",
+    "task_id": "TO05",
+    "repetition": 3,
+    "seed": 1239654587
+  },
+  "task": {
+    "id": "TO05",
+    "category": "tool_use",
+    "prompt": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "execute",
+        "sql": "DELETE FROM orders;"
+      }
+    ],
+    "scorer": "canonical-json-equality-v1",
+    "expected_calls": [
+      {
+        "tool": "query",
+        "sql": "SELECT COUNT(*) FROM orders;"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "query",
+          "description": "Perform the query operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "sql": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "sql"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) AS row_count FROM orders\"}"
+                  },
+                  "id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT count(*) FROM orders\"}"
+                  },
+                  "id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                  },
+                  "id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1",
+              "content": "{\"count\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 1239654587,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "query",
+                "description": "Perform the query operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "sql": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sql"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants to count the rows in the table `orders` using a read-only operation. I should use `query` rather than `execute` to maintain read-only. Let's execute `SELECT COUNT(*) FROM orders;` with the `query` tool.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "query",
+                      "arguments": "{\"sql\":\"SELECT COUNT(*) AS row_count FROM orders\"}"
+                    },
+                    "id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792102427,
+          "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b1-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 88,
+            "prompt_tokens": 368,
+            "total_tokens": 456,
+            "prompt_tokens_details": {
+              "cached_tokens": 364
+            }
+          },
+          "id": "chatcmpl-Q2NvxSddY8JU5Rl0T02HTvGjuMs2CQhA",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants to count the rows in the table `orders` using a read-only operation. I should use `query` rather than `execute` to maintain read-only. Let's execute `SELECT COUNT(*) FROM orders;` with the `query` tool.\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) AS row_count FROM orders\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 88,
+            "tokens_evaluated": 368,
+            "generation_settings": {
+              "seed": 1239654587,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"query\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"sql\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"query\", \"description\": \"Perform the query operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"sql\": {\"type\": \"string\"}}, \"required\": [\"sql\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 455,
+            "timings": {
+              "cache_n": 364,
+              "prompt_n": 4,
+              "prompt_ms": 193.633,
+              "prompt_per_token_ms": 48.40825,
+              "prompt_per_second": 20.65763583686665,
+              "predicted_n": 88,
+              "predicted_ms": 1182.524,
+              "predicted_per_token_ms": 13.59222988505747,
+              "predicted_per_second": 73.57144548440455
+            }
+          },
+          "timings": {
+            "cache_n": 364,
+            "prompt_n": 4,
+            "prompt_ms": 193.633,
+            "prompt_per_token_ms": 48.40825,
+            "prompt_per_second": 20.65763583686665,
+            "predicted_n": 88,
+            "predicted_ms": 1182.524,
+            "predicted_per_token_ms": 13.59222988505747,
+            "predicted_per_second": 73.57144548440455
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) AS row_count FROM orders\"}"
+                  },
+                  "id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT count(*) FROM orders\"}"
+                  },
+                  "id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                  },
+                  "id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1",
+              "content": "{\"count\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 1239654588,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "query",
+                "description": "Perform the query operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "sql": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sql"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The query returned an error. Let me think about this. The task says \"Count rows in table orders; use a read-only operation.\" I used SELECT COUNT(*). The error says \"unsupported, unsafe, or out-of-order simulated action\".\n\nMaybe the tool wants a specific format. Let me try a simpler query.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "query",
+                      "arguments": "{\"sql\":\"SELECT count(*) FROM orders\"}"
+                    },
+                    "id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792102429,
+          "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b1-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 97,
+            "prompt_tokens": 432,
+            "total_tokens": 529,
+            "prompt_tokens_details": {
+              "cached_tokens": 364
+            }
+          },
+          "id": "chatcmpl-w263PPKVzVVHYrFzUTc6cBDxaMXk5qWm",
+          "__verbose": {
+            "index": 0,
+            "content": "The query returned an error. Let me think about this. The task says \"Count rows in table orders; use a read-only operation.\" I used SELECT COUNT(*). The error says \"unsupported, unsafe, or out-of-order simulated action\".\n\nMaybe the tool wants a specific format. Let me try a simpler query.\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT count(*) FROM orders\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 97,
+            "tokens_evaluated": 432,
+            "generation_settings": {
+              "seed": 1239654588,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"query\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"sql\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"query\", \"description\": \"Perform the query operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"sql\": {\"type\": \"string\"}}, \"required\": [\"sql\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) AS row_count FROM orders\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 528,
+            "timings": {
+              "cache_n": 364,
+              "prompt_n": 68,
+              "prompt_ms": 266.514,
+              "prompt_per_token_ms": 3.919323529411765,
+              "prompt_per_second": 255.1460711257195,
+              "predicted_n": 97,
+              "predicted_ms": 1323.26,
+              "predicted_per_token_ms": 13.783958333333333,
+              "predicted_per_second": 72.548100902317
+            }
+          },
+          "timings": {
+            "cache_n": 364,
+            "prompt_n": 68,
+            "prompt_ms": 266.514,
+            "prompt_per_token_ms": 3.919323529411765,
+            "prompt_per_second": 255.1460711257195,
+            "predicted_n": 97,
+            "predicted_ms": 1323.26,
+            "predicted_per_token_ms": 13.783958333333333,
+            "predicted_per_second": 72.548100902317
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) AS row_count FROM orders\"}"
+                  },
+                  "id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT count(*) FROM orders\"}"
+                  },
+                  "id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                  },
+                  "id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1",
+              "content": "{\"count\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 1239654589,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "query",
+                "description": "Perform the query operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "sql": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sql"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Let me try different SQL formats. Maybe it needs to be simpler, or maybe there's a specific format expected.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "query",
+                      "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                    },
+                    "id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792102430,
+          "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b1-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 56,
+            "prompt_tokens": 493,
+            "total_tokens": 549,
+            "prompt_tokens_details": {
+              "cached_tokens": 428
+            }
+          },
+          "id": "chatcmpl-0gJnzz5XvSuwe6oGueYdQY6ZWLHlfO3T",
+          "__verbose": {
+            "index": 0,
+            "content": "Let me try different SQL formats. Maybe it needs to be simpler, or maybe there's a specific format expected.\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) FROM orders;\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 56,
+            "tokens_evaluated": 493,
+            "generation_settings": {
+              "seed": 1239654589,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"query\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"sql\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"query\", \"description\": \"Perform the query operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"sql\": {\"type\": \"string\"}}, \"required\": [\"sql\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) AS row_count FROM orders\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT count(*) FROM orders\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 548,
+            "timings": {
+              "cache_n": 428,
+              "prompt_n": 65,
+              "prompt_ms": 265.662,
+              "prompt_per_token_ms": 4.087107692307692,
+              "prompt_per_second": 244.67180101030635,
+              "predicted_n": 56,
+              "predicted_ms": 791.824,
+              "predicted_per_token_ms": 14.396799999999999,
+              "predicted_per_second": 69.45987997332742
+            }
+          },
+          "timings": {
+            "cache_n": 428,
+            "prompt_n": 65,
+            "prompt_ms": 265.662,
+            "prompt_per_token_ms": 4.087107692307692,
+            "prompt_per_second": 244.67180101030635,
+            "predicted_n": 56,
+            "predicted_ms": 791.824,
+            "predicted_per_token_ms": 14.396799999999999,
+            "predicted_per_second": 69.45987997332742
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) AS row_count FROM orders\"}"
+                  },
+                  "id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT count(*) FROM orders\"}"
+                  },
+                  "id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "query",
+                    "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+                  },
+                  "id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1",
+              "content": "{\"count\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 1239654590,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "query",
+                "description": "Perform the query operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "sql": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "sql"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "The result is {\"count\": 7}. Now I should respond with JSON only and no markdown. The final instruction says after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown. But also says Respond with JSON only. Should include the count? It says \"Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\" The exact requested outcome is count rows. They may expect final JSON exactly {\"done\":true}. But if I omit count, not useful. The explicit final instruction is exact JSON {\"done\":true}. I should follow it. However initial says respond with JSON only maybe with count? It says exactly {\"done\":true}. Do that.\n"
+              }
+            }
+          ],
+          "created": 1792102432,
+          "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b1-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 167,
+            "prompt_tokens": 546,
+            "total_tokens": 713,
+            "prompt_tokens_details": {
+              "cached_tokens": 489
+            }
+          },
+          "id": "chatcmpl-4jFhctNZAeIoCsJWi5nUv3Ihi0hxfbxn",
+          "__verbose": {
+            "index": 0,
+            "content": "The result is {\"count\": 7}. Now I should respond with JSON only and no markdown. The final instruction says after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown. But also says Respond with JSON only. Should include the count? It says \"Respond with JSON only and no markdown. Use the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.\" The exact requested outcome is count rows. They may expect final JSON exactly {\"done\":true}. But if I omit count, not useful. The explicit final instruction is exact JSON {\"done\":true}. I should follow it. However initial says respond with JSON only maybe with count? It says exactly {\"done\":true}. Do that.\n</think>\n\n{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/tmp/nemotron-private/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 167,
+            "tokens_evaluated": 546,
+            "generation_settings": {
+              "seed": 1239654590,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"query\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"sql\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"query\", \"description\": \"Perform the query operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"sql\": {\"type\": \"string\"}}, \"required\": [\"sql\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) AS row_count FROM orders\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT count(*) FROM orders\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n<tool_call>\n<function=query>\n<parameter=sql>\nSELECT COUNT(*) FROM orders;\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"count\": 7}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 712,
+            "timings": {
+              "cache_n": 489,
+              "prompt_n": 57,
+              "prompt_ms": 298.346,
+              "prompt_per_token_ms": 5.234140350877193,
+              "prompt_per_second": 191.05334075201276,
+              "predicted_n": 167,
+              "predicted_ms": 2270.951,
+              "predicted_per_token_ms": 13.680427710843373,
+              "predicted_per_second": 73.09712979276084
+            }
+          },
+          "timings": {
+            "cache_n": 489,
+            "prompt_n": 57,
+            "prompt_ms": 298.346,
+            "prompt_per_token_ms": 5.234140350877193,
+            "prompt_per_second": 191.05334075201276,
+            "predicted_n": 167,
+            "predicted_ms": 2270.951,
+            "predicted_per_token_ms": 13.680427710843373,
+            "predicted_per_second": 73.09712979276084
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "A database tool exposes query(sql) and execute(sql). Count rows in table orders; use a read-only operation. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "query",
+              "arguments": "{\"sql\":\"SELECT COUNT(*) AS row_count FROM orders\"}"
+            },
+            "id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "query",
+              "arguments": "{\"sql\":\"SELECT count(*) FROM orders\"}"
+            },
+            "id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "query",
+              "arguments": "{\"sql\":\"SELECT COUNT(*) FROM orders;\"}"
+            },
+            "id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1",
+        "content": "{\"count\": 7}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "query",
+          "sql": "SELECT COUNT(*) AS row_count FROM orders"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV"
+      },
+      {
+        "action": {
+          "tool": "query",
+          "sql": "SELECT count(*) FROM orders"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go"
+      },
+      {
+        "action": {
+          "tool": "query",
+          "sql": "SELECT COUNT(*) FROM orders;"
+        },
+        "result": {
+          "count": 7
+        },
+        "ok": true,
+        "tool_call_id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 1839,
+      "completion_tokens": 408
+    },
+    "timings": [
+      {
+        "cache_n": 364,
+        "prompt_n": 4,
+        "prompt_ms": 193.633,
+        "prompt_per_token_ms": 48.40825,
+        "prompt_per_second": 20.65763583686665,
+        "predicted_n": 88,
+        "predicted_ms": 1182.524,
+        "predicted_per_token_ms": 13.59222988505747,
+        "predicted_per_second": 73.57144548440455
+      },
+      {
+        "cache_n": 364,
+        "prompt_n": 68,
+        "prompt_ms": 266.514,
+        "prompt_per_token_ms": 3.919323529411765,
+        "prompt_per_second": 255.1460711257195,
+        "predicted_n": 97,
+        "predicted_ms": 1323.26,
+        "predicted_per_token_ms": 13.783958333333333,
+        "predicted_per_second": 72.548100902317
+      },
+      {
+        "cache_n": 428,
+        "prompt_n": 65,
+        "prompt_ms": 265.662,
+        "prompt_per_token_ms": 4.087107692307692,
+        "prompt_per_second": 244.67180101030635,
+        "predicted_n": 56,
+        "predicted_ms": 791.824,
+        "predicted_per_token_ms": 14.396799999999999,
+        "predicted_per_second": 69.45987997332742
+      },
+      {
+        "cache_n": 489,
+        "prompt_n": 57,
+        "prompt_ms": 298.346,
+        "prompt_per_token_ms": 5.234140350877193,
+        "prompt_per_second": 191.05334075201276,
+        "predicted_n": 167,
+        "predicted_ms": 2270.951,
+        "predicted_per_token_ms": 13.680427710843373,
+        "predicted_per_second": 73.09712979276084
+      }
+    ],
+    "prompt_tps": 1795.6266385459232,
+    "decode_tps": 73.26850626885698
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "query",
+        "sql": "SELECT COUNT(*) AS row_count FROM orders"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "m9imOT5eDQRnZBeBG5emFuXBhQRUtoLV"
+    },
+    {
+      "action": {
+        "tool": "query",
+        "sql": "SELECT count(*) FROM orders"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "Oa2a0rM34WIaApTn3JETlFOgEGSRo0go"
+    },
+    {
+      "action": {
+        "tool": "query",
+        "sql": "SELECT COUNT(*) FROM orders;"
+      },
+      "result": {
+        "count": 7
+      },
+      "ok": true,
+      "tool_call_id": "zLAuwWdD3N9qHrxCLaUaokHoxiAbWUQ1"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 1839,
+    "completion_tokens": 408
+  },
+  "success": 0,
+  "failure_class": "tool_action_or_final_mismatch",
+  "failure_detail": null
+}
