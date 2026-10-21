@@ -1,0 +1,1370 @@
+{
+  "trial": {
+    "model": "qwen",
+    "task_id": "MU03",
+    "repetition": 2,
+    "seed": 2577633007
+  },
+  "task": {
+    "id": "MU03",
+    "category": "multi_step",
+    "prompt": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "complete_task",
+        "id": "A"
+      },
+      {
+        "tool": "complete_task",
+        "id": "B"
+      },
+      {
+        "tool": "complete_task",
+        "id": "C"
+      },
+      {
+        "tool": "complete_task",
+        "id": "D"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "complete_task",
+        "id": "D"
+      },
+      {
+        "tool": "complete_task",
+        "id": "B"
+      },
+      {
+        "tool": "complete_task",
+        "id": "C"
+      },
+      {
+        "tool": "complete_task",
+        "id": "A"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "complete_task",
+          "description": "Perform the complete_task operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "06oS48av7oaDrFQvwLVls4WJOK176QeC"
+                }
+              ],
+              "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "06oS48av7oaDrFQvwLVls4WJOK176QeC",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f"
+                }
+              ],
+              "reasoning_content": "D is done. Next up are B and C. Since B and C are independent of each other (both depend only on D), they can be called in parallel.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx"
+                }
+              ],
+              "reasoning_content": "Both B and C are complete. Next up is A.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 2577633007,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"D\"}"
+                    },
+                    "id": "06oS48av7oaDrFQvwLVls4WJOK176QeC"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111619,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 108,
+            "prompt_tokens": 392,
+            "total_tokens": 500,
+            "prompt_tokens_details": {
+              "cached_tokens": 388
+            }
+          },
+          "id": "chatcmpl-UhqTL4PKBugLv8TAJFEeUF0emqddibh4",
+          "__verbose": {
+            "index": 0,
+            "content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n</think>\n\n<tool_call>\n<function=complete_task>\n<parameter=id>\nD\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 108,
+            "tokens_evaluated": 392,
+            "generation_settings": {
+              "seed": 2577633007,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"complete_task\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"id\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"complete_task\", \"description\": \"Perform the complete_task operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"string\"}}, \"required\": [\"id\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nComplete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 499,
+            "timings": {
+              "cache_n": 388,
+              "prompt_n": 4,
+              "prompt_ms": 265.635,
+              "prompt_per_token_ms": 66.40875,
+              "prompt_per_second": 15.058256630338622,
+              "predicted_n": 108,
+              "predicted_ms": 2602.769,
+              "predicted_per_token_ms": 24.324943925233644,
+              "predicted_per_second": 41.11006393575458
+            }
+          },
+          "timings": {
+            "cache_n": 388,
+            "prompt_n": 4,
+            "prompt_ms": 265.635,
+            "prompt_per_token_ms": 66.40875,
+            "prompt_per_second": 15.058256630338622,
+            "predicted_n": 108,
+            "predicted_ms": 2602.769,
+            "predicted_per_token_ms": 24.324943925233644,
+            "predicted_per_second": 41.11006393575458
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "06oS48av7oaDrFQvwLVls4WJOK176QeC"
+                }
+              ],
+              "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "06oS48av7oaDrFQvwLVls4WJOK176QeC",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f"
+                }
+              ],
+              "reasoning_content": "D is done. Next up are B and C. Since B and C are independent of each other (both depend only on D), they can be called in parallel.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx"
+                }
+              ],
+              "reasoning_content": "Both B and C are complete. Next up is A.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 2577633008,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "D is done. Next up are B and C. Since B and C are independent of each other (both depend only on D), they can be called in parallel.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"B\"}"
+                    },
+                    "id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv"
+                  },
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"C\"}"
+                    },
+                    "id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111621,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 89,
+            "prompt_tokens": 521,
+            "total_tokens": 610,
+            "prompt_tokens_details": {
+              "cached_tokens": 499
+            }
+          },
+          "id": "chatcmpl-5fI7BtVVgVW3NEdPNT1fMgAgwbUv9MD8",
+          "__verbose": {
+            "index": 0,
+            "content": "D is done. Next up are B and C. Since B and C are independent of each other (both depend only on D), they can be called in parallel.\n</think>\n\n<tool_call>\n<function=complete_task>\n<parameter=id>\nB\n</parameter>\n</function>\n</tool_call>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nC\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 89,
+            "tokens_evaluated": 521,
+            "generation_settings": {
+              "seed": 2577633008,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"complete_task\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"id\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"complete_task\", \"description\": \"Perform the complete_task operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"string\"}}, \"required\": [\"id\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nComplete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nLet's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n</think>\n\n<tool_call>\n<function=complete_task>\n<parameter=id>\nD\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"D\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 609,
+            "timings": {
+              "cache_n": 499,
+              "prompt_n": 22,
+              "prompt_ms": 272.645,
+              "prompt_per_token_ms": 12.392954545454545,
+              "prompt_per_second": 80.69100845421703,
+              "predicted_n": 89,
+              "predicted_ms": 2148.642,
+              "predicted_per_token_ms": 24.416386363636363,
+              "predicted_per_second": 40.95610157485519
+            }
+          },
+          "timings": {
+            "cache_n": 499,
+            "prompt_n": 22,
+            "prompt_ms": 272.645,
+            "prompt_per_token_ms": 12.392954545454545,
+            "prompt_per_second": 80.69100845421703,
+            "predicted_n": 89,
+            "predicted_ms": 2148.642,
+            "predicted_per_token_ms": 24.416386363636363,
+            "predicted_per_second": 40.95610157485519
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "06oS48av7oaDrFQvwLVls4WJOK176QeC"
+                }
+              ],
+              "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "06oS48av7oaDrFQvwLVls4WJOK176QeC",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f"
+                }
+              ],
+              "reasoning_content": "D is done. Next up are B and C. Since B and C are independent of each other (both depend only on D), they can be called in parallel.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx"
+                }
+              ],
+              "reasoning_content": "Both B and C are complete. Next up is A.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 2577633009,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Both B and C are complete. Next up is A.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"A\"}"
+                    },
+                    "id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111622,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 41,
+            "prompt_tokens": 642,
+            "total_tokens": 683,
+            "prompt_tokens_details": {
+              "cached_tokens": 609
+            }
+          },
+          "id": "chatcmpl-iXU7hfY5KPj0srvTog4hJvrHByxEkRMe",
+          "__verbose": {
+            "index": 0,
+            "content": "Both B and C are complete. Next up is A.\n</think>\n\n<tool_call>\n<function=complete_task>\n<parameter=id>\nA\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 41,
+            "tokens_evaluated": 642,
+            "generation_settings": {
+              "seed": 2577633009,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"complete_task\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"id\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"complete_task\", \"description\": \"Perform the complete_task operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"string\"}}, \"required\": [\"id\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nComplete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nLet's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n</think>\n\n<tool_call>\n<function=complete_task>\n<parameter=id>\nD\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"D\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nD is done. Next up are B and C. Since B and C are independent of each other (both depend only on D), they can be called in parallel.\n</think>\n\n<tool_call>\n<function=complete_task>\n<parameter=id>\nB\n</parameter>\n</function>\n</tool_call>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nC\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"B\"}\n</tool_response>\n<tool_response>\n{\"completed\": \"C\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 682,
+            "timings": {
+              "cache_n": 609,
+              "prompt_n": 33,
+              "prompt_ms": 277.398,
+              "prompt_per_token_ms": 8.406,
+              "prompt_per_second": 118.962645729241,
+              "predicted_n": 41,
+              "predicted_ms": 982.125,
+              "predicted_per_token_ms": 24.553125,
+              "predicted_per_second": 40.7280132366043
+            }
+          },
+          "timings": {
+            "cache_n": 609,
+            "prompt_n": 33,
+            "prompt_ms": 277.398,
+            "prompt_per_token_ms": 8.406,
+            "prompt_per_second": 118.962645729241,
+            "predicted_n": 41,
+            "predicted_ms": 982.125,
+            "predicted_per_token_ms": 24.553125,
+            "predicted_per_second": 40.7280132366043
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "06oS48av7oaDrFQvwLVls4WJOK176QeC"
+                }
+              ],
+              "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "06oS48av7oaDrFQvwLVls4WJOK176QeC",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f"
+                }
+              ],
+              "reasoning_content": "D is done. Next up are B and C. Since B and C are independent of each other (both depend only on D), they can be called in parallel.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx"
+                }
+              ],
+              "reasoning_content": "Both B and C are complete. Next up is A.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 2577633010,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "All tasks are complete: D → B, C → A. Please return the JSON exactly as specified.\n"
+              }
+            }
+          ],
+          "created": 1792111623,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 30,
+            "prompt_tokens": 704,
+            "total_tokens": 734,
+            "prompt_tokens_details": {
+              "cached_tokens": 682
+            }
+          },
+          "id": "chatcmpl-fdIPePvVYqI1tTJNuH17VcM0ygNztT6s",
+          "__verbose": {
+            "index": 0,
+            "content": "All tasks are complete: D → B, C → A. Please return the JSON exactly as specified.\n</think>\n\n{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 30,
+            "tokens_evaluated": 704,
+            "generation_settings": {
+              "seed": 2577633010,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"complete_task\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"id\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"complete_task\", \"description\": \"Perform the complete_task operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"id\": {\"type\": \"string\"}}, \"required\": [\"id\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nComplete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nLet's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n</think>\n\n<tool_call>\n<function=complete_task>\n<parameter=id>\nD\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"D\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nD is done. Next up are B and C. Since B and C are independent of each other (both depend only on D), they can be called in parallel.\n</think>\n\n<tool_call>\n<function=complete_task>\n<parameter=id>\nB\n</parameter>\n</function>\n</tool_call>\n<tool_call>\n<function=complete_task>\n<parameter=id>\nC\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"B\"}\n</tool_response>\n<tool_response>\n{\"completed\": \"C\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nBoth B and C are complete. Next up is A.\n</think>\n\n<tool_call>\n<function=complete_task>\n<parameter=id>\nA\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"completed\": \"A\"}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 733,
+            "timings": {
+              "cache_n": 682,
+              "prompt_n": 22,
+              "prompt_ms": 274.145,
+              "prompt_per_token_ms": 12.461136363636363,
+              "prompt_per_second": 80.24950300023711,
+              "predicted_n": 30,
+              "predicted_ms": 713.147,
+              "predicted_per_token_ms": 24.59127586206897,
+              "predicted_per_second": 40.664827868588105
+            }
+          },
+          "timings": {
+            "cache_n": 682,
+            "prompt_n": 22,
+            "prompt_ms": 274.145,
+            "prompt_per_token_ms": 12.461136363636363,
+            "prompt_per_second": 80.24950300023711,
+            "predicted_n": 30,
+            "predicted_ms": 713.147,
+            "predicted_per_token_ms": 24.59127586206897,
+            "predicted_per_second": 40.664827868588105
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"D\"}"
+            },
+            "id": "06oS48av7oaDrFQvwLVls4WJOK176QeC"
+          }
+        ],
+        "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "06oS48av7oaDrFQvwLVls4WJOK176QeC",
+        "content": "{\"completed\": \"D\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"B\"}"
+            },
+            "id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv"
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"C\"}"
+            },
+            "id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f"
+          }
+        ],
+        "reasoning_content": "D is done. Next up are B and C. Since B and C are independent of each other (both depend only on D), they can be called in parallel.\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv",
+        "content": "{\"completed\": \"B\"}"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f",
+        "content": "{\"completed\": \"C\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"A\"}"
+            },
+            "id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx"
+          }
+        ],
+        "reasoning_content": "Both B and C are complete. Next up is A.\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx",
+        "content": "{\"completed\": \"A\"}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "D"
+        },
+        "result": {
+          "completed": "D"
+        },
+        "ok": true,
+        "tool_call_id": "06oS48av7oaDrFQvwLVls4WJOK176QeC"
+      },
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "B"
+        },
+        "result": {
+          "completed": "B"
+        },
+        "ok": true,
+        "tool_call_id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv"
+      },
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "C"
+        },
+        "result": {
+          "completed": "C"
+        },
+        "ok": true,
+        "tool_call_id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f"
+      },
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "A"
+        },
+        "result": {
+          "completed": "A"
+        },
+        "ok": true,
+        "tool_call_id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2259,
+      "completion_tokens": 268
+    },
+    "timings": [
+      {
+        "cache_n": 388,
+        "prompt_n": 4,
+        "prompt_ms": 265.635,
+        "prompt_per_token_ms": 66.40875,
+        "prompt_per_second": 15.058256630338622,
+        "predicted_n": 108,
+        "predicted_ms": 2602.769,
+        "predicted_per_token_ms": 24.324943925233644,
+        "predicted_per_second": 41.11006393575458
+      },
+      {
+        "cache_n": 499,
+        "prompt_n": 22,
+        "prompt_ms": 272.645,
+        "prompt_per_token_ms": 12.392954545454545,
+        "prompt_per_second": 80.69100845421703,
+        "predicted_n": 89,
+        "predicted_ms": 2148.642,
+        "predicted_per_token_ms": 24.416386363636363,
+        "predicted_per_second": 40.95610157485519
+      },
+      {
+        "cache_n": 609,
+        "prompt_n": 33,
+        "prompt_ms": 277.398,
+        "prompt_per_token_ms": 8.406,
+        "prompt_per_second": 118.962645729241,
+        "predicted_n": 41,
+        "predicted_ms": 982.125,
+        "predicted_per_token_ms": 24.553125,
+        "predicted_per_second": 40.7280132366043
+      },
+      {
+        "cache_n": 682,
+        "prompt_n": 22,
+        "prompt_ms": 274.145,
+        "prompt_per_token_ms": 12.461136363636363,
+        "prompt_per_second": 80.24950300023711,
+        "predicted_n": 30,
+        "predicted_ms": 713.147,
+        "predicted_per_token_ms": 24.59127586206897,
+        "predicted_per_second": 40.664827868588105
+      }
+    ],
+    "prompt_tps": 2072.8136587317395,
+    "decode_tps": 41.571766441749965
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "D"
+      },
+      "result": {
+        "completed": "D"
+      },
+      "ok": true,
+      "tool_call_id": "06oS48av7oaDrFQvwLVls4WJOK176QeC"
+    },
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "B"
+      },
+      "result": {
+        "completed": "B"
+      },
+      "ok": true,
+      "tool_call_id": "pSsevIYFp44SsL8tVAomHCf1pzVVM3Gv"
+    },
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "C"
+      },
+      "result": {
+        "completed": "C"
+      },
+      "ok": true,
+      "tool_call_id": "jRlex9Rds53BUwa2TgRGjZmzQsAY8U2f"
+    },
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "A"
+      },
+      "result": {
+        "completed": "A"
+      },
+      "ok": true,
+      "tool_call_id": "ZSY3Rr0EidJXU5Grz0qqzgraBMCO4qfx"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2259,
+    "completion_tokens": 268
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

@@ -1,0 +1,1064 @@
+{
+  "trial": {
+    "model": "qwen",
+    "task_id": "MU04",
+    "repetition": 3,
+    "seed": 1842654413
+  },
+  "task": {
+    "id": "MU04",
+    "category": "multi_step",
+    "prompt": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "create_event",
+        "date": "2026-11-03",
+        "start": "09:30",
+        "end": "10:30",
+        "title": "Review"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "find_availability",
+        "date": "2026-11-03",
+        "start": "10:00",
+        "end": "11:00"
+      },
+      {
+        "tool": "create_event",
+        "date": "2026-11-03",
+        "start": "10:00",
+        "end": "11:00",
+        "title": "Review"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "find_availability",
+          "description": "Perform the find_availability operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "date",
+              "start",
+              "end"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "create_event",
+          "description": "Perform the create_event operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "date": {
+                "type": "string"
+              },
+              "start": {
+                "type": "string"
+              },
+              "end": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "date",
+              "start",
+              "end",
+              "title"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "find_availability",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+                  },
+                  "id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72"
+                }
+              ],
+              "reasoning_content": "First, let's check the available time slots.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72",
+              "content": "{\"available\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "create_event",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"Review\"}"
+                  },
+                  "id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP"
+                }
+              ],
+              "reasoning_content": "The time slot is available, so I'll create the event.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP",
+              "content": "{\"created\": true}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 1842654413,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "find_availability",
+                "description": "Perform the find_availability operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "create_event",
+                "description": "Perform the create_event operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "First, let's check the available time slots.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "find_availability",
+                      "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+                    },
+                    "id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111657,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 78,
+            "prompt_tokens": 573,
+            "total_tokens": 651,
+            "prompt_tokens_details": {
+              "cached_tokens": 569
+            }
+          },
+          "id": "chatcmpl-PUIXiEkhDEAd83IT9BKuFc1CIcKAr7ux",
+          "__verbose": {
+            "index": 0,
+            "content": "First, let's check the available time slots.\n</think>\n\n<tool_call>\n<function=find_availability>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 78,
+            "tokens_evaluated": 573,
+            "generation_settings": {
+              "seed": 1842654413,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"find_availability\" \">\\n\") tool-0-args-7 \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-0-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-0-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-0-args-1 ::= tool-0-arg-0\ntool-0-args-2 ::= tool-0-arg-1\ntool-0-args-3 ::= tool-0-arg-0 tool-0-args-2 | tool-0-arg-1 tool-0-args-1\ntool-0-args-4 ::= tool-0-arg-2\ntool-0-args-5 ::= tool-0-arg-0 tool-0-args-4 | tool-0-arg-2 tool-0-args-1\ntool-0-args-6 ::= tool-0-arg-1 tool-0-args-4 | tool-0-arg-2 tool-0-args-2\ntool-0-args-7 ::= tool-0-arg-0 tool-0-args-6 | tool-0-arg-1 tool-0-args-5 | tool-0-arg-2 tool-0-args-3\ntool-1 ::= (\"<function=\" \"create_event\" \">\\n\") tool-1-args-15 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-1-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-1-arg-3 ::= (\"<parameter=\" \"title\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-10 ::= tool-1-arg-1 tool-1-args-8 | tool-1-arg-3 tool-1-args-2\ntool-1-args-11 ::= tool-1-arg-0 tool-1-args-10 | tool-1-arg-1 tool-1-args-9 | tool-1-arg-3 tool-1-args-3\ntool-1-args-12 ::= tool-1-arg-2 tool-1-args-8 | tool-1-arg-3 tool-1-args-4\ntool-1-args-13 ::= tool-1-arg-0 tool-1-args-12 | tool-1-arg-2 tool-1-args-9 | tool-1-arg-3 tool-1-args-5\ntool-1-args-14 ::= tool-1-arg-1 tool-1-args-12 | tool-1-arg-2 tool-1-args-10 | tool-1-arg-3 tool-1-args-6\ntool-1-args-15 ::= tool-1-arg-0 tool-1-args-14 | tool-1-arg-1 tool-1-args-13 | tool-1-arg-2 tool-1-args-11 | tool-1-arg-3 tool-1-args-7\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-1-args-4 ::= tool-1-arg-2\ntool-1-args-5 ::= tool-1-arg-0 tool-1-args-4 | tool-1-arg-2 tool-1-args-1\ntool-1-args-6 ::= tool-1-arg-1 tool-1-args-4 | tool-1-arg-2 tool-1-args-2\ntool-1-args-7 ::= tool-1-arg-0 tool-1-args-6 | tool-1-arg-1 tool-1-args-5 | tool-1-arg-2 tool-1-args-3\ntool-1-args-8 ::= tool-1-arg-3\ntool-1-args-9 ::= tool-1-arg-0 tool-1-args-8 | tool-1-arg-3 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"find_availability\", \"description\": \"Perform the find_availability operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"date\": {\"type\": \"string\"}, \"start\": {\"type\": \"string\"}, \"end\": {\"type\": \"string\"}}, \"required\": [\"date\", \"start\", \"end\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"create_event\", \"description\": \"Perform the create_event operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"date\": {\"type\": \"string\"}, \"start\": {\"type\": \"string\"}, \"end\": {\"type\": \"string\"}, \"title\": {\"type\": \"string\"}}, \"required\": [\"date\", \"start\", \"end\", \"title\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nSchedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 650,
+            "timings": {
+              "cache_n": 569,
+              "prompt_n": 4,
+              "prompt_ms": 238.53,
+              "prompt_per_token_ms": 59.6325,
+              "prompt_per_second": 16.769379113738314,
+              "predicted_n": 78,
+              "predicted_ms": 1874.053,
+              "predicted_per_token_ms": 24.33835064935065,
+              "predicted_per_second": 41.087418552196766
+            }
+          },
+          "timings": {
+            "cache_n": 569,
+            "prompt_n": 4,
+            "prompt_ms": 238.53,
+            "prompt_per_token_ms": 59.6325,
+            "prompt_per_second": 16.769379113738314,
+            "predicted_n": 78,
+            "predicted_ms": 1874.053,
+            "predicted_per_token_ms": 24.33835064935065,
+            "predicted_per_second": 41.087418552196766
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "find_availability",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+                  },
+                  "id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72"
+                }
+              ],
+              "reasoning_content": "First, let's check the available time slots.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72",
+              "content": "{\"available\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "create_event",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"Review\"}"
+                  },
+                  "id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP"
+                }
+              ],
+              "reasoning_content": "The time slot is available, so I'll create the event.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP",
+              "content": "{\"created\": true}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 1842654414,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "find_availability",
+                "description": "Perform the find_availability operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "create_event",
+                "description": "Perform the create_event operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The time slot is available, so I'll create the event.\n",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "create_event",
+                      "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"Review\"}"
+                    },
+                    "id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792111659,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 91,
+            "prompt_tokens": 671,
+            "total_tokens": 762,
+            "prompt_tokens_details": {
+              "cached_tokens": 650
+            }
+          },
+          "id": "chatcmpl-Hn4PyOrwXT4sjoZOoPsmL6ax5156exJt",
+          "__verbose": {
+            "index": 0,
+            "content": "The time slot is available, so I'll create the event.\n</think>\n\n<tool_call>\n<function=create_event>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n<parameter=title>\nReview\n</parameter>\n</function>\n</tool_call>",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 91,
+            "tokens_evaluated": 671,
+            "generation_settings": {
+              "seed": 1842654414,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"find_availability\" \">\\n\") tool-0-args-7 \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-0-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-0-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-0-args-1 ::= tool-0-arg-0\ntool-0-args-2 ::= tool-0-arg-1\ntool-0-args-3 ::= tool-0-arg-0 tool-0-args-2 | tool-0-arg-1 tool-0-args-1\ntool-0-args-4 ::= tool-0-arg-2\ntool-0-args-5 ::= tool-0-arg-0 tool-0-args-4 | tool-0-arg-2 tool-0-args-1\ntool-0-args-6 ::= tool-0-arg-1 tool-0-args-4 | tool-0-arg-2 tool-0-args-2\ntool-0-args-7 ::= tool-0-arg-0 tool-0-args-6 | tool-0-arg-1 tool-0-args-5 | tool-0-arg-2 tool-0-args-3\ntool-1 ::= (\"<function=\" \"create_event\" \">\\n\") tool-1-args-15 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-1-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-1-arg-3 ::= (\"<parameter=\" \"title\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-10 ::= tool-1-arg-1 tool-1-args-8 | tool-1-arg-3 tool-1-args-2\ntool-1-args-11 ::= tool-1-arg-0 tool-1-args-10 | tool-1-arg-1 tool-1-args-9 | tool-1-arg-3 tool-1-args-3\ntool-1-args-12 ::= tool-1-arg-2 tool-1-args-8 | tool-1-arg-3 tool-1-args-4\ntool-1-args-13 ::= tool-1-arg-0 tool-1-args-12 | tool-1-arg-2 tool-1-args-9 | tool-1-arg-3 tool-1-args-5\ntool-1-args-14 ::= tool-1-arg-1 tool-1-args-12 | tool-1-arg-2 tool-1-args-10 | tool-1-arg-3 tool-1-args-6\ntool-1-args-15 ::= tool-1-arg-0 tool-1-args-14 | tool-1-arg-1 tool-1-args-13 | tool-1-arg-2 tool-1-args-11 | tool-1-arg-3 tool-1-args-7\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-1-args-4 ::= tool-1-arg-2\ntool-1-args-5 ::= tool-1-arg-0 tool-1-args-4 | tool-1-arg-2 tool-1-args-1\ntool-1-args-6 ::= tool-1-arg-1 tool-1-args-4 | tool-1-arg-2 tool-1-args-2\ntool-1-args-7 ::= tool-1-arg-0 tool-1-args-6 | tool-1-arg-1 tool-1-args-5 | tool-1-arg-2 tool-1-args-3\ntool-1-args-8 ::= tool-1-arg-3\ntool-1-args-9 ::= tool-1-arg-0 tool-1-args-8 | tool-1-arg-3 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"find_availability\", \"description\": \"Perform the find_availability operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"date\": {\"type\": \"string\"}, \"start\": {\"type\": \"string\"}, \"end\": {\"type\": \"string\"}}, \"required\": [\"date\", \"start\", \"end\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"create_event\", \"description\": \"Perform the create_event operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"date\": {\"type\": \"string\"}, \"start\": {\"type\": \"string\"}, \"end\": {\"type\": \"string\"}, \"title\": {\"type\": \"string\"}}, \"required\": [\"date\", \"start\", \"end\", \"title\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nSchedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nFirst, let's check the available time slots.\n</think>\n\n<tool_call>\n<function=find_availability>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"available\": true}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 761,
+            "timings": {
+              "cache_n": 650,
+              "prompt_n": 21,
+              "prompt_ms": 293.119,
+              "prompt_per_token_ms": 13.95804761904762,
+              "prompt_per_second": 71.64325751657177,
+              "predicted_n": 91,
+              "predicted_ms": 2189.155,
+              "predicted_per_token_ms": 24.323944444444447,
+              "predicted_per_second": 41.11175316503399
+            }
+          },
+          "timings": {
+            "cache_n": 650,
+            "prompt_n": 21,
+            "prompt_ms": 293.119,
+            "prompt_per_token_ms": 13.95804761904762,
+            "prompt_per_second": 71.64325751657177,
+            "predicted_n": 91,
+            "predicted_ms": 2189.155,
+            "predicted_per_token_ms": 24.323944444444447,
+            "predicted_per_second": 41.11175316503399
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "find_availability",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+                  },
+                  "id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72"
+                }
+              ],
+              "reasoning_content": "First, let's check the available time slots.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72",
+              "content": "{\"available\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "create_event",
+                    "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"Review\"}"
+                  },
+                  "id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP"
+                }
+              ],
+              "reasoning_content": "The time slot is available, so I'll create the event.\n"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP",
+              "content": "{\"created\": true}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "seed": 1842654415,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "find_availability",
+                "description": "Perform the find_availability operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "create_event",
+                "description": "Perform the create_event operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "start": {
+                      "type": "string"
+                    },
+                    "end": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "date",
+                    "start",
+                    "end",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "Done. I'll return the JSON exactly as requested.\n"
+              }
+            }
+          ],
+          "created": 1792111660,
+          "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 20,
+            "prompt_tokens": 782,
+            "total_tokens": 802,
+            "prompt_tokens_details": {
+              "cached_tokens": 761
+            }
+          },
+          "id": "chatcmpl-PF29FC9X2QIwKJOpFWVQTtsFciEDZvRG",
+          "__verbose": {
+            "index": 0,
+            "content": "Done. I'll return the JSON exactly as requested.\n</think>\n\n{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/qwen/Qwen3.8-27B-Q4_K_M.gguf",
+            "tokens_predicted": 20,
+            "tokens_evaluated": 782,
+            "generation_settings": {
+              "seed": 1842654415,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 20,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"find_availability\" \">\\n\") tool-0-args-7 \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-0-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-0-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-0-args-1 ::= tool-0-arg-0\ntool-0-args-2 ::= tool-0-arg-1\ntool-0-args-3 ::= tool-0-arg-0 tool-0-args-2 | tool-0-arg-1 tool-0-args-1\ntool-0-args-4 ::= tool-0-arg-2\ntool-0-args-5 ::= tool-0-arg-0 tool-0-args-4 | tool-0-arg-2 tool-0-args-1\ntool-0-args-6 ::= tool-0-arg-1 tool-0-args-4 | tool-0-arg-2 tool-0-args-2\ntool-0-args-7 ::= tool-0-arg-0 tool-0-args-6 | tool-0-arg-1 tool-0-args-5 | tool-0-arg-2 tool-0-args-3\ntool-1 ::= (\"<function=\" \"create_event\" \">\\n\") tool-1-args-15 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"date\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"start\" \">\\n\") xml-arg-string\ntool-1-arg-2 ::= (\"<parameter=\" \"end\" \">\\n\") xml-arg-string\ntool-1-arg-3 ::= (\"<parameter=\" \"title\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-10 ::= tool-1-arg-1 tool-1-args-8 | tool-1-arg-3 tool-1-args-2\ntool-1-args-11 ::= tool-1-arg-0 tool-1-args-10 | tool-1-arg-1 tool-1-args-9 | tool-1-arg-3 tool-1-args-3\ntool-1-args-12 ::= tool-1-arg-2 tool-1-args-8 | tool-1-arg-3 tool-1-args-4\ntool-1-args-13 ::= tool-1-arg-0 tool-1-args-12 | tool-1-arg-2 tool-1-args-9 | tool-1-arg-3 tool-1-args-5\ntool-1-args-14 ::= tool-1-arg-1 tool-1-args-12 | tool-1-arg-2 tool-1-args-10 | tool-1-arg-3 tool-1-args-6\ntool-1-args-15 ::= tool-1-arg-0 tool-1-args-14 | tool-1-arg-1 tool-1-args-13 | tool-1-arg-2 tool-1-args-11 | tool-1-arg-3 tool-1-args-7\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-1-args-4 ::= tool-1-arg-2\ntool-1-args-5 ::= tool-1-arg-0 tool-1-args-4 | tool-1-arg-2 tool-1-args-1\ntool-1-args-6 ::= tool-1-arg-1 tool-1-args-4 | tool-1-arg-2 tool-1-args-2\ntool-1-args-7 ::= tool-1-arg-0 tool-1-args-6 | tool-1-arg-1 tool-1-args-5 | tool-1-arg-2 tool-1-args-3\ntool-1-args-8 ::= tool-1-arg-3\ntool-1-args-9 ::= tool-1-arg-0 tool-1-args-8 | tool-1-arg-3 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                248058,
+                248059,
+                248068,
+                248069
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\nReasoning effort is set to xhigh. Please think carefully through the task, validate key assumptions, consider plausible alternatives, and prioritize correctness, consistency, and clarity in the final answer.\n\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n{\"type\": \"function\", \"function\": {\"name\": \"find_availability\", \"description\": \"Perform the find_availability operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"date\": {\"type\": \"string\"}, \"start\": {\"type\": \"string\"}, \"end\": {\"type\": \"string\"}}, \"required\": [\"date\", \"start\", \"end\"], \"additionalProperties\": false}}}\n{\"type\": \"function\", \"function\": {\"name\": \"create_event\", \"description\": \"Perform the create_event operation in the task fixture.\", \"parameters\": {\"type\": \"object\", \"properties\": {\"date\": {\"type\": \"string\"}, \"start\": {\"type\": \"string\"}, \"end\": {\"type\": \"string\"}, \"title\": {\"type\": \"string\"}}, \"required\": [\"date\", \"start\", \"end\", \"title\"], \"additionalProperties\": false}}}\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nSchedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nFirst, let's check the available time slots.\n</think>\n\n<tool_call>\n<function=find_availability>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"available\": true}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\nThe time slot is available, so I'll create the event.\n</think>\n\n<tool_call>\n<function=create_event>\n<parameter=date>\n2026-11-03\n</parameter>\n<parameter=start>\n10:00\n</parameter>\n<parameter=end>\n11:00\n</parameter>\n<parameter=title>\nReview\n</parameter>\n</function>\n</tool_call><|im_end|>\n<|im_start|>user\n<tool_response>\n{\"created\": true}\n</tool_response><|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 801,
+            "timings": {
+              "cache_n": 761,
+              "prompt_n": 21,
+              "prompt_ms": 294.085,
+              "prompt_per_token_ms": 14.004047619047618,
+              "prompt_per_second": 71.40792627981706,
+              "predicted_n": 20,
+              "predicted_ms": 468.266,
+              "predicted_per_token_ms": 24.64557894736842,
+              "predicted_per_second": 40.57522860938013
+            }
+          },
+          "timings": {
+            "cache_n": 761,
+            "prompt_n": 21,
+            "prompt_ms": 294.085,
+            "prompt_per_token_ms": 14.004047619047618,
+            "prompt_per_second": 71.40792627981706,
+            "predicted_n": 20,
+            "predicted_ms": 468.266,
+            "predicted_per_token_ms": 24.64557894736842,
+            "predicted_per_second": 40.57522860938013
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Schedule a review for 2026-11-03 from 10:00 to 11:00. Existing events are 09:00-10:00 and 11:00-12:00. Tools: find_availability(date,start,end), create_event(date,start,end,title). Check availability first, then create only if free. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "find_availability",
+              "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\"}"
+            },
+            "id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72"
+          }
+        ],
+        "reasoning_content": "First, let's check the available time slots.\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72",
+        "content": "{\"available\": true}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "create_event",
+              "arguments": "{\"date\":\"2026-11-03\",\"start\":\"10:00\",\"end\":\"11:00\",\"title\":\"Review\"}"
+            },
+            "id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP"
+          }
+        ],
+        "reasoning_content": "The time slot is available, so I'll create the event.\n"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP",
+        "content": "{\"created\": true}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "find_availability",
+          "date": "2026-11-03",
+          "start": "10:00",
+          "end": "11:00"
+        },
+        "result": {
+          "available": true
+        },
+        "ok": true,
+        "tool_call_id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72"
+      },
+      {
+        "action": {
+          "tool": "create_event",
+          "date": "2026-11-03",
+          "start": "10:00",
+          "end": "11:00",
+          "title": "Review"
+        },
+        "result": {
+          "created": true
+        },
+        "ok": true,
+        "tool_call_id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2026,
+      "completion_tokens": 189
+    },
+    "timings": [
+      {
+        "cache_n": 569,
+        "prompt_n": 4,
+        "prompt_ms": 238.53,
+        "prompt_per_token_ms": 59.6325,
+        "prompt_per_second": 16.769379113738314,
+        "predicted_n": 78,
+        "predicted_ms": 1874.053,
+        "predicted_per_token_ms": 24.33835064935065,
+        "predicted_per_second": 41.087418552196766
+      },
+      {
+        "cache_n": 650,
+        "prompt_n": 21,
+        "prompt_ms": 293.119,
+        "prompt_per_token_ms": 13.95804761904762,
+        "prompt_per_second": 71.64325751657177,
+        "predicted_n": 91,
+        "predicted_ms": 2189.155,
+        "predicted_per_token_ms": 24.323944444444447,
+        "predicted_per_second": 41.11175316503399
+      },
+      {
+        "cache_n": 761,
+        "prompt_n": 21,
+        "prompt_ms": 294.085,
+        "prompt_per_token_ms": 14.004047619047618,
+        "prompt_per_second": 71.40792627981706,
+        "predicted_n": 20,
+        "predicted_ms": 468.266,
+        "predicted_per_token_ms": 24.64557894736842,
+        "predicted_per_second": 40.57522860938013
+      }
+    ],
+    "prompt_tps": 2453.5746378373665,
+    "decode_tps": 41.70828300018934
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "find_availability",
+        "date": "2026-11-03",
+        "start": "10:00",
+        "end": "11:00"
+      },
+      "result": {
+        "available": true
+      },
+      "ok": true,
+      "tool_call_id": "0OXVG0irq16XhD38FZVYXzLQeewJ5J72"
+    },
+    {
+      "action": {
+        "tool": "create_event",
+        "date": "2026-11-03",
+        "start": "10:00",
+        "end": "11:00",
+        "title": "Review"
+      },
+      "result": {
+        "created": true
+      },
+      "ok": true,
+      "tool_call_id": "7rwpY9SWRd7Swa2XGik09mPHAOLv6UqP"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2026,
+    "completion_tokens": 189
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

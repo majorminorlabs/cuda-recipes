@@ -127,3 +127,5 @@ This is a comparison of two specific GGUF files, not an isolated quantization ex
 - `SHA256SUMS`: hashes of the released study files.
 
 Model and runtime licenses are summarized in the repository's [NOTICE.md](../NOTICE.md). The [article](https://majorminor.xyz/research/cuda-recipes-001) presents the study in full.
+
+Supplementary raw run records added Oct 2026; tagged releases unchanged

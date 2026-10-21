@@ -1,0 +1,1390 @@
+{
+  "trial": {
+    "model": "nemotron",
+    "task_id": "MU01",
+    "repetition": 3,
+    "seed": 289637159
+  },
+  "task": {
+    "id": "MU01",
+    "category": "multi_step",
+    "prompt": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "get_stock",
+        "product": "cable"
+      },
+      {
+        "tool": "adjust_stock",
+        "product": "cable",
+        "delta": -6
+      },
+      {
+        "tool": "get_stock",
+        "product": "cable"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "get_stock",
+        "product": "cable"
+      },
+      {
+        "tool": "adjust_stock",
+        "product": "cable",
+        "delta": -5
+      },
+      {
+        "tool": "get_stock",
+        "product": "cable"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_stock",
+          "description": "Perform the get_stock operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "product": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "adjust_stock",
+          "description": "Perform the adjust_stock operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "product": {
+                "type": "string"
+              },
+              "delta": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "product",
+              "delta"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K"
+                }
+              ],
+              "reasoning_content": "The user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K",
+              "content": "{\"product\": \"cable\", \"quantity\": 12}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "adjust_stock",
+                    "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                  },
+                  "id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo"
+                }
+              ],
+              "reasoning_content": "Stock is 12. Now I need to adjust by -5."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo",
+              "content": "{\"quantity\": 7}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI"
+                }
+              ],
+              "reasoning_content": "Now verify by getting stock again."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI",
+              "content": "{\"product\": \"cable\", \"quantity\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 289637159,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "get_stock",
+                "description": "Perform the get_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "adjust_stock",
+                "description": "Perform the adjust_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    },
+                    "delta": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "product",
+                    "delta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "get_stock",
+                      "arguments": "{\"product\":\"cable\"}"
+                    },
+                    "id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112451,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 218,
+            "prompt_tokens": 466,
+            "total_tokens": 684,
+            "prompt_tokens_details": {
+              "cached_tokens": 462
+            }
+          },
+          "id": "chatcmpl-Ks2oJXDdrtK8WknAiXpCpjakgwBmv6gG",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock.</think>\n<tool_call>\n<function=get_stock>\n<parameter=product>\ncable\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 218,
+            "tokens_evaluated": 466,
+            "generation_settings": {
+              "seed": 289637159,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\ninteger ::= (\"-\"? integral-part)\nintegral-part ::= [0] | [1-9] [0-9]{0,15}\njson-array ::= \"[\" space (\"]\" | json-value (space \",\" space json-value)* space \"]\")\njson-bool ::= \"true\" | \"false\"\njson-null ::= \"null\"\njson-number ::= \"-\"? (\"0\" | [1-9] [0-9]*) (\".\" [0-9]+)? ((\"e\" | \"E\") [+-]? [0-9]+)?\njson-object ::= \"{\" space (\"}\" | json-string space \":\" space json-value (space \",\" space json-string space \":\" space json-value)* space \"}\")\njson-string ::= \"\\\"\" ( [^\"\\\\] | \"\\\\\" ( [\"\\\\/ bfnrt] | \"u\" [0-9a-fA-F]{4} ) )* \"\\\"\"\njson-value ::= json-object | json-array | json-string | json-number | json-bool | json-null\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"get_stock\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"product\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"adjust_stock\" \">\\n\") tool-1-args-3 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"product\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"delta\" \">\\n\") integer \"\\n</parameter>\\n\"\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>get_stock</name>\n<description>Perform the get_stock operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>product</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"product\"]</required>\n</parameters>\n</function>\n<function>\n<name>adjust_stock</name>\n<description>Perform the adjust_stock operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>product</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>delta</name>\n<type>integer</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"product\", \"delta\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 683,
+            "timings": {
+              "cache_n": 462,
+              "prompt_n": 4,
+              "prompt_ms": 318.723,
+              "prompt_per_token_ms": 79.68075,
+              "prompt_per_second": 12.550082673669612,
+              "predicted_n": 218,
+              "predicted_ms": 2571.706,
+              "predicted_per_token_ms": 11.851179723502305,
+              "predicted_per_second": 84.37978524761384
+            }
+          },
+          "timings": {
+            "cache_n": 462,
+            "prompt_n": 4,
+            "prompt_ms": 318.723,
+            "prompt_per_token_ms": 79.68075,
+            "prompt_per_second": 12.550082673669612,
+            "predicted_n": 218,
+            "predicted_ms": 2571.706,
+            "predicted_per_token_ms": 11.851179723502305,
+            "predicted_per_second": 84.37978524761384
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K"
+                }
+              ],
+              "reasoning_content": "The user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K",
+              "content": "{\"product\": \"cable\", \"quantity\": 12}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "adjust_stock",
+                    "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                  },
+                  "id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo"
+                }
+              ],
+              "reasoning_content": "Stock is 12. Now I need to adjust by -5."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo",
+              "content": "{\"quantity\": 7}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI"
+                }
+              ],
+              "reasoning_content": "Now verify by getting stock again."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI",
+              "content": "{\"product\": \"cable\", \"quantity\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 289637160,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "get_stock",
+                "description": "Perform the get_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "adjust_stock",
+                "description": "Perform the adjust_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    },
+                    "delta": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "product",
+                    "delta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Stock is 12. Now I need to adjust by -5.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "adjust_stock",
+                      "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                    },
+                    "id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112452,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 54,
+            "prompt_tokens": 714,
+            "total_tokens": 768,
+            "prompt_tokens_details": {
+              "cached_tokens": 683
+            }
+          },
+          "id": "chatcmpl-7z9SMd3gFrv2hgeWgbePU0prlQwAUOG5",
+          "__verbose": {
+            "index": 0,
+            "content": "Stock is 12. Now I need to adjust by -5.</think>\n<tool_call>\n<function=adjust_stock>\n<parameter=product>\ncable\n</parameter>\n<parameter=delta>\n-5\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 54,
+            "tokens_evaluated": 714,
+            "generation_settings": {
+              "seed": 289637160,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\ninteger ::= (\"-\"? integral-part)\nintegral-part ::= [0] | [1-9] [0-9]{0,15}\njson-array ::= \"[\" space (\"]\" | json-value (space \",\" space json-value)* space \"]\")\njson-bool ::= \"true\" | \"false\"\njson-null ::= \"null\"\njson-number ::= \"-\"? (\"0\" | [1-9] [0-9]*) (\".\" [0-9]+)? ((\"e\" | \"E\") [+-]? [0-9]+)?\njson-object ::= \"{\" space (\"}\" | json-string space \":\" space json-value (space \",\" space json-string space \":\" space json-value)* space \"}\")\njson-string ::= \"\\\"\" ( [^\"\\\\] | \"\\\\\" ( [\"\\\\/ bfnrt] | \"u\" [0-9a-fA-F]{4} ) )* \"\\\"\"\njson-value ::= json-object | json-array | json-string | json-number | json-bool | json-null\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"get_stock\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"product\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"adjust_stock\" \">\\n\") tool-1-args-3 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"product\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"delta\" \">\\n\") integer \"\\n</parameter>\\n\"\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>get_stock</name>\n<description>Perform the get_stock operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>product</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"product\"]</required>\n</parameters>\n</function>\n<function>\n<name>adjust_stock</name>\n<description>Perform the adjust_stock operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>product</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>delta</name>\n<type>integer</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"product\", \"delta\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock.</think>\n<tool_call>\n<function=get_stock>\n<parameter=product>\ncable\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"product\": \"cable\", \"quantity\": 12}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 767,
+            "timings": {
+              "cache_n": 683,
+              "prompt_n": 31,
+              "prompt_ms": 315.835,
+              "prompt_per_token_ms": 10.188225806451612,
+              "prompt_per_second": 98.15251634556019,
+              "predicted_n": 54,
+              "predicted_ms": 641.77,
+              "predicted_per_token_ms": 12.108867924528301,
+              "predicted_per_second": 82.58410333920253
+            }
+          },
+          "timings": {
+            "cache_n": 683,
+            "prompt_n": 31,
+            "prompt_ms": 315.835,
+            "prompt_per_token_ms": 10.188225806451612,
+            "prompt_per_second": 98.15251634556019,
+            "predicted_n": 54,
+            "predicted_ms": 641.77,
+            "predicted_per_token_ms": 12.108867924528301,
+            "predicted_per_second": 82.58410333920253
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K"
+                }
+              ],
+              "reasoning_content": "The user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K",
+              "content": "{\"product\": \"cable\", \"quantity\": 12}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "adjust_stock",
+                    "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                  },
+                  "id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo"
+                }
+              ],
+              "reasoning_content": "Stock is 12. Now I need to adjust by -5."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo",
+              "content": "{\"quantity\": 7}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI"
+                }
+              ],
+              "reasoning_content": "Now verify by getting stock again."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI",
+              "content": "{\"product\": \"cable\", \"quantity\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 289637161,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "get_stock",
+                "description": "Perform the get_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "adjust_stock",
+                "description": "Perform the adjust_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    },
+                    "delta": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "product",
+                    "delta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Now verify by getting stock again.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "get_stock",
+                      "arguments": "{\"product\":\"cable\"}"
+                    },
+                    "id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792112452,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 33,
+            "prompt_tokens": 790,
+            "total_tokens": 823,
+            "prompt_tokens_details": {
+              "cached_tokens": 767
+            }
+          },
+          "id": "chatcmpl-5j2050vu1QUY4txnArUUgIiQC6Pwvxtz",
+          "__verbose": {
+            "index": 0,
+            "content": "Now verify by getting stock again.</think>\n<tool_call>\n<function=get_stock>\n<parameter=product>\ncable\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 33,
+            "tokens_evaluated": 790,
+            "generation_settings": {
+              "seed": 289637161,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\ninteger ::= (\"-\"? integral-part)\nintegral-part ::= [0] | [1-9] [0-9]{0,15}\njson-array ::= \"[\" space (\"]\" | json-value (space \",\" space json-value)* space \"]\")\njson-bool ::= \"true\" | \"false\"\njson-null ::= \"null\"\njson-number ::= \"-\"? (\"0\" | [1-9] [0-9]*) (\".\" [0-9]+)? ((\"e\" | \"E\") [+-]? [0-9]+)?\njson-object ::= \"{\" space (\"}\" | json-string space \":\" space json-value (space \",\" space json-string space \":\" space json-value)* space \"}\")\njson-string ::= \"\\\"\" ( [^\"\\\\] | \"\\\\\" ( [\"\\\\/ bfnrt] | \"u\" [0-9a-fA-F]{4} ) )* \"\\\"\"\njson-value ::= json-object | json-array | json-string | json-number | json-bool | json-null\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"get_stock\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"product\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"adjust_stock\" \">\\n\") tool-1-args-3 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"product\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"delta\" \">\\n\") integer \"\\n</parameter>\\n\"\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>get_stock</name>\n<description>Perform the get_stock operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>product</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"product\"]</required>\n</parameters>\n</function>\n<function>\n<name>adjust_stock</name>\n<description>Perform the adjust_stock operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>product</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>delta</name>\n<type>integer</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"product\", \"delta\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock.</think>\n<tool_call>\n<function=get_stock>\n<parameter=product>\ncable\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"product\": \"cable\", \"quantity\": 12}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nStock is 12. Now I need to adjust by -5.</think>\n<tool_call>\n<function=adjust_stock>\n<parameter=product>\ncable\n</parameter>\n<parameter=delta>\n-5\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"quantity\": 7}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 822,
+            "timings": {
+              "cache_n": 767,
+              "prompt_n": 23,
+              "prompt_ms": 289.447,
+              "prompt_per_token_ms": 12.584652173913044,
+              "prompt_per_second": 79.46187039423452,
+              "predicted_n": 33,
+              "predicted_ms": 390.072,
+              "predicted_per_token_ms": 12.18975,
+              "predicted_per_second": 82.03613691831252
+            }
+          },
+          "timings": {
+            "cache_n": 767,
+            "prompt_n": 23,
+            "prompt_ms": 289.447,
+            "prompt_per_token_ms": 12.584652173913044,
+            "prompt_per_second": 79.46187039423452,
+            "predicted_n": 33,
+            "predicted_ms": 390.072,
+            "predicted_per_token_ms": 12.18975,
+            "predicted_per_second": 82.03613691831252
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K"
+                }
+              ],
+              "reasoning_content": "The user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K",
+              "content": "{\"product\": \"cable\", \"quantity\": 12}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "adjust_stock",
+                    "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                  },
+                  "id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo"
+                }
+              ],
+              "reasoning_content": "Stock is 12. Now I need to adjust by -5."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo",
+              "content": "{\"quantity\": 7}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI"
+                }
+              ],
+              "reasoning_content": "Now verify by getting stock again."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI",
+              "content": "{\"product\": \"cable\", \"quantity\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 289637162,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "get_stock",
+                "description": "Perform the get_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "adjust_stock",
+                "description": "Perform the adjust_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    },
+                    "delta": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "product",
+                    "delta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "Stock is now 7, which is 12 - 5 = 7. Everything checks out. Now I need to return JSON exactly {\"done\":true} with no markdown."
+              }
+            }
+          ],
+          "created": 1792112453,
+          "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b11669-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 45,
+            "prompt_tokens": 852,
+            "total_tokens": 897,
+            "prompt_tokens_details": {
+              "cached_tokens": 822
+            }
+          },
+          "id": "chatcmpl-9aohLFNuszvBxbj6zdNqbbrFPIuLtRWY",
+          "__verbose": {
+            "index": 0,
+            "content": "Stock is now 7, which is 12 - 5 = 7. Everything checks out. Now I need to return JSON exactly {\"done\":true} with no markdown.</think>{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/workspace/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 45,
+            "tokens_evaluated": 852,
+            "generation_settings": {
+              "seed": 289637162,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\ninteger ::= (\"-\"? integral-part)\nintegral-part ::= [0] | [1-9] [0-9]{0,15}\njson-array ::= \"[\" space (\"]\" | json-value (space \",\" space json-value)* space \"]\")\njson-bool ::= \"true\" | \"false\"\njson-null ::= \"null\"\njson-number ::= \"-\"? (\"0\" | [1-9] [0-9]*) (\".\" [0-9]+)? ((\"e\" | \"E\") [+-]? [0-9]+)?\njson-object ::= \"{\" space (\"}\" | json-string space \":\" space json-value (space \",\" space json-string space \":\" space json-value)* space \"}\")\njson-string ::= \"\\\"\" ( [^\"\\\\] | \"\\\\\" ( [\"\\\\/ bfnrt] | \"u\" [0-9a-fA-F]{4} ) )* \"\\\"\"\njson-value ::= json-object | json-array | json-string | json-number | json-bool | json-null\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"get_stock\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"product\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"adjust_stock\" \">\\n\") tool-1-args-3 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"product\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"delta\" \">\\n\") integer \"\\n</parameter>\\n\"\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>get_stock</name>\n<description>Perform the get_stock operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>product</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"product\"]</required>\n</parameters>\n</function>\n<function>\n<name>adjust_stock</name>\n<description>Perform the adjust_stock operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>product</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>delta</name>\n<type>integer</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"product\", \"delta\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nA shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\nThe user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock.</think>\n<tool_call>\n<function=get_stock>\n<parameter=product>\ncable\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"product\": \"cable\", \"quantity\": 12}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nStock is 12. Now I need to adjust by -5.</think>\n<tool_call>\n<function=adjust_stock>\n<parameter=product>\ncable\n</parameter>\n<parameter=delta>\n-5\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"quantity\": 7}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\nNow verify by getting stock again.</think>\n<tool_call>\n<function=get_stock>\n<parameter=product>\ncable\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"product\": \"cable\", \"quantity\": 7}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": false,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 896,
+            "timings": {
+              "cache_n": 822,
+              "prompt_n": 30,
+              "prompt_ms": 289.233,
+              "prompt_per_token_ms": 9.6411,
+              "prompt_per_second": 103.72260426714794,
+              "predicted_n": 45,
+              "predicted_ms": 531.089,
+              "predicted_per_token_ms": 12.070204545454546,
+              "predicted_per_second": 82.84863742235294
+            }
+          },
+          "timings": {
+            "cache_n": 822,
+            "prompt_n": 30,
+            "prompt_ms": 289.233,
+            "prompt_per_token_ms": 9.6411,
+            "prompt_per_second": 103.72260426714794,
+            "predicted_n": 45,
+            "predicted_ms": 531.089,
+            "predicted_per_token_ms": 12.070204545454546,
+            "predicted_per_second": 82.84863742235294
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "get_stock",
+              "arguments": "{\"product\":\"cable\"}"
+            },
+            "id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K"
+          }
+        ],
+        "reasoning_content": "The user wants me to:\n1. Inspect stock for \"cable\" (or whatever product name - they said \"cable units\")\n2. Deduct exactly five\n3. Verify the final stock\n4. Return JSON exactly {\"done\":true}\n\nThe inventory starts at 12, and I need to deduct 5, so final should be 7.\n\nLet me first get the stock for \"cable\", then adjust it by -5, then get stock again to verify. But actually, I need to be careful - the user says \"Inspect stock, deduct exactly five, and verify the final stock.\" So I should:\n1. Call get_stock(product=\"cable\")\n2. Call adjust_stock(product=\"cable\", delta=-5)\n3. Call get_stock(product=\"cable\") to verify\n4. Return {\"done\":true}\n\nLet me do this step by step. First, get_stock."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K",
+        "content": "{\"product\": \"cable\", \"quantity\": 12}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "adjust_stock",
+              "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+            },
+            "id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo"
+          }
+        ],
+        "reasoning_content": "Stock is 12. Now I need to adjust by -5."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo",
+        "content": "{\"quantity\": 7}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "get_stock",
+              "arguments": "{\"product\":\"cable\"}"
+            },
+            "id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI"
+          }
+        ],
+        "reasoning_content": "Now verify by getting stock again."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI",
+        "content": "{\"product\": \"cable\", \"quantity\": 7}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "get_stock",
+          "product": "cable"
+        },
+        "result": {
+          "product": "cable",
+          "quantity": 12
+        },
+        "ok": true,
+        "tool_call_id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K"
+      },
+      {
+        "action": {
+          "tool": "adjust_stock",
+          "product": "cable",
+          "delta": -5
+        },
+        "result": {
+          "quantity": 7
+        },
+        "ok": true,
+        "tool_call_id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo"
+      },
+      {
+        "action": {
+          "tool": "get_stock",
+          "product": "cable"
+        },
+        "result": {
+          "product": "cable",
+          "quantity": 7
+        },
+        "ok": true,
+        "tool_call_id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2822,
+      "completion_tokens": 350
+    },
+    "timings": [
+      {
+        "cache_n": 462,
+        "prompt_n": 4,
+        "prompt_ms": 318.723,
+        "prompt_per_token_ms": 79.68075,
+        "prompt_per_second": 12.550082673669612,
+        "predicted_n": 218,
+        "predicted_ms": 2571.706,
+        "predicted_per_token_ms": 11.851179723502305,
+        "predicted_per_second": 84.37978524761384
+      },
+      {
+        "cache_n": 683,
+        "prompt_n": 31,
+        "prompt_ms": 315.835,
+        "prompt_per_token_ms": 10.188225806451612,
+        "prompt_per_second": 98.15251634556019,
+        "predicted_n": 54,
+        "predicted_ms": 641.77,
+        "predicted_per_token_ms": 12.108867924528301,
+        "predicted_per_second": 82.58410333920253
+      },
+      {
+        "cache_n": 767,
+        "prompt_n": 23,
+        "prompt_ms": 289.447,
+        "prompt_per_token_ms": 12.584652173913044,
+        "prompt_per_second": 79.46187039423452,
+        "predicted_n": 33,
+        "predicted_ms": 390.072,
+        "predicted_per_token_ms": 12.18975,
+        "predicted_per_second": 82.03613691831252
+      },
+      {
+        "cache_n": 822,
+        "prompt_n": 30,
+        "prompt_ms": 289.233,
+        "prompt_per_token_ms": 9.6411,
+        "prompt_per_second": 103.72260426714794,
+        "predicted_n": 45,
+        "predicted_ms": 531.089,
+        "predicted_per_token_ms": 12.070204545454546,
+        "predicted_per_second": 82.84863742235294
+      }
+    ],
+    "prompt_tps": 2326.0069335118087,
+    "decode_tps": 84.6507202446067
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "get_stock",
+        "product": "cable"
+      },
+      "result": {
+        "product": "cable",
+        "quantity": 12
+      },
+      "ok": true,
+      "tool_call_id": "77F3Lv3ezgk98e5z7OtXL8rmKM5TPE2K"
+    },
+    {
+      "action": {
+        "tool": "adjust_stock",
+        "product": "cable",
+        "delta": -5
+      },
+      "result": {
+        "quantity": 7
+      },
+      "ok": true,
+      "tool_call_id": "S4MNiauodgQenoSbKgEyNORDYlsojoNo"
+    },
+    {
+      "action": {
+        "tool": "get_stock",
+        "product": "cable"
+      },
+      "result": {
+        "product": "cable",
+        "quantity": 7
+      },
+      "ok": true,
+      "tool_call_id": "RNsUIqSW3FJkAhzgdR0ey5jsqcSuPwsI"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2822,
+    "completion_tokens": 350
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

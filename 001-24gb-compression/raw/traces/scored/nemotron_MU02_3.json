@@ -1,0 +1,1569 @@
+{
+  "trial": {
+    "model": "nemotron",
+    "task_id": "MU02",
+    "repetition": 3,
+    "seed": 63408375
+  },
+  "task": {
+    "id": "MU02",
+    "category": "multi_step",
+    "prompt": "Move drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "list_file",
+        "path": "drafts/report.csv"
+      },
+      {
+        "tool": "copy_file",
+        "src": "drafts/report.csv",
+        "dst": "archive/report.csv"
+      },
+      {
+        "tool": "delete_file",
+        "path": "drafts/report.csv"
+      },
+      {
+        "tool": "verify_file",
+        "path": "archive/report.csv"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "list_file",
+        "path": "drafts/report.csv"
+      },
+      {
+        "tool": "copy_file",
+        "src": "drafts/report.csv",
+        "dst": "archive/report.csv"
+      },
+      {
+        "tool": "verify_file",
+        "path": "archive/report.csv"
+      },
+      {
+        "tool": "delete_file",
+        "path": "drafts/report.csv"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "list_file",
+          "description": "Perform the list_file operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "copy_file",
+          "description": "Perform the copy_file operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string"
+              },
+              "dst": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "src",
+              "dst"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "verify_file",
+          "description": "Perform the verify_file operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "delete_file",
+          "description": "Perform the delete_file operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "path"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Move drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "copy_file",
+                    "arguments": "{\"src\":\"drafts/report.csv\",\"dst\":\"archive/report.csv\"}"
+                  },
+                  "id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS",
+              "content": "{\"copied\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "verify_file",
+                    "arguments": "{\"path\":\"archive/report.csv\"}"
+                  },
+                  "id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2",
+              "content": "{\"matches_source\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "delete_file",
+                    "arguments": "{\"path\":\"drafts/report.csv\"}"
+                  },
+                  "id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz",
+              "content": "{\"deleted\": true}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 63408375,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "list_file",
+                "description": "Perform the list_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "copy_file",
+                "description": "Perform the copy_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string"
+                    },
+                    "dst": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "dst"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_file",
+                "description": "Perform the verify_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "delete_file",
+                "description": "Perform the delete_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants to move drafts/report.csv to archive/report.csv. The procedure: copy_file(src, dst) then verify_file(dst) then delete_file(src). Need to use tools. Let's do it step by step.\n\nFirst, maybe list_file to see if files exist? Not required but can. Let's just copy. Use copy_file with src \"drafts/report.csv\", dst \"archive/report.csv\". Then verify_file \"archive/report.csv\". Then delete_file \"drafts/report.csv\". Then return JSON.\n\nLet's call copy_file.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "copy_file",
+                      "arguments": "{\"src\":\"drafts/report.csv\",\"dst\":\"archive/report.csv\"}"
+                    },
+                    "id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792103122,
+          "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b1-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 163,
+            "prompt_tokens": 613,
+            "total_tokens": 776,
+            "prompt_tokens_details": {
+              "cached_tokens": 609
+            }
+          },
+          "id": "chatcmpl-3g1uzcKM20L9K5wDXJJbIeGycNaYMK7u",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants to move drafts/report.csv to archive/report.csv. The procedure: copy_file(src, dst) then verify_file(dst) then delete_file(src). Need to use tools. Let's do it step by step.\n\nFirst, maybe list_file to see if files exist? Not required but can. Let's just copy. Use copy_file with src \"drafts/report.csv\", dst \"archive/report.csv\". Then verify_file \"archive/report.csv\". Then delete_file \"drafts/report.csv\". Then return JSON.\n\nLet's call copy_file.</think>\n<tool_call>\n<function=copy_file>\n<parameter=src>\ndrafts/report.csv\n</parameter>\n<parameter=dst>\narchive/report.csv\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 163,
+            "tokens_evaluated": 613,
+            "generation_settings": {
+              "seed": 63408375,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"list_file\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"copy_file\" \">\\n\") tool-1-args-3 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"src\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"dst\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-2 ::= (\"<function=\" \"verify_file\" \">\\n\") (tool-2-arg-0) \"</function>\\n\"\ntool-2-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-3 ::= (\"<function=\" \"delete_file\" \">\\n\") (tool-3-arg-0) \"</function>\\n\"\ntool-3-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1 | tool-2 | tool-3) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>list_file</name>\n<description>Perform the list_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n<function>\n<name>copy_file</name>\n<description>Perform the copy_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>src</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>dst</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"src\", \"dst\"]</required>\n</parameters>\n</function>\n<function>\n<name>verify_file</name>\n<description>Perform the verify_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n<function>\n<name>delete_file</name>\n<description>Perform the delete_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nMove drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 775,
+            "timings": {
+              "cache_n": 609,
+              "prompt_n": 4,
+              "prompt_ms": 183.129,
+              "prompt_per_token_ms": 45.78225,
+              "prompt_per_second": 21.84252630659262,
+              "predicted_n": 163,
+              "predicted_ms": 1116.939,
+              "predicted_per_token_ms": 6.894685185185185,
+              "predicted_per_second": 145.0392546056678
+            }
+          },
+          "timings": {
+            "cache_n": 609,
+            "prompt_n": 4,
+            "prompt_ms": 183.129,
+            "prompt_per_token_ms": 45.78225,
+            "prompt_per_second": 21.84252630659262,
+            "predicted_n": 163,
+            "predicted_ms": 1116.939,
+            "predicted_per_token_ms": 6.894685185185185,
+            "predicted_per_second": 145.0392546056678
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Move drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "copy_file",
+                    "arguments": "{\"src\":\"drafts/report.csv\",\"dst\":\"archive/report.csv\"}"
+                  },
+                  "id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS",
+              "content": "{\"copied\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "verify_file",
+                    "arguments": "{\"path\":\"archive/report.csv\"}"
+                  },
+                  "id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2",
+              "content": "{\"matches_source\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "delete_file",
+                    "arguments": "{\"path\":\"drafts/report.csv\"}"
+                  },
+                  "id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz",
+              "content": "{\"deleted\": true}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 63408376,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "list_file",
+                "description": "Perform the list_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "copy_file",
+                "description": "Perform the copy_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string"
+                    },
+                    "dst": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "dst"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_file",
+                "description": "Perform the verify_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "delete_file",
+                "description": "Perform the delete_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants me to move drafts/report.csv to archive/report.csv. The instructions say:\n1. Copy and verify the destination before deleting the source\n2. Use the available tools\n3. Return JSON exactly {\"done\":true} when complete\n\nI've already copied the file. Now I need to verify the destination exists, then delete the source. Let me verify the destination first.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "verify_file",
+                      "arguments": "{\"path\":\"archive/report.csv\"}"
+                    },
+                    "id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792103123,
+          "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b1-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 110,
+            "prompt_tokens": 678,
+            "total_tokens": 788,
+            "prompt_tokens_details": {
+              "cached_tokens": 609
+            }
+          },
+          "id": "chatcmpl-O48k39Ioz4FwwEkmOsz2RdNPtPgY32Du",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants me to move drafts/report.csv to archive/report.csv. The instructions say:\n1. Copy and verify the destination before deleting the source\n2. Use the available tools\n3. Return JSON exactly {\"done\":true} when complete\n\nI've already copied the file. Now I need to verify the destination exists, then delete the source. Let me verify the destination first.</think>\n<tool_call>\n<function=verify_file>\n<parameter=path>\narchive/report.csv\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 110,
+            "tokens_evaluated": 678,
+            "generation_settings": {
+              "seed": 63408376,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"list_file\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"copy_file\" \">\\n\") tool-1-args-3 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"src\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"dst\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-2 ::= (\"<function=\" \"verify_file\" \">\\n\") (tool-2-arg-0) \"</function>\\n\"\ntool-2-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-3 ::= (\"<function=\" \"delete_file\" \">\\n\") (tool-3-arg-0) \"</function>\\n\"\ntool-3-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1 | tool-2 | tool-3) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>list_file</name>\n<description>Perform the list_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n<function>\n<name>copy_file</name>\n<description>Perform the copy_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>src</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>dst</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"src\", \"dst\"]</required>\n</parameters>\n</function>\n<function>\n<name>verify_file</name>\n<description>Perform the verify_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n<function>\n<name>delete_file</name>\n<description>Perform the delete_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nMove drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think></think>\n<tool_call>\n<function=copy_file>\n<parameter=src>\ndrafts/report.csv\n</parameter>\n<parameter=dst>\narchive/report.csv\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"copied\": true}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 787,
+            "timings": {
+              "cache_n": 609,
+              "prompt_n": 69,
+              "prompt_ms": 283.073,
+              "prompt_per_token_ms": 4.1025072463768115,
+              "prompt_per_second": 243.75337810388135,
+              "predicted_n": 110,
+              "predicted_ms": 748.898,
+              "predicted_per_token_ms": 6.8706238532110095,
+              "predicted_per_second": 145.54719067216095
+            }
+          },
+          "timings": {
+            "cache_n": 609,
+            "prompt_n": 69,
+            "prompt_ms": 283.073,
+            "prompt_per_token_ms": 4.1025072463768115,
+            "prompt_per_second": 243.75337810388135,
+            "predicted_n": 110,
+            "predicted_ms": 748.898,
+            "predicted_per_token_ms": 6.8706238532110095,
+            "predicted_per_second": 145.54719067216095
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Move drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "copy_file",
+                    "arguments": "{\"src\":\"drafts/report.csv\",\"dst\":\"archive/report.csv\"}"
+                  },
+                  "id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS",
+              "content": "{\"copied\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "verify_file",
+                    "arguments": "{\"path\":\"archive/report.csv\"}"
+                  },
+                  "id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2",
+              "content": "{\"matches_source\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "delete_file",
+                    "arguments": "{\"path\":\"drafts/report.csv\"}"
+                  },
+                  "id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz",
+              "content": "{\"deleted\": true}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 63408377,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "list_file",
+                "description": "Perform the list_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "copy_file",
+                "description": "Perform the copy_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string"
+                    },
+                    "dst": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "dst"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_file",
+                "description": "Perform the verify_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "delete_file",
+                "description": "Perform the delete_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants me to move drafts/report.csv to archive/report.csv. I've already:\n1. Copied the file from drafts/report.csv to archive/report.csv\n2. Verified the destination file matches the source\n\nNow I need to delete the source file drafts/report.csv, then return the JSON.\n\nLet me delete the source file.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "delete_file",
+                      "arguments": "{\"path\":\"drafts/report.csv\"}"
+                    },
+                    "id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz"
+                  }
+                ]
+              }
+            }
+          ],
+          "created": 1792103124,
+          "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b1-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 107,
+            "prompt_tokens": 728,
+            "total_tokens": 835,
+            "prompt_tokens_details": {
+              "cached_tokens": 674
+            }
+          },
+          "id": "chatcmpl-KdKJoBZY1nnOawuWOeb5Hv61oIqXuH4O",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants me to move drafts/report.csv to archive/report.csv. I've already:\n1. Copied the file from drafts/report.csv to archive/report.csv\n2. Verified the destination file matches the source\n\nNow I need to delete the source file drafts/report.csv, then return the JSON.\n\nLet me delete the source file.</think>\n<tool_call>\n<function=delete_file>\n<parameter=path>\ndrafts/report.csv\n</parameter>\n</function>\n</tool_call>\n",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 107,
+            "tokens_evaluated": 728,
+            "generation_settings": {
+              "seed": 63408377,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"list_file\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"copy_file\" \">\\n\") tool-1-args-3 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"src\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"dst\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-2 ::= (\"<function=\" \"verify_file\" \">\\n\") (tool-2-arg-0) \"</function>\\n\"\ntool-2-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-3 ::= (\"<function=\" \"delete_file\" \">\\n\") (tool-3-arg-0) \"</function>\\n\"\ntool-3-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1 | tool-2 | tool-3) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>list_file</name>\n<description>Perform the list_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n<function>\n<name>copy_file</name>\n<description>Perform the copy_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>src</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>dst</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"src\", \"dst\"]</required>\n</parameters>\n</function>\n<function>\n<name>verify_file</name>\n<description>Perform the verify_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n<function>\n<name>delete_file</name>\n<description>Perform the delete_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nMove drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think></think>\n<tool_call>\n<function=copy_file>\n<parameter=src>\ndrafts/report.csv\n</parameter>\n<parameter=dst>\narchive/report.csv\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"copied\": true}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think></think>\n<tool_call>\n<function=verify_file>\n<parameter=path>\narchive/report.csv\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"matches_source\": true}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 834,
+            "timings": {
+              "cache_n": 674,
+              "prompt_n": 54,
+              "prompt_ms": 259.395,
+              "prompt_per_token_ms": 4.803611111111111,
+              "prompt_per_second": 208.17671890360265,
+              "predicted_n": 107,
+              "predicted_ms": 717.222,
+              "predicted_per_token_ms": 6.7662452830188675,
+              "predicted_per_second": 147.7924547769031
+            }
+          },
+          "timings": {
+            "cache_n": 674,
+            "prompt_n": 54,
+            "prompt_ms": 259.395,
+            "prompt_per_token_ms": 4.803611111111111,
+            "prompt_per_second": 208.17671890360265,
+            "predicted_n": 107,
+            "predicted_ms": 717.222,
+            "predicted_per_token_ms": 6.7662452830188675,
+            "predicted_per_second": 147.7924547769031
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Move drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "copy_file",
+                    "arguments": "{\"src\":\"drafts/report.csv\",\"dst\":\"archive/report.csv\"}"
+                  },
+                  "id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS",
+              "content": "{\"copied\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "verify_file",
+                    "arguments": "{\"path\":\"archive/report.csv\"}"
+                  },
+                  "id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2",
+              "content": "{\"matches_source\": true}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "delete_file",
+                    "arguments": "{\"path\":\"drafts/report.csv\"}"
+                  },
+                  "id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz"
+                }
+              ]
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz",
+              "content": "{\"deleted\": true}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 40,
+          "seed": 63408378,
+          "max_tokens": 512,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "list_file",
+                "description": "Perform the list_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "copy_file",
+                "description": "Perform the copy_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string"
+                    },
+                    "dst": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "dst"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_file",
+                "description": "Perform the verify_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "delete_file",
+                "description": "Perform the delete_file operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "The user wants me to move drafts/report.csv to archive/report.csv. The instructions say to copy and verify the destination before deleting the source. I've already done all three steps:\n1. Copied drafts/report.csv to archive/report.csv - success\n2. Verified archive/report.csv matches source - success\n3. Deleted drafts/report.csv - success\n\nNow I need to return JSON exactly {\"done\":true} with no markdown."
+              }
+            }
+          ],
+          "created": 1792103125,
+          "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+          "system_fingerprint": "b1-620d2225c",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 104,
+            "prompt_tokens": 779,
+            "total_tokens": 883,
+            "prompt_tokens_details": {
+              "cached_tokens": 724
+            }
+          },
+          "id": "chatcmpl-8KAn8Cn5sjMI9gQxy5COg12uVZC1ZGyo",
+          "__verbose": {
+            "index": 0,
+            "content": "The user wants me to move drafts/report.csv to archive/report.csv. The instructions say to copy and verify the destination before deleting the source. I've already done all three steps:\n1. Copied drafts/report.csv to archive/report.csv - success\n2. Verified archive/report.csv matches source - success\n3. Deleted drafts/report.csv - success\n\nNow I need to return JSON exactly {\"done\":true} with no markdown.</think>{\"done\":true}",
+            "tokens": [],
+            "id_slot": 0,
+            "stop": true,
+            "model": "/tmp/nemotron-private/models/nemotron/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf",
+            "tokens_predicted": 104,
+            "tokens_evaluated": 779,
+            "generation_settings": {
+              "seed": 63408378,
+              "temperature": 1.0,
+              "dynatemp_range": 0.0,
+              "dynatemp_exponent": 1.0,
+              "top_k": 40,
+              "top_p": 0.949999988079071,
+              "min_p": 0.05000000074505806,
+              "top_n_sigma": -1.0,
+              "xtc_probability": 0.0,
+              "xtc_threshold": 0.10000000149011612,
+              "typical_p": 1.0,
+              "repeat_last_n": 64,
+              "repeat_penalty": 1.0,
+              "presence_penalty": 0.0,
+              "frequency_penalty": 0.0,
+              "dry_multiplier": 0.0,
+              "dry_base": 1.75,
+              "dry_allowed_length": 2,
+              "dry_penalty_last_n": 64,
+              "dry_sequence_breakers": [
+                "\n",
+                ":",
+                "\"",
+                "*"
+              ],
+              "mirostat": 0,
+              "mirostat_tau": 5.0,
+              "mirostat_eta": 0.10000000149011612,
+              "adaptive_target": -1.0,
+              "adaptive_decay": 0.8999999761581421,
+              "stop": [],
+              "max_tokens": 512,
+              "n_predict": 512,
+              "n_keep": 0,
+              "n_discard": 0,
+              "ignore_eos": false,
+              "stream": false,
+              "logit_bias": [],
+              "n_probs": 0,
+              "min_keep": 0,
+              "grammar": "ac-20 ::= [\\n] ac-20-01 | [^\\n] ac-20\nac-20-01 ::= [\\n] ac-20-01 | [<] ac-20-02 | [^\\n<] ac-20\nac-20-02 ::= [\\n] ac-20-01 | [/] ac-20-03 | [^\\n/] ac-20\nac-20-03 ::= [\\n] ac-20-01 | [p] ac-20-04 | [^\\np] ac-20\nac-20-04 ::= [\\n] ac-20-01 | [a] ac-20-05 | [^\\na] ac-20\nac-20-05 ::= [\\n] ac-20-01 | [r] ac-20-06 | [^\\nr] ac-20\nac-20-06 ::= [\\n] ac-20-01 | [a] ac-20-07 | [^\\na] ac-20\nac-20-07 ::= [\\n] ac-20-01 | [m] ac-20-08 | [^\\nm] ac-20\nac-20-08 ::= [\\n] ac-20-01 | [e] ac-20-09 | [^\\ne] ac-20\nac-20-09 ::= [\\n] ac-20-01 | [t] ac-20-10 | [^\\nt] ac-20\nac-20-10 ::= [\\n] ac-20-01 | [e] ac-20-11 | [^\\ne] ac-20\nac-20-11 ::= [\\n] ac-20-01 | [r] ac-20-12 | [^\\nr] ac-20\nac-20-12 ::= [\\n] ac-20-01 | [>] ac-20-13 | [^\\n>] ac-20\nac-20-13 ::= [\\n] | [^\\n] ac-20\nroot ::= tool-call-root\nspace ::= | \" \" | \"\\n\"{1,2} [ \\t]{0,20}\ntool-0 ::= (\"<function=\" \"list_file\" \">\\n\") (tool-0-arg-0) \"</function>\\n\"\ntool-0-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-1 ::= (\"<function=\" \"copy_file\" \">\\n\") tool-1-args-3 \"</function>\\n\"\ntool-1-arg-0 ::= (\"<parameter=\" \"src\" \">\\n\") xml-arg-string\ntool-1-arg-1 ::= (\"<parameter=\" \"dst\" \">\\n\") xml-arg-string\ntool-1-args-1 ::= tool-1-arg-0\ntool-1-args-2 ::= tool-1-arg-1\ntool-1-args-3 ::= tool-1-arg-0 tool-1-args-2 | tool-1-arg-1 tool-1-args-1\ntool-2 ::= (\"<function=\" \"verify_file\" \">\\n\") (tool-2-arg-0) \"</function>\\n\"\ntool-2-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-3 ::= (\"<function=\" \"delete_file\" \">\\n\") (tool-3-arg-0) \"</function>\\n\"\ntool-3-arg-0 ::= (\"<parameter=\" \"path\" \">\\n\") xml-arg-string\ntool-call ::= \"<tool_call>\\n\" (tool-0 | tool-1 | tool-2 | tool-3) \"</tool_call>\" space\ntool-call-root ::= (tool-call tool-call*)?\nxml-arg-string ::= ac-20\n",
+              "grammar_lazy": true,
+              "grammar_triggers": [
+                {
+                  "type": 0,
+                  "value": "<tool_call>",
+                  "token": "<REDACTED_SECRET>"
+                }
+              ],
+              "preserved_tokens": [
+                12,
+                13,
+                14,
+                15
+              ],
+              "chat_format": "peg-native",
+              "reasoning_format": "deepseek",
+              "reasoning_in_content": false,
+              "generation_prompt": "<|im_start|>assistant\n<think>\n",
+              "samplers": [
+                "penalties",
+                "dry",
+                "top_n_sigma",
+                "top_k",
+                "typ_p",
+                "top_p",
+                "min_p",
+                "xtc",
+                "temperature"
+              ],
+              "speculative.types": "none",
+              "timings_per_token": false,
+              "post_sampling_probs": false,
+              "backend_sampling": false,
+              "lora": []
+            },
+            "prompt": "<|im_start|>system\n# Tools\n\nYou have access to the following functions:\n\n<tools>\n<function>\n<name>list_file</name>\n<description>Perform the list_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n<function>\n<name>copy_file</name>\n<description>Perform the copy_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>src</name>\n<type>string</type>\n</parameter>\n<parameter>\n<name>dst</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"src\", \"dst\"]</required>\n</parameters>\n</function>\n<function>\n<name>verify_file</name>\n<description>Perform the verify_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n<function>\n<name>delete_file</name>\n<description>Perform the delete_file operation in the task fixture.</description>\n<parameters>\n<parameter>\n<name>path</name>\n<type>string</type>\n</parameter>\n<additionalProperties>False</additionalProperties>\n<required>[\"path\"]</required>\n</parameters>\n</function>\n</tools>\n\nIf you choose to call a function ONLY reply in the following format with NO suffix:\n\n<tool_call>\n<function=example_function_name>\n<parameter=example_parameter_1>\nvalue_1\n</parameter>\n<parameter=example_parameter_2>\nThis is the value for the second parameter\nthat can span\nmultiple lines\n</parameter>\n</function>\n</tool_call>\n\n<IMPORTANT>\nReminder:\n- Function calls MUST follow the specified format: an inner <function=...></function> block must be nested within <tool_call></tool_call> XML tags\n- Required parameters MUST be specified\n- You may provide optional reasoning for your function call in natural language BEFORE the function call, but NOT after\n- If there is no function call available, answer the question like normal with your current knowledge and do not tell the user about function calls\n</IMPORTANT><|im_end|>\n<|im_start|>user\nMove drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.<|im_end|>\n<|im_start|>assistant\n<think></think>\n<tool_call>\n<function=copy_file>\n<parameter=src>\ndrafts/report.csv\n</parameter>\n<parameter=dst>\narchive/report.csv\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"copied\": true}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think></think>\n<tool_call>\n<function=verify_file>\n<parameter=path>\narchive/report.csv\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"matches_source\": true}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think></think>\n<tool_call>\n<function=delete_file>\n<parameter=path>\ndrafts/report.csv\n</parameter>\n</function>\n</tool_call>\n<|im_end|>\n<|im_start|>user\n<tool_response>\n{\"deleted\": true}\n</tool_response>\n<|im_end|>\n<|im_start|>assistant\n<think>\n",
+            "has_new_line": true,
+            "truncated": false,
+            "stop_type": "eos",
+            "stopping_word": "",
+            "tokens_cached": 882,
+            "timings": {
+              "cache_n": 724,
+              "prompt_n": 55,
+              "prompt_ms": 258.107,
+              "prompt_per_token_ms": 4.692854545454546,
+              "prompt_per_second": 213.08992007190813,
+              "predicted_n": 104,
+              "predicted_ms": 705.573,
+              "predicted_per_token_ms": 6.850223300970874,
+              "predicted_per_second": 145.98064268332263
+            }
+          },
+          "timings": {
+            "cache_n": 724,
+            "prompt_n": 55,
+            "prompt_ms": 258.107,
+            "prompt_per_token_ms": 4.692854545454546,
+            "prompt_per_second": 213.08992007190813,
+            "predicted_n": 104,
+            "predicted_ms": 705.573,
+            "predicted_per_token_ms": 6.850223300970874,
+            "predicted_per_second": 145.98064268332263
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Move drafts/report.csv to archive/report.csv. Tools: list_file(path), copy_file(src,dst), verify_file(path), delete_file(path). Copy and verify the destination before deleting the source. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "copy_file",
+              "arguments": "{\"src\":\"drafts/report.csv\",\"dst\":\"archive/report.csv\"}"
+            },
+            "id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS",
+        "content": "{\"copied\": true}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "verify_file",
+              "arguments": "{\"path\":\"archive/report.csv\"}"
+            },
+            "id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2",
+        "content": "{\"matches_source\": true}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "delete_file",
+              "arguments": "{\"path\":\"drafts/report.csv\"}"
+            },
+            "id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz"
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz",
+        "content": "{\"deleted\": true}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "copy_file",
+          "src": "drafts/report.csv",
+          "dst": "archive/report.csv"
+        },
+        "result": {
+          "copied": true
+        },
+        "ok": true,
+        "tool_call_id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS"
+      },
+      {
+        "action": {
+          "tool": "verify_file",
+          "path": "archive/report.csv"
+        },
+        "result": {
+          "matches_source": true
+        },
+        "ok": true,
+        "tool_call_id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2"
+      },
+      {
+        "action": {
+          "tool": "delete_file",
+          "path": "drafts/report.csv"
+        },
+        "result": {
+          "deleted": true
+        },
+        "ok": true,
+        "tool_call_id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2798,
+      "completion_tokens": 484
+    },
+    "timings": [
+      {
+        "cache_n": 609,
+        "prompt_n": 4,
+        "prompt_ms": 183.129,
+        "prompt_per_token_ms": 45.78225,
+        "prompt_per_second": 21.84252630659262,
+        "predicted_n": 163,
+        "predicted_ms": 1116.939,
+        "predicted_per_token_ms": 6.894685185185185,
+        "predicted_per_second": 145.0392546056678
+      },
+      {
+        "cache_n": 609,
+        "prompt_n": 69,
+        "prompt_ms": 283.073,
+        "prompt_per_token_ms": 4.1025072463768115,
+        "prompt_per_second": 243.75337810388135,
+        "predicted_n": 110,
+        "predicted_ms": 748.898,
+        "predicted_per_token_ms": 6.8706238532110095,
+        "predicted_per_second": 145.54719067216095
+      },
+      {
+        "cache_n": 674,
+        "prompt_n": 54,
+        "prompt_ms": 259.395,
+        "prompt_per_token_ms": 4.803611111111111,
+        "prompt_per_second": 208.17671890360265,
+        "predicted_n": 107,
+        "predicted_ms": 717.222,
+        "predicted_per_token_ms": 6.7662452830188675,
+        "predicted_per_second": 147.7924547769031
+      },
+      {
+        "cache_n": 724,
+        "prompt_n": 55,
+        "prompt_ms": 258.107,
+        "prompt_per_token_ms": 4.692854545454546,
+        "prompt_per_second": 213.08992007190813,
+        "predicted_n": 104,
+        "predicted_ms": 705.573,
+        "predicted_per_token_ms": 6.850223300970874,
+        "predicted_per_second": 145.98064268332263
+      }
+    ],
+    "prompt_tps": 2844.3515529061588,
+    "decode_tps": 147.17365761812206
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "copy_file",
+        "src": "drafts/report.csv",
+        "dst": "archive/report.csv"
+      },
+      "result": {
+        "copied": true
+      },
+      "ok": true,
+      "tool_call_id": "bmnD4ZLtkq0iFYCWHW1jDatpagylD0eS"
+    },
+    {
+      "action": {
+        "tool": "verify_file",
+        "path": "archive/report.csv"
+      },
+      "result": {
+        "matches_source": true
+      },
+      "ok": true,
+      "tool_call_id": "LyJ6FCOK1tnpsoBOvXaGej2v4AAxPga2"
+    },
+    {
+      "action": {
+        "tool": "delete_file",
+        "path": "drafts/report.csv"
+      },
+      "result": {
+        "deleted": true
+      },
+      "ok": true,
+      "tool_call_id": "Fhq10laIXC9MUJVSQlVl8ivbygmk25uz"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2798,
+    "completion_tokens": 484
+  },
+  "success": 0,
+  "failure_class": "tool_action_or_final_mismatch",
+  "failure_detail": null
+}
