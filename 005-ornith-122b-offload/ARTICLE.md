@@ -4,6 +4,8 @@
 
 CUDA Recipes 005 · 2026-10-21 · [Study repository](https://github.com/majorminorlabs/cuda-recipes/tree/main/005-ornith-122b-offload)
 
+![How Ornith-1.5-122B runs on a 24GB RTX 3090: the CPU computes offloaded routed experts with their weights in system RAM; attention, the shared expert, and remaining routed experts run on the GPU. Activations cross PCIe. Only 8 of 256 routed experts are selected per token in each MoE layer. Schematic.](https://majorminor.xyz/social/research/cuda-recipes-005.png)
+
 Ornith released Ornith-1.5-122B on October 20. It's a 125B-parameter mixture-of-experts model with an estimated 9 to 10B parameters active per token, and the model card says it serves on one 80GB GPU. Most people don't have one of those. Plenty of people have a 3090.
 
 The model doesn't fit in 24GB at any quant worth using. The smallest Unsloth file is 40 GB. But only a small slice of the weights is touched for each token, which is the setup that made [CUDA Recipes 004](https://majorminor.xyz/research/cuda-recipes-004) work: keep attention and the shared expert on the GPU, park the routed experts in system RAM, and let llama.cpp's `--n-cpu-moe` decide how many layers of experts live where.
@@ -63,15 +65,13 @@ Ornith-1.5-122B is a reasoning model and thinks by default. For quick answers, p
 
 The first question with any aggressive quant is whether it's still the same model.
 
-| Quant | Perplexity | vs BF16 reference | Tasks |
-| --- | ---: | ---: | ---: |
-| BF16 (AtomicChat) | 5.7625 ± 0.0358 | | |
-| UD-Q4_K_XL | 5.7746 ± 0.0359 | +0.21% | 18/20 |
-| UD-Q3_K_XL | 5.8312 ± 0.0363 | +1.19% | 18/20 |
+![Perplexity with reported error bars: BF16 reference 5.7625, Q4 5.7746, Q3 5.8312. The horizontal axis shows a detail scale.](https://majorminor.xyz/research/cuda-recipes-005/charts/fig2-perplexity.png)
+
+*AtomicChat's BF16 result is an external reference on the same held-out set. Whiskers show the reported ± error, not a new confidence-interval calculation.*
 
 Q4 is inside the error bars of the reference. Q3 drifts a little, about what you'd expect from losing another bit per weight.
 
-The task set is 20 short prompts with exact answers: arithmetic, string handling, a few Python outputs. Both quants missed the same two. One was reversing the string "lighthouse", which models of every size get wrong because of how text is tokenized. The other was answering "150 miles" when the expected answer was "150", which is a formatting miss rather than a wrong answer. We scored it as a miss anyway.
+Both quants scored 18/20 on the task set: short prompts with exact answers covering arithmetic, string handling, and a few Python outputs. They missed the same two. One was reversing the string "lighthouse", which models of every size get wrong because of how text is tokenized. The other was answering "150 miles" when the expected answer was "150", which is a formatting miss rather than a wrong answer. We scored it as a miss anyway.
 
 This is a sanity check, not a benchmark. It tells you the quant isn't broken. For how Unsloth's and other quants compare in detail, AtomicChat has published KL divergence and top-1 agreement across a dozen files on the [AtomicChat/Ornith-1.5-122B-GGUF](https://huggingface.co/AtomicChat/Ornith-1.5-122B-GGUF) card.
 
@@ -93,17 +93,11 @@ The 257 tok/s prefill at 38 is not a typo, and it isn't a property of that setti
 
 Decode had the same problem in a milder form. The Q4 configuration we recommend, 38 layers on CPU at 16 threads, decoded at 20.0 tok/s in the thread sweep and 12.2 tok/s in the depth sweep an hour later. Same pod, same command, same empty context.
 
-That's why the headline is a range. On this host, Q4 decoded at 12 to 22 tok/s, and the 32K median of 15.5 sits inside that. It also explains a result that looks backwards in the depth table:
+That's why the headline is a range. On this host, Q4 decoded at 12 to 22 tok/s, and the 32K median of 15.5 sits inside that. It also explains the apparent speed increase with context depth:
 
-| Quant | Context | Prefill tok/s | Decode tok/s |
-| --- | ---: | ---: | ---: |
-| Q4_K_XL | 0 | 455 | 12.2 |
-| Q4_K_XL | 32K | 548 | 15.5 |
-| Q4_K_XL | 64K | 568 | 21.5 |
-| Q4_K_XL | 128K | 416 (1 run) | 21.2 (1 run) |
-| Q3_K_XL | 0 | 353 | 28.2 |
-| Q3_K_XL | 32K | 311 | 26.3 |
-| Q3_K_XL | 64K | 294 | 25.3 |
+![Decode and prefill at each context depth, with unconnected measurements and repetition min–max whiskers. Q4 varies substantially across runs; the 128K point is one run at a different offload setting.](https://majorminor.xyz/research/cuda-recipes-005/charts/fig3-speed-vs-context.png)
+
+*Points are separate measurements, with medians and min–max over three repetitions. The 128K diamond is one Q4 run with 40 CPU MoE layers instead of 38. Q3 uses 36.*
 
 Q4 shouldn't get faster as context grows, and it didn't really. The run-to-run swing on this host was bigger than the cost of the context. The hybrid architecture is part of why that's possible: with only 12 attention layers holding a cache, going from empty to 128K costs little, so host noise dominates.
 
@@ -115,20 +109,13 @@ Q3 behaved the way you'd expect. It slowed slightly with depth and stayed within
 
 Inside the container, `nproc` reported 256 CPUs: the host's two EPYC 7763s with SMT. Our pod was allocated 32. With no `-t` flag, llama.cpp chose 128 threads.
 
-| Threads | Prefill tok/s | Decode tok/s |
-| ---: | ---: | ---: |
-| 8 | 772 | 17.6 |
-| **16** | 762 | **20.0** |
-| 24 | 758 | 16.9 |
-| 30 | 255 | 18.4 |
-| 32 | 763 | 15.9 |
-| Default (128) | 447 | 2.5 |
+![Q4 decode by thread count: 17.6 tok/s at 8 threads, 20.0 at 16, 16.9 at 24, 18.4 at 30, 15.9 at 32, and 2.5 at the default 128.](https://majorminor.xyz/research/cuda-recipes-005/charts/fig4-thread-trap.png)
 
-Q4, 38 layers on CPU, empty context, median of three runs.
+*Q4, 38 CPU MoE layers, empty context. Bars show medians; whiskers show min–max over three repetitions.*
 
-Decode at the default was 2.5 tok/s. At 16 threads it was 20.0. Same model, same settings, one flag. Anyone trying this on a cloud pod and getting single digits should check this first.
+The default was much slower than any explicit setting we tried. Anyone trying this on a cloud pod and getting single digits should check this first.
 
-Prefill barely cares between 8 and 32 threads (the 30-thread row is one of the outliers above). Decode peaked at 16. We'd treat 16 vs 32 as within the noise and the default as the real cliff.
+Prefill barely cares between 8 and 32 threads: around 758–772 tok/s, apart from the 30-thread outlier at 255. The default reached 447. Decode peaked at 16. We'd treat 16 vs 32 as within the noise and the default as the real cliff. The complete thread sweep is in [RESULTS.md](https://github.com/majorminorlabs/cuda-recipes/blob/main/005-ornith-122b-offload/RESULTS.md#q4-thread-sweep).
 
 To find your real core count inside a container:
 

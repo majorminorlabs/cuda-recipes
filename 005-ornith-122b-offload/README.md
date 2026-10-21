@@ -58,6 +58,8 @@ For Q4 perplexity, use the same offload and thread settings with `llama-perplexi
 
 Full sweeps, repetitions, resource peaks, task failures, and MTP counts are in [RESULTS.md](RESULTS.md).
 
+The [illustrated article](https://majorminor.xyz/research/cuda-recipes-005) explains CPU expert offload and charts quality, context behavior, and the thread-count cliff. [Download the main PNG](https://majorminor.xyz/social/research/cuda-recipes-005.png).
+
 ## Caveats
 
 - Step 8's Q3 offload sweep, repeating step 4 at `ncmoe=32`, crashed `llama-bench` during CUDA workspace allocation at 15:27:59 CDT; no published performance or resource measurement uses that run.
