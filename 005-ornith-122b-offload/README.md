@@ -6,12 +6,16 @@ Rented 1x RTX 3090 24GB + 32 vCPU AMD EPYC 7763, 125 GB RAM on RunPod Secure Clo
 
 ## Reader recipe card
 
-| GPU and host RAM | Quant | CPU MoE layers | Threads | Context | Measured 32K decode |
-| --- | --- | ---: | ---: | ---: | ---: |
-| 24 GB GPU + 64 GB RAM | Q3_K_XL | 36 | 16 | 32K | 26.2562 tok/s |
-| 24 GB GPU + 128 GB RAM | Q4_K_XL | 38 | 16 | 32K | 15.4985 tok/s |
+| GPU and host RAM | Quant | CPU MoE layers | Threads | Context | Measured 32K decode | Measured server peak RAM |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| 24 GB GPU + 64 GB RAM | Q3_K_XL | 36 | 16 | 32K | 26.2562 tok/s | — |
+| 24 GB GPU + 128 GB RAM | Q4_K_XL | 38 | 16 | 32K | 15.4985 tok/s | — |
+| 32 GB GPU + 64 GB RAM | Q4_K_XL | 33 | 14 | 32K | 30.416 tok/s | 50.40 GiB |
+| 32 GB GPU + 64 GB RAM | Q3_K_XL | 27 | 14 | 32K | 30.241 tok/s | 30.23 GiB |
 
-The Q3 PPL run peaked at 55.82 GiB process RSS. This recipe was not verified on a 64 GB host; the benchmark pod had 125 GB allocated.
+The Q3 PPL run peaked at 55.82 GiB process RSS. The 3090 recipe was not verified on a 64 GB host; its benchmark pod had 125 GB allocated. A dash in the server-RSS column means no matching 32K serving-server RSS was recorded for that recipe.
+
+For the RTX 5090 measurements, see [RESULTS_5090.md](RESULTS_5090.md).
 
 ## Setup
 
