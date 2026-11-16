@@ -6,6 +6,7 @@ Each folder is one study: the frozen task suite, validation scripts, sanitized t
 
 | Study | Question | Headline |
 |---|---|---|
+| [006-edge0-145b](006-edge0-145b/) | How fast does Edge0-145B Q3_K run on one RTX 3090? | 48.6 tok/s median chat decode, 23,929 MiB peak VRAM, and 87.4 GiB peak pod RAM in timed trials. |
 | [004-small-card-offload](004-small-card-offload/) | How does Bolt run with 8–16GB of VRAM when experts are offloaded to CPU RAM? | Fits 128K at capped 8/12/16GB; offloaded decode is CPU-bound and host-load-sensitive. |
 | [001-24gb-compression](001-24gb-compression/) | Does a native 2-bit 74B mixture-of-experts model outperform a 27B Q4_K_M model on one 24GB card? | Nemotron decoded about 2x faster but wrote about 1.5x more tokens per task, so median time to a finished task was a tie. Qwen passed more strict tasks on both GPUs, and the gap was concentrated in tool calling. |
 | [002-context-ceiling](002-context-ceiling/) | How much context fits on a 24GB RTX 3090, and what does it cost in speed? | pending |
