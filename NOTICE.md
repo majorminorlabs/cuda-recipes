@@ -5,3 +5,5 @@
 - llama.cpp is MIT-licensed. Its exact source revision and CUDA build flags are recorded in the runtime manifest after deployment.
 - Edge0-145B Q3_K is distributed under the Edge0 Community Model License 1.0 with a Qwen license notice. The two prefill request bodies use fixtures from the MIT-licensed Edge0 v0.2.0 Strata prompt bundle, credited in the study.
 - Model weights, provider credentials, pod identifiers, host/network details, and raw operational traces are not included in this repository.
+
+- CUDA Recipes 008 references Inkling 2 Mini and Unsloth/AtomicChat GGUF artifacts. Consult their upstream model cards and artifact licenses; no model weights or release binaries are redistributed. Bundled Anton and IBM Plex Mono fonts retain their included SIL Open Font License notices.
