@@ -1,7 +1,8 @@
 #!/bin/sh
 set -eu
 cd "$(git rev-parse --show-toplevel)"
-python3 - <<'PY'
+push_input=$(cat)
+python3 - "$push_input" <<'PY'
 import re, subprocess, sys
 
 patterns = {
@@ -25,7 +26,8 @@ staged=subprocess.check_output(['git','diff','--cached','--name-only','--diff-fi
 for path in filter(None,staged):
     inspect(path,subprocess.run(['git','show',':'+path],stdout=subprocess.PIPE,stderr=subprocess.DEVNULL))
 has_outgoing=False
-for line in sys.stdin:
+for line in sys.argv[1].splitlines():
+    if not line.strip(): continue
     has_outgoing=True
     local_ref, local_sha, remote_ref, remote_sha = line.strip().split()
     if set(local_sha) == {'0'}:
@@ -33,8 +35,12 @@ for line in sys.stdin:
     if set(remote_sha) == {'0'}:
         base = subprocess.run(['git','merge-base',local_sha,'origin/main'],capture_output=True,text=True)
         if base.returncode:
-            print(f'FAIL: cannot find review base for {local_ref}',file=sys.stderr); sys.exit(1)
-        remote_sha=base.stdout.strip()
+            parent=subprocess.run(['git','rev-parse',f'{local_sha}^'],capture_output=True,text=True)
+            if parent.returncode:
+                print(f'FAIL: cannot find review base for {local_ref}',file=sys.stderr); sys.exit(1)
+            remote_sha=parent.stdout.strip()
+        else:
+            remote_sha=base.stdout.strip()
     changed=subprocess.check_output(['git','diff','--name-only','--diff-filter=ACMRT',remote_sha,local_sha,'-z']).decode(errors='surrogateescape').split('\0')
     for path in filter(None,changed):
         blob=subprocess.run(['git','show',f'{local_sha}:{path}'],stdout=subprocess.PIPE,stderr=subprocess.DEVNULL)
