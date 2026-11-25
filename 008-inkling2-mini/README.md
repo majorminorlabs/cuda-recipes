@@ -6,6 +6,24 @@ Default batch settings failed at large configured contexts. Reducing batch/ubatc
 
 ![Base UD-Q4_K_M generation and filled-context decode on an RTX 3090. Display labels are rounded; exact values are in the tables.](CHARTS/overview.png)
 
+## Update 2026-11-24: DSpark speculative decoding
+
+A later study tested the same base UD-Q4_K_M file in `llama-server` with Unsloth's DSpark drafter on one RTX 3090. Full method, tables and data are in [dspark-3090/](dspark-3090/). The original measurements below are unchanged.
+
+Each ratio divides by a no-drafter arm on the **same build**, sampler and length, never by the 59.106860 tok/s figure above. Requests generated a fixed 128 or 1024 tokens with EOS suppressed; four prompts, three repetitions each, 336 requests in total. Means are of 12 request rates, rounded here.
+
+| Build | Sampler, tokens | Off tok/s | Fastest tested drafter | On tok/s | Ratio |
+|---|---|---:|---|---:|---:|
+| Unsloth `b12675-mix-d14fe45` | greedy, 128 | 81.08 | default 0.50 GB, n-max 3 | 89.57 | 1.105 |
+| Unsloth `b12675-mix-d14fe45` | greedy, 1024 | 79.20 | default 0.50 GB, n-max 3 | 93.23 | 1.177 |
+| Unsloth `b12675-mix-d14fe45` | temp 1, 128 | 71.88 | default 0.50 GB, n-max 2 | 74.24 | 1.033 |
+| Unsloth `b12675-mix-d14fe45` | temp 1, 1024 | 70.51 | default 0.50 GB, n-max 2 (only setting tested) | 72.84 | 1.033 |
+| Unsloth `b12675-mix-d14fe45` | greedy, 128 | 81.08 | old 0.40 GB file, n-max 2 (optional) | 93.15 | 1.149 |
+| Mainline `33aeb17` | greedy, 128 | 59.83 | n-max 2 | 79.72 | 1.332 |
+| Mainline `33aeb17` | greedy, 1024 | 58.74 | n-max 5 (only setting tested) | 84.90 | 1.445 |
+
+Gains depended on the prompt. The B-tree explanation prompt slowed down in every Unsloth greedy drafter cell, and some temperature 1 prompt and length combinations slowed on both builds. Greedy output text was not bit-identical with drafting on (12 of 180 greedy pairs had matching hashes). No quality evaluation was run.
+
 ## Measured rates
 
 | Artifact | pp512 tok/s | tg128 tok/s | 128K F16, b256/ub128 | 256K Q8, b64/ub32 |
@@ -30,6 +48,7 @@ Default batch settings failed at large configured contexts. Reducing batch/ubatc
 | [provenance.json](provenance.json) | Source/archive verification and provisional-run status |
 | [CHARTS](CHARTS/) | Overview and decode-depth PNG/SVG graphics, renderer inputs and provenance |
 | [VALIDATION.md](VALIDATION.md) | Package verification record |
+| [dspark-3090/](dspark-3090/) | 2026-11-24 DSpark drafter update: method, 336 requests, logs, telemetry and validator |
 
 ## Findings
 

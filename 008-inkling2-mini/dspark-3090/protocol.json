@@ -1,0 +1,57 @@
+{
+  "context": 16384,
+  "threads": 8,
+  "batch": 2048,
+  "ubatch": 512,
+  "kv": [
+    "f16",
+    "f16"
+  ],
+  "flash_attention": "on",
+  "parallel": 1,
+  "repetitions": 3,
+  "generation_lengths": [
+    128,
+    1024
+  ],
+  "sampling": {
+    "greedy": {
+      "temperature": 0,
+      "top_k": 1,
+      "top_p": 1,
+      "min_p": 0
+    },
+    "default": {
+      "temperature": 1,
+      "top_k": 0,
+      "top_p": 1,
+      "min_p": 0
+    }
+  },
+  "seeds": [
+    4242,
+    4243,
+    4244
+  ],
+  "cache_prompt": false,
+  "ignore_eos": true,
+  "ignore_eos_reason": "Fixed-length decode throughput workload: generate exactly the requested number of tokens in both arms, including when EOS would otherwise end the response. These are not organic completion-length measurements.",
+  "order": "required 128-token off/on nmax2 for both samplers; greedy 128 sweep 1,3,5,7 (reuse nmax2); 1024 off/on nmax2 both samplers if primary healthy; secondary mainline off/on nmax5 both samplers at128; optional old drafter and 8K not required",
+  "comparison": "Paired prompt, seed, length, sampler, build, target GGUF and flags; only drafter switches differ. Fresh server per arm/sampling/length setting; cache_prompt false for each request. Report three runs per prompt and cell, plus per-prompt means and aggregate equal-weight mean, never merge different builds.",
+  "tasks": [
+    "01-merge",
+    "02-btree",
+    "03-refactor",
+    "04-go-retries"
+  ],
+  "additional_cells": {
+    "reason": "The required sweep selected nmax3; time/balance permit the user-authorized optional tests. Keep these exploratory.",
+    "additional_cells": [
+      "Unsloth greedy1024 nmax3",
+      "Unsloth default128 nmax3",
+      "Old drafter greedy128 nmax2 and3"
+    ],
+    "secondary": "Matched mainline off/on nmax5 for both sampling modes at128 and1024; greedy128 sweep1,2,3,7 in addition to5 if build/load succeeds",
+    "no_prompt_or_primary_protocol_changes": true
+  }
+}
