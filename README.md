@@ -6,6 +6,7 @@ Each folder is one study: the frozen task suite, validation scripts, sanitized t
 
 | Study | Question | Headline |
 |---|---|---|
+| [009-ternary-bonsai-25-27b](009-ternary-bonsai-25-27b/) | How does Ternary Bonsai 2.5 27B compare with Qwen3.8 27B on one RTX 3090? | 81/120 strict passes plain and 79/120 with MTP, versus the reused Qwen result of 89/120; PTQ1 plain reached 94.536232 tok/s in the fresh Prism-build tg128 comparison. |
 | [008-inkling2-mini](008-inkling2-mini/) | How does Inkling 2 Mini run on a 24GB RTX 3090? | About 59 tok/s, with verified filled-context decode near 36.7 tok/s at 128K and 25 tok/s at 256K. |
 | [006-edge0-145b](006-edge0-145b/) | How fast does Edge0-145B Q3_K run on one RTX 3090? | 48.6 tok/s median chat decode, 23,929 MiB peak VRAM, and 87.4 GiB peak pod RAM in timed trials. |
 | [004-small-card-offload](004-small-card-offload/) | How does Bolt run with 8–16GB of VRAM when experts are offloaded to CPU RAM? | Fits 128K at capped 8/12/16GB; offloaded decode is CPU-bound and host-load-sensitive. |
