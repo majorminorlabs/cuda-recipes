@@ -1,10 +1,10 @@
-# Phase 0 scripts and pod pre-flight
+# Phase 0 scripts and host pre-flight
 
 Every script reads `DATA/study-config.json`. The load and bench runners write exactly the columns in `DATA/SCHEMA.md`. Result rows are saved as work completes; private run-clock state and raw selected load-log lines go only under `_private/`.
 
-## First commands on a fresh pod
+## First commands on a fresh host
 
-Run the hash check first to start the shared 0.9-GPU-hour clock. On a new pod, use `--reset-budget-window`; do not use that option again during the same run.
+Run the hash check first to start the shared 0.9-GPU-hour clock. On a new host, use `--reset-budget-window`; do not use that option again during the same run.
 
 ```sh
 python3 scripts/verify_gguf.py --model-dir <GGUF_DIRECTORY> --reset-budget-window
@@ -28,7 +28,7 @@ The load sweep proceeds by model and ascending context: 16,384 anchor, then conf
 
 The bench runner reads each model's marked ceiling from `load-results.csv`. It runs depth 0, 65,536 and 131,072 as eligible, then the models' `ceiling90` depths last. A depth is skipped when `depth + 512 + 128` exceeds that model's ceiling. Each depth has its own llama-bench invocation and VRAM sampler; repetitions are 3 at zero and 1 above zero. The hard-stop guard projects the next invocation and stops at 0.9 GPU-hour, or skips a `ceiling90` invocation when its projection crosses that limit. Completed bench rows are written after each invocation.
 
-The shared clock starts with the first hash-check command and persists under `_private/phase0-budget.json` across scripts. `sample_vram.py` is a standalone 0.4-second cadence sampler and also exits at the configured hard stop. Stop the allocated pod after the scripts exit; the scripts cannot stop the provider instance itself.
+The shared clock starts with the first hash-check command and persists under `_private/phase0-budget.json` across scripts. `sample_vram.py` is a standalone 0.4-second cadence sampler and also exits at the configured hard stop. Stop the allocated host after the scripts exit; the scripts cannot stop the provider instance itself.
 
 ## Completed-run package tools
 

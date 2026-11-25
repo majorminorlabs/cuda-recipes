@@ -5,6 +5,6 @@
 - The RTX 5090 ran faster. Median complete-trial latency for Nemotron/Qwen was **3.44/3.47 s** versus **5.68/5.37 s** on RTX 3090. Decode rates were **148.3/72.5 tok/s** versus **85.2/41.5 tok/s**.
 - Paired binary outcomes agreed on **207/240 (86.25%)** assignments: 21 were 3090-only successes, 12 were 5090-only successes. Agreement does not imply identical text or tool traces.
 - Peak measured VRAM was **21,339/16,481 MiB** (Nemotron/Qwen) on RTX 3090 and **21,865/16,514 MiB** on RTX 5090. Peak container RAM was **47.52/47.26 GiB** and **46.87/47.55 GiB**, respectively.
-- Estimated compute for the two scored comparison runs was **$0.36 + $0.59 = $0.95** across **1.218 allocated GPU-hours**. The provider did not return a posted billing row for the corrected 5090 pod; this is a rate-times-uptime estimate, not an invoice.
+- Estimated compute for the two scored comparison runs was **$0.36 + $0.59 = $0.95** across **1.218 allocated GPU-hours**. The provider did not return a posted billing row for the corrected 5090 host; this is a rate-times-uptime estimate, not an invoice.
 
 Evidence: `DATA/paired-comparison.json`, paired run CSV and canonical per-GPU result JSON. See `RESULTS.md` for complete breakdowns and `LIMITATIONS.md` for interpretation.

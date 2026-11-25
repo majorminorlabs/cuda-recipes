@@ -7,4 +7,4 @@
 - PPL was measured on host 0 only. It measures the same model math and is expected to be host-independent, but this study did not repeat PPL on Host C.
 - Cloud host CPU slices were shared and variable; Host C is the desktop-class comparison host. The host-to-host speed differences should not be read as model changes.
 - llama-bench fill depth is synthetic; real prompts and concurrent workloads may differ.
-- compute host and Vast costs use recorded provider list rates and runtime estimates, not invoices.
+- compute host and Host C costs use recorded provider list rates and runtime estimates, not invoices.

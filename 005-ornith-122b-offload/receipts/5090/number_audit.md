@@ -33,7 +33,7 @@ Every numeric claim in blocks A–D was checked against the listed local evidenc
 | Three 32K Q4 invocations, at least 10 minutes apart; decode 28.2/29.7/30.4 and prefill 562.7–564.0 | `RESULTS_5090.md`, Q4 variance table; `logs/5090/variance_q4_schedule.txt` and each JSONL `test_time`. First invocation 01:58:29Z, second 02:21:19Z, third 02:33:54Z. |
 | 3090 decode spread 12–22 tok/s | Existing `RESULTS.md`, Q4 repeated runs: 12.2471–21.6680 tok/s, rounded to whole tok/s. |
 | Default thread count 64; 6.6 tok/s; `-t 14`; 13.6 CPU-equivalents | `RESULTS_5090.md`, Q4 thread sweep (default picked 64 and decoded at 6.6321); `receipts/5090/cpu.max.txt` and `T_derivation.txt` (quota 13.6, rounded T=14). |
-| Q3 quality within 1%; Q3 RAM about 30 GiB; Q4 RAM tight on 3090 | Existing `RESULTS.md`: Q3 PPL +1.19%, Q4 PPL +0.21%, Q4 55.13 GiB on the 125 GB pod; `RESULTS_5090.md`: Q3 server RSS 30.23 GiB. |
+| Q3 quality within 1%; Q3 RAM about 30 GiB; Q4 RAM tight on 3090 | Existing `RESULTS.md`: Q3 PPL +1.19%, Q4 PPL +0.21%, Q4 55.13 GiB on the 125 GB host; `RESULTS_5090.md`: Q3 server RSS 30.23 GiB. |
 
 ## Block C
 
@@ -46,7 +46,7 @@ Every numeric claim in blocks A–D was checked against the listed local evidenc
 
 | Claim | Source and trace |
 | --- | --- |
-| 64 GB recommendation was unverified on 3090; 3090 Q4 peak 55.1 GiB | Existing `RESULTS.md` and `README.md` state 125 GB pod and 55.13 GiB measured RSS; original `ARTICLE.md` says the 64 GB claim was unverified. |
+| 64 GB recommendation was unverified on 3090; 3090 Q4 peak 55.1 GiB | Existing `RESULTS.md` and `README.md` state 125 GB host and 55.13 GiB measured RSS; original `ARTICLE.md` says the 64 GB claim was unverified. |
 | RTX 5090 comparison host: Xeon Gold 6530, 14 threads; 3090 host: EPYC 7763, 16 threads | `receipts/5090/pod_details.txt`; `receipts/5090/T.txt`; existing `README.md`/`RESULTS.md` host line and 3090 Q4 configuration. |
 | 2.8× RAM bandwidth | Same calculation and sources as Block B above. |
 | 5090 cost row: about 1.34 h at $1.22/hr, about $1.64; combined total about $3.17 | `receipts/5090/cost.md` gives approximately 1.34 h / $1.64 from screenshot uptime; existing `README.md` gives 3090 total $1.53; $1.53 + $1.64 = $3.17. |

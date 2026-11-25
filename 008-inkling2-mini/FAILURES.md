@@ -12,11 +12,11 @@ The initial 128K-depth captures produced no throughput rows. A long saturated-GP
 
 ## Lost supplemental run
 
-A supplemental Secure Cloud pod completed provisional summaries of 35.384 tok/s base and 35.454 tok/s uncensored at 128K, and 23.640 tok/s base at 256K. The uncensored 256K measurement was still active at the last observation. Connectivity failed; recovery later confirmed the pod no longer existed. Its raw tree was not recovered or transfer-verified.
+A supplemental Secure Cloud host completed provisional summaries of 35.384 tok/s base and 35.454 tok/s uncensored at 128K, and 23.640 tok/s base at 256K. The uncensored 256K measurement was still active at the last observation. Connectivity failed; recovery later confirmed the host no longer existed. Its raw tree was not recovered or transfer-verified.
 
 The operator reported a low-balance termination. Billing evidence did not independently establish that cause. These provisional figures are retained as history in `provenance.json` and are not selected measurements.
 
-A separate RTX 3090 pod reran all four settings, transferring and verifying the evidence before termination. Selected rates are 36.646339 / 36.685906 tok/s at 128K F16 and 24.842185 / 25.018935 tok/s at 256K Q8, base / uncensored. Each point has one repetition. The new host's hardware and cgroup records are separate from the primary host's inventory.
+A separate RTX 3090 host reran all four settings, transferring and verifying the evidence before termination. Selected rates are 36.646339 / 36.685906 tok/s at 128K F16 and 24.842185 / 25.018935 tok/s at 256K Q8, base / uncensored. Each point has one repetition. The new host's hardware and cgroup records are separate from the primary host's inventory.
 
 ## Setup and retention
 

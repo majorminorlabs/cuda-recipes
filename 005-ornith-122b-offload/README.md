@@ -2,7 +2,7 @@
 
 **TL;DR:** At 32K context, Q4_K_XL reached 548.03 tok/s prefill and 15.4985 tok/s decode. Q3_K_XL reached 311.307 tok/s prefill and 26.2562 tok/s decode. Both base quant runs scored 18/20. PPL was 5.7746 for Q4 and 5.8312 for Q3, against the AtomicChat BF16 reference of 5.7625.
 
-allocated 1x RTX 3090 24GB + 32 vCPU AMD EPYC 7763, 125 GB RAM on compute host at $0.53/hr. Total $1.53 over 2.88 hours.
+Hardware: 1x RTX 3090 24GB + 32 vCPU AMD EPYC 7763, 125 GB RAM at $0.53/hr. Total $1.53 over 2.88 hours.
 
 ## Reader recipe card
 
@@ -13,7 +13,7 @@ allocated 1x RTX 3090 24GB + 32 vCPU AMD EPYC 7763, 125 GB RAM on compute host a
 | 32 GB GPU + 64 GB RAM | Q4_K_XL | 33 | 14 | 32K | 30.416 tok/s | 50.40 GiB |
 | 32 GB GPU + 64 GB RAM | Q3_K_XL | 27 | 14 | 32K | 30.241 tok/s | 30.23 GiB |
 
-The Q3 PPL run peaked at 55.82 GiB process RSS. The 3090 recipe was not verified on a 64 GB host; its benchmark pod had 125 GB allocated. A dash in the server-RSS column means no matching 32K serving-server RSS was recorded for that recipe.
+The Q3 PPL run peaked at 55.82 GiB process RSS. The 3090 recipe was not verified on a 64 GB host; its benchmark host had 125 GB allocated. A dash in the server-RSS column means no matching 32K serving-server RSS was recorded for that recipe.
 
 For the RTX 5090 measurements, see [RESULTS_5090.md](RESULTS_5090.md).
 

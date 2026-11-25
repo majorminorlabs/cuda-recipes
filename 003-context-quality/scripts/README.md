@@ -6,7 +6,7 @@
 
 `show_examples.py` prints two `long_64k` examples per task, with exact planted sentences and nearby prose, to inspect before Phase 1.
 
-`pod_preflight.py` is for the configured RTX 3090 pod only. It verifies the downloaded Qwen3.6 GGUF locally by byte size and SHA-256, builds pinned llama.cpp for CUDA architecture 86, records sanitized host/build details, health-gates the server, and measures Qwen3.6 decoding with an approximately 8K prompt. The completed sanitized record is in `DATA/host-build-manifest.json`.
+`pod_preflight.py` is for the configured RTX 3090 host only. It verifies the downloaded Qwen3.6 GGUF locally by byte size and SHA-256, builds pinned llama.cpp for CUDA architecture 86, records sanitized host/build details, health-gates the server, and measures Qwen3.6 decoding with an approximately 8K prompt. The completed sanitized record is in `DATA/host-build-manifest.json`.
 
 `arm_preflight.py` runs three control questions per model with thinking off and saves preflight responses. All models must pass before `run_phase1.py` will start. `run_phase1.py` is for the configured RTX 3090 host only. Run in this order while preserving `_private/phase1-clock.json`:
 

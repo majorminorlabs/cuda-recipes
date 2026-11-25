@@ -8,9 +8,9 @@ Machine-specific paths use `<HOME>` or `<WORKDIR>`. Recorded authentication argu
 
 Original SHA256SUMS records retained with the evidence describe the pre-redaction source files. The supplement SHA256SUMS file describes the added, sanitized copies.
 
-CUDA 003 retains `_private/scratchpad/progress.jsonl` as measurement-only timing evidence at the runner/test path. No pod, account or budget records are included. CUDA 004 `sampler.csv` is the original mixed-width telemetry stream (five- and eight-field records); it parses as CSV and is preserved without padding or rewriting measurement rows.
+CUDA 003 operational timing records and original responses are retained privately and excluded from publication. CUDA 004 `sampler.csv` is the original mixed-width telemetry stream (five- and eight-field records); it parses as CSV and is preserved without padding or rewriting measurement rows.
 
-Reproduction limitation: The historical CUDA 003 test variant depends on dataset/planting-map paths outside its historical directory. Its two dataset identity checks cannot run successfully from that historical copy alone; the current CUDA 003 suite uses the published dataset and the retained timing evidence.
+Reproduction limitation: The historical CUDA 003 test variant depends on dataset/planting-map paths outside its historical directory. Its two dataset identity checks cannot run successfully from that historical copy alone; the current CUDA 003 suite uses the published dataset; operational timing records remain private.
 
 Default pytest discovery is restricted to the runnable public suites in `pytest.ini`. Archived original-run test modules are retained unchanged under `historical/tests/` and are excluded from default discovery. Active checks needing omitted archived inputs have explicit skip reasons. No omitted inputs were added.
 

@@ -8,7 +8,7 @@ Every numeric token on each listed document line is covered by the cited evidenc
 | ---: | --- | --- |
 | 1 | Recipe 005, model 1.5-122B, one RTX 3090 | `receipts/recipe_identity.txt:1`; `receipts/model_source.txt:2`; `receipts/gpu.txt:2` |
 | 3 | 32K Q4/Q3 prefill and decode; task scores; both PPL results and reference | `logs/depth_q4.jsonl:3-4`; `logs/depth_q3.jsonl:3-4`; `logs/score_q4_base.log:21`; `logs/score_q3_base.log:21`; `logs/ppl_q4.log:30`; `logs/ppl_q3.log:30`; `logs/atomicchat_reference.txt:2` |
-| 5 | Pod GPU, CPU, RAM, region, rate, total cost and hours | `receipts/pod_details.txt:2-4`; `receipts/gpu.txt:2`; `receipts/cpu.txt:8`; `receipts/ram_limit.txt:1`; `receipts/T.txt:1`; `receipts/cost_calculation.txt:2-6` |
+| 5 | host GPU, CPU, RAM, region, rate, total cost and hours | `receipts/pod_details.txt:2-4`; `receipts/gpu.txt:2`; `receipts/cpu.txt:8`; `receipts/ram_limit.txt:1`; `receipts/T.txt:1`; `receipts/cost_calculation.txt:2-6` |
 | 9, 11-12 | Recipe-card host/GPU tiers, MoE layers, threads, context, decode rates | `receipts/pod_details.txt:6`; `receipts/gpu.txt:2`; `logs/depth_q3.jsonl:3-4`; `logs/depth_q4.jsonl:3-4`; `logs/depth_q3.time:10`; `logs/depth_q4.time:10` |
 | 14 | Q3 PPL peak RSS, 64 GB target, 125 GB allocation | `logs/ppl_q3.time:10`; `receipts/pod_details.txt:3,6`; `receipts/ram_limit.txt:1` |
 | 18 | Model name and parameter count | `receipts/model_source.txt:2-4`; `logs/depth_q3.jsonl:1`; `logs/depth_q4.jsonl:1` |

@@ -30,7 +30,7 @@ So we measured it on day one. One 3090, plain llama.cpp, two Unsloth quants, abo
 
 ## Update: RTX 5090 (32GB)
 
-Same model, same quants, same llama.cpp build and the same method, on a compute host pod with one RTX 5090 32GB, 16 vCPUs of an Intel Xeon Gold 6530 and 62 GB of RAM ($1.22/hr, about $1.64 total).
+Same model, same quants, same llama.cpp build and the same method,  host with one RTX 5090 32GB, 16 vCPUs of an Intel Xeon Gold 6530 and 62 GB of RAM ($1.22/hr, about $1.64 total).
 
 The extra 8 GB of VRAM holds more expert layers, so fewer sit in system RAM. Q4 went from 38 layers of experts on the CPU to 33, and Q3 from 36 to 27.
 
@@ -43,9 +43,9 @@ The extra 8 GB of VRAM holds more expert layers, so fewer sit in system RAM. Q4 
 
 Median of three runs each. Both quants scored 18/20 on the task set again.
 
-**It fits a 64 GB machine. Measured, not inferred.** This pod's RAM limit was 57.74 GiB. Serving Q4 at 32K context peaked at 50.40 GiB and Q3 at 30.23 GiB, with no RAM-limit kills anywhere in the run. On the 3090, the 64 GB claim was an estimate. With a 32GB card, it's a measurement.
+**It fits a 64 GB machine. Measured, not inferred.** This host's RAM limit was 57.74 GiB. Serving Q4 at 32K context peaked at 50.40 GiB and Q3 at 30.23 GiB, with no RAM-limit kills anywhere in the run. On the 3090, the 64 GB claim was an estimate. With a 32GB card, it's a measurement.
 
-**Q4 decode doubled, but not only because of the GPU.** This host was different. The pod's RAM measured 136,718 MiB/s on the same `sysbench memory` test, about 2.8x the 3090 pod's 48,773 MiB/s. With experts in RAM, decode depends on memory bandwidth as much as on the card. We can't split the 2x between the 5090 and the faster RAM. Read it as "a 5090 on a host with fast RAM".
+**Q4 decode doubled, but not only because of the GPU.** This host was different. The host's RAM measured 136,718 MiB/s on the same `sysbench memory` test, about 2.8x the 3090 host's 48,773 MiB/s. With experts in RAM, decode depends on memory bandwidth as much as on the card. We can't split the 2x between the 5090 and the faster RAM. Read it as "a 5090 on a host with fast RAM".
 
 **Q3 and Q4 now decode at the same speed.** Both sit around 30 tok/s, and Q3 reads prompts about 1.6x faster (889 vs 563 tok/s). That undercuts our 3090 guess that Q3's compression formats were what slowed its prefill. Q3 sped up steadily as layers moved onto the GPU (771 tok/s at 36 layers on CPU, 989 at 27). Q4's prefill barely moved between the two cards, and we don't have a clean explanation for that yet.
 
@@ -53,13 +53,13 @@ On a 5090, pick Q4 for quality (perplexity within 0.2% of BF16) unless your prom
 
 **128K fits.** Q4 at 128K context ran out of GPU memory with 33 layers on CPU and completed at 35: 483 tok/s prefill, 28.2 tok/s decode, 51.6 GiB RAM (one run). Q3 at 27 layers ran out of GPU memory at 64K, so for long context on Q3, raise `--n-cpu-moe`. We didn't test which value works.
 
-**This host was steadier.** Three separate 32K invocations of the Q4 config, 10+ minutes apart, landed at 28.2, 29.7 and 30.4 tok/s decode and 562.7 to 564.0 tok/s prefill. That's much tighter than the 3090 pod's 12 to 22 tok/s spread.
+**This host was steadier.** Three separate 32K invocations of the Q4 config, 10+ minutes apart, landed at 28.2, 29.7 and 30.4 tok/s decode and 562.7 to 564.0 tok/s prefill. That's much tighter than the 3090 host's 12 to 22 tok/s spread.
 
 **The thread trap hit again.** This container showed llama.cpp more CPUs than it was allowed to use. llama.cpp defaulted to 64 threads and decoded at 6.6 tok/s. With `-t 14` (the container's real 13.6-CPU quota, rounded), decode was 29.7 tok/s.
 
 ## Setup
 
-A compute host pod (EU-CZ-1): one RTX 3090 24GB, 32 vCPUs of an AMD EPYC 7763, 125 GB RAM, $0.53/hr.
+A host (EU-CZ-1): one RTX 3090 24GB, 32 vCPUs of an AMD EPYC 7763, 125 GB RAM, $0.53/hr.
 
 - **Model:** [ornith-ai/Ornith-1.5-122B](https://huggingface.co/ornith-ai/Ornith-1.5-122B), MIT license. 48 layers, 12 of them full attention and 36 linear attention, 256 routed experts with 8 active per token, one shared expert, one multi-token-prediction head.
 - **Quants:** [unsloth/Ornith-1.5-122B-GGUF](https://huggingface.co/unsloth/Ornith-1.5-122B-GGUF) at revision `3842d00`. UD-Q4_K_XL (79.7 GB) and UD-Q3_K_XL (59.8 GB). All six shards matched their published SHA-256.
@@ -105,7 +105,7 @@ llama-server -m Ornith-1.5-122B-UD-Q3_K_XL-00001-of-00003.gguf \
   -ngl 99 --n-cpu-moe 27 -c 32768 -fa on -t 14 --load-mode none
 ```
 
-Set `-t` to your own core count; 14 was this pod's quota. For 128K on Q4, use `--n-cpu-moe 35`.
+Set `-t` to your own core count; 14 was this host's quota. For 128K on Q4, use `--n-cpu-moe 35`.
 ## Result 1: it runs, and the answers hold up
 
 The first question with any aggressive quant is whether it's still the same model.
@@ -136,7 +136,7 @@ Every layer of experts moved onto the GPU buys decode speed, and the card fills 
 
 The 257 tok/s prefill at 38 is not a typo, and it isn't a property of that setting. It's one of three runs in this study where prefill came in at roughly a third of its neighbors with identical settings. The other two were the first pass at 49 (219 tok/s, against 618 on the rerun) and the 30-thread row of the thread sweep. We logged them and didn't chase them mid-run. The 32K prefill of 548 tok/s comes from a separate sweep at the same settings.
 
-Decode had the same problem in a milder form. The Q4 configuration we recommend, 38 layers on CPU at 16 threads, decoded at 20.0 tok/s in the thread sweep and 12.2 tok/s in the depth sweep an hour later. Same pod, same command, same empty context.
+Decode had the same problem in a milder form. The Q4 configuration we recommend, 38 layers on CPU at 16 threads, decoded at 20.0 tok/s in the thread sweep and 12.2 tok/s in the depth sweep an hour later. Same host, same command, same empty context.
 
 That's why the headline is a range. On this host, Q4 decoded at 12 to 22 tok/s, and the 32K median of 15.5 sits inside that. It also explains the apparent speed increase with context depth:
 
@@ -152,13 +152,13 @@ Q3 behaved the way you'd expect. It slowed slightly with depth and stayed within
 
 [CUDA Recipes 004](https://majorminor.xyz/research/cuda-recipes-004) found this on a different model. It happened again, and it was worse.
 
-Inside the container, `nproc` reported 256 CPUs: the host's two EPYC 7763s with SMT. Our pod was allocated 32. With no `-t` flag, llama.cpp chose 128 threads.
+Inside the container, `nproc` reported 256 CPUs: the host's two EPYC 7763s with SMT. Our host was allocated 32. With no `-t` flag, llama.cpp chose 128 threads.
 
 ![Q4 decode by thread count: 17.6 tok/s at 8 threads, 20.0 at 16, 16.9 at 24, 18.4 at 30, 15.9 at 32, and 2.5 at the default 128.](https://majorminor.xyz/research/cuda-recipes-005/charts/fig4-thread-trap.png)
 
 *Q4, 38 CPU MoE layers, empty context. Bars show medians; whiskers show min–max over three repetitions.*
 
-The default was much slower than any explicit setting we tried. Anyone trying this on a cloud pod and getting single digits should check this first.
+The default was much slower than any explicit setting we tried. Anyone trying this on a cloud host and getting single digits should check this first.
 
 Prefill barely cares between 8 and 32 threads: around 758–772 tok/s, apart from the 30-thread outlier at 255. The default reached 447. Decode peaked at 16. We'd treat 16 vs 32 as within the noise and the default as the real cliff. The complete thread sweep is in [RESULTS.md](https://github.com/majorminorlabs/cuda-recipes/blob/main/005-ornith-122b-offload/RESULTS.md#q4-thread-sweep).
 
@@ -168,7 +168,7 @@ To find your real core count inside a container:
 cat /sys/fs/cgroup/cpu.max
 ```
 
-Divide the first number by the second. On this pod it was 31.13.
+Divide the first number by the second. On this host it was 31.13.
 
 ## Result 4: Q3 for chat, Q4 for long prompts
 
@@ -199,20 +199,20 @@ That isn't a clean comparison, since the two runs used different offload setting
 
 ## What this doesn't tell you
 
-- **Your CPU and RAM decide your decode speed.** With experts in system RAM, every token reads them from memory. This pod's EPYC measured 48,773 MiB/s on `sysbench memory` (1 MiB blocks, writes, 32 threads). We haven't run the same test on a desktop, so we can't say whether yours will be faster or slower. Run `sysbench memory --memory-block-size=1M --memory-total-size=64G --threads=<your cores> run` and compare.
-- **This was a cloud pod, and it was noisy.** Same-settings runs varied by up to about 1.8x on decode and 3x on prefill. 004 warned about shared cloud CPUs. Secure Cloud didn't fix it.
+- **Your CPU and RAM decide your decode speed.** With experts in system RAM, every token reads them from memory. This host's EPYC measured 48,773 MiB/s on `sysbench memory` (1 MiB blocks, writes, 32 threads). We haven't run the same test on a desktop, so we can't say whether yours will be faster or slower. Run `sysbench memory --memory-block-size=1M --memory-total-size=64G --threads=<your cores> run` and compare.
+- **This was a cloud host, and it was noisy.** Same-settings runs varied by up to about 1.8x on decode and 3x on prefill. 004 warned about shared cloud CPUs. Secure Cloud didn't fix it.
 - **64 GB is verified with a 32GB card only.** On the 3090, Q4 needs more experts in RAM and peaked at 55.1 GiB, so a 3090 with 64 GB is still tight and unverified.
 - **128K was one run.**
 - **Quality is a sanity check.** Perplexity on one held-out set plus 20 exact-match prompts, thinking off. No agentic or coding benchmarks.
 - **One crash.** The Q3 sweep at 32 layers on CPU ran out of GPU memory and aborted with a core dump. No number in this post comes from that run.
-- **The two GPU runs used different hosts.** The 5090 pod had about 2.8x the RAM bandwidth of the 3090 pod and a different CPU (Xeon Gold 6530, 14 threads, vs EPYC 7763, 16 threads). The 3090 vs 5090 comparison is two whole machines, not two cards.
+- **The two GPU runs used different hosts.** The 5090 host had about 2.8x the RAM bandwidth of the 3090 host and a different CPU (Xeon Gold 6530, 14 threads, vs EPYC 7763, 16 threads). The 3090 vs 5090 comparison is two whole machines, not two cards.
 
 ## Cost
 
 | Run | Time and rate | Cost |
 | --- | --- | ---: |
 | RTX 3090 run | 2 h 53 min at $0.53/hr | about $1.53 |
-| RTX 5090 run: about 1.34 h at $1.22/hr, about $1.64 (estimated from pod uptime) | | |
+| RTX 5090 run: about 1.34 h at $1.22/hr, about $1.64 (estimated from host uptime) | | |
 | **Total** | | **about $3.17** |
 
 That covers downloading both quants, building llama.cpp, and every benchmark in this post.
@@ -237,7 +237,7 @@ Pinned artifacts:
 | llama.cpp | `b11757` @ `13786fbb3a1aaf4ff445c0b92d9f21cbe0af6d42` |
 | Eval set | `AtomicChat/calib-corpora` @ `933ce4826d0fe764a5cd6674bc9e0af5f5e985b1` |
 
-If you run this on your own 3090 or 5090, send us your numbers along with your CPU and RAM. The decode figure depends more on that than on the GPU, and a few home desktops would tell us more than another cloud pod.
+If you run this on a 3090 or 5090, send us your numbers along with your CPU and RAM. The decode figure depends more on that than on the GPU, and a few home desktops would tell us more than another cloud host.
 
 ## Credits
 

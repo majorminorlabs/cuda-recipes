@@ -36,4 +36,4 @@ KV cache at 16K was 68.01 MiB for Nemotron and 544.00 MiB for Qwen (8×). Across
 
 ## Execution and cost
 
-Pod start through termination was 0.867 GPU-hour. At compute host's advertised RTX 3090 list rate of $0.50/hour, cost is **estimated** at $0.43.
+host start through termination was 0.867 GPU-hour. At compute host's advertised RTX 3090 list rate of $0.50/hour, cost is **estimated** at $0.43.

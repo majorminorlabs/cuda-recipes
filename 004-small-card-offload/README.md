@@ -12,7 +12,7 @@ Study 002 showed the full model fits its native 256K context on a 24GB RTX 3090.
 
 | | |
 |---|---|
-| GPU | RTX 3090 24GB; compute host for calibration/PPL/cloud repetitions and a full-machine Vast desktop-class host for the main speed table |
+| GPU | RTX 3090 24GB; compute host for calibration/PPL/cloud repetitions and a desktop-class host with dedicated CPU resources for the main speed table |
 | Main speed host | Intel Core i5-11600K, 6C/12T, 11.52-vCPU quota (96%), 64,125 MiB RAM, PCIe Gen4 x16; Host C snapshot is in `DATA/hosts.json` |
 | Model | Nemotron 3.5 Bolt 74B-A9B, 2-bit 24GB GGUF; SHA256 is in `DATA/hosts.json` |
 | Engine | llama.cpp commit `620d2225cc436ab0b001e3200e590e3b286ef9ab` |

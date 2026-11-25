@@ -24,4 +24,4 @@ The first Nemotron 16K anchor attempt was excluded because our runner crashed wh
 
 ## Cost and scope
 
-The pod ran 0.867 GPU-hour from start through termination. At the advertised $0.50/hour compute host RTX 3090 list price, the cost is estimated at about $0.43, not an invoice. Long-context quality and retrieval are out of scope.
+The host ran 0.867 GPU-hour from start through termination. At the advertised $0.50/hour compute host RTX 3090 list price, the cost is estimated at about $0.43, not an invoice. Long-context quality and retrieval are out of scope.

@@ -98,7 +98,7 @@ The no-`-t` row reports the `n_threads` value emitted by llama.cpp.
 
 ## 64 GB-class RAM result and OOMs
 
-Verified on a 60 GB-class RAM pod with a **57.74 GiB cgroup RAM limit** (memory.max=61999996928 bytes): Q4 at ncmoe=33 peaked at **50.40 GiB** in the 32K server task run; Q3 at ncmoe=27 peaked at **30.23 GiB**. The supporting 32K benchmark process peaks were Q4 46.54 GiB and Q3 26.36 GiB.
+Verified on a 60 GB-class RAM host with a **57.74 GiB cgroup RAM limit** (memory.max=61999996928 bytes): Q4 at ncmoe=33 peaked at **50.40 GiB** in the 32K server task run; Q3 at ncmoe=27 peaked at **30.23 GiB**. The supporting 32K benchmark process peaks were Q4 46.54 GiB and Q3 26.36 GiB.
 
 - Q4 RAM OOM kills: none recorded.
 - Q4 CUDA OOM: offload sweep `ncmoe=31`; 128K at `ncmoe=33` failed CUDA allocation and the retry at `ncmoe=35` completed.
@@ -120,11 +120,11 @@ Verified on a 60 GB-class RAM pod with a **57.74 GiB cgroup RAM limit** (memory.
 
 ## Hardware and cost
 
-allocated 1x RTX 5090 32GB + 16 vCPU (Intel(R) Xeon(R) Gold 6530), 62 GB RAM on compute host at $1.22/hr. compute host displayed total rate: $1.22/hr ($1.19/hr compute + $0.028/hr container storage, rounded as displayed).
+Hardware: 1x RTX 5090 32GB + 16 vCPU (Intel(R) Xeon(R) Gold 6530), 62 GB RAM at $1.22/hr. compute host displayed total rate: $1.22/hr ($1.19/hr compute + $0.028/hr container storage, rounded as displayed).
 
-The user-provided Details screenshot showed 43m38s uptime at 9:14 PM local, which is 02:14 UTC on 2026-10-22. The data pull ended at 02:50:28Z. Using the minute-resolution screenshot clock, estimated pod uptime at pull was approximately 1.34 hours (about 1.33–1.35 hours), for an estimated total of approximately $1.64 (about $1.63–$1.65 at the displayed rate).
+The user-provided Details screenshot showed 43m38s uptime at 9:14 PM local, which is 02:14 UTC on 2026-10-22. The data pull ended at 02:50:28Z. Using the minute-resolution screenshot clock, estimated host uptime at pull was approximately 1.34 hours (about 1.33–1.35 hours), for an estimated total of approximately $1.64 (about $1.63–$1.65 at the displayed rate).
 
-This is an estimate because the screenshot clock has only minute precision and no exact compute host creation/billing timestamp was available. The local measurement window from receipts/5090/start_time.txt to end_time.txt was 1h17m14s (1.29 hours); it excludes the pod uptime already accumulated when the screenshot was captured.
+This is an estimate because the screenshot clock has only minute precision and no exact compute host creation/billing timestamp was available. The local measurement window from receipts/5090/start_time.txt to end_time.txt was 1h17m14s (1.29 hours); it excludes the host uptime already accumulated when the screenshot was captured.
 
 compute host reported 16 vCPU; `cpu.max` constrained this container to 13.6 CPU-equivalents, so `T=14` was used. The measured cgroup RAM limit was 57.74 GiB (memory.max=61999996928 bytes).
 

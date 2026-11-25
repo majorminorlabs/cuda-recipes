@@ -70,7 +70,7 @@ PPL used dataset revision `933ce4826d0fe764a5cd6674bc9e0af5f5e985b1`. The Q4 `-l
 
 ## Hardware and setup
 
-allocated 1x RTX 3090 24GB + 32 vCPU AMD EPYC 7763, 125 GB RAM on compute host at $0.53/hr. Total $1.53 over 2.88 hours. `sysbench memory` measured **48,773.25 MiB/s** (1 MiB blocks, 64 GiB writes, 32 threads).
+Hardware: 1x RTX 3090 24GB + 32 vCPU AMD EPYC 7763, 125 GB RAM at $0.53/hr. Total $1.53 over 2.88 hours. `sysbench memory` measured **48,773.25 MiB/s** (1 MiB blocks, 64 GiB writes, 32 threads).
 
 - llama.cpp: tag `b11757`, commit `13786fbb3a1aaf4ff445c0b92d9f21cbe0af6d42`.
 - Unsloth GGUF revision: `3842d003341507c216295c6f28dfcd30349925c6`.

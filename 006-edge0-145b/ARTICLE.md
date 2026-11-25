@@ -92,16 +92,16 @@ The 4090 figures are Edge0's claims. I didn't reproduce them. I used an 800-word
 | --- | ---: |
 | GPU memory (timed runs) | 23,929 MiB of 24,576 MiB |
 | Strata engine RSS (`VmHWM`) | 43.4 GiB |
-| Pod cgroup usage, timed runs | 87.4 GiB |
-| Pod cgroup usage, setup | 116.4 GiB (at the limit, no OOM kill) |
+| host cgroup usage, timed runs | 87.4 GiB |
+| host cgroup usage, setup | 116.4 GiB (at the limit, no OOM kill) |
 
-![Peak engine RSS was 43.4 GiB, pod cgroup RAM reached 87.4 GiB in timed trials and 116.4 GiB in setup, and the GPU used 23,929 of 24,576 MiB.](https://majorminor.xyz/research/cuda-recipes-006/charts/memory.png)
+![Peak engine RSS was 43.4 GiB, host cgroup RAM reached 87.4 GiB in timed trials and 116.4 GiB in setup, and the GPU used 23,929 of 24,576 MiB.](https://majorminor.xyz/research/cuda-recipes-006/charts/memory.png)
 
 The engine's resident memory peaked at 43.4 GiB. I didn't measure the minimum host RAM required to run this configuration.
 
 The cgroup numbers are much bigger because they count page cache too, and with a 51 GB PLE table read from disk plus a 106 GB download, a lot of that RAM was probably file cache. The 116.4 GiB setup peak hit right at the limit. `memory.events` recorded zero OOMs and zero OOM kills, which is consistent with the kernel reclaiming cache rather than the engine needing that much.
 
-Edge0's model page says the 145B Q3_K holds as 23.14 GiB VRAM plus 31.28 GiB RAM with residency on, on a 5090 D. It lists a minimum of 16 GiB VRAM and 20 GiB RAM, at much lower speeds. My 43.4 GiB is with the wrapper's automatic defaults on a machine with plenty of RAM, so the engine may simply have taken what was available. I planned a 32 GiB cap test and didn't get to it. The pod had a 116.4 GiB cgroup limit.
+Edge0's model page says the 145B Q3_K holds as 23.14 GiB VRAM plus 31.28 GiB RAM with residency on, on a 5090 D. It lists a minimum of 16 GiB VRAM and 20 GiB RAM, at much lower speeds. My 43.4 GiB is with the wrapper's automatic defaults on a machine with plenty of RAM, so the engine may simply have taken what was available. I planned a 32 GiB cap test and didn't get to it. The host had a 116.4 GiB cgroup limit.
 
 ## Result 4: the agent run
 
@@ -129,7 +129,7 @@ This was at `temperature=0`, with the same prompt every time, and the three runs
 | RTX 3090, compute host | 3 h 9 min at a quoted $0.50/hr | $1.0930 GPU + $0.0963 disk |
 | **Total billed** | compute host billing API | **$1.1893** |
 
-That covers the build, the 106 GB download, smoke runs, timed trials, and evidence transfer while the pod was allocated. See the [cost record](https://github.com/majorminorlabs/cuda-recipes/blob/main/006-edge0-145b/cost.md) for the billing breakdown.
+That covers the build, the 106 GB download, smoke runs, timed trials, and evidence transfer while the host was allocated. See the [cost record](https://github.com/majorminorlabs/cuda-recipes/blob/main/006-edge0-145b/cost.md) for the billing breakdown.
 
 ## Data and reproducibility
 

@@ -21,7 +21,7 @@ Default batch settings failed at large configured contexts. Reducing batch/ubatc
 |---|---|
 | [METHOD.md](METHOD.md) | Inputs, builds, machines, statistics and reproduction |
 | [RESULTS.md](RESULTS.md) | All 12 measurement rows and 14 context attempts |
-| [FAILURES.md](FAILURES.md) | Allocation failures, successful tuning and lost-pod correction |
+| [FAILURES.md](FAILURES.md) | Allocation failures, successful tuning and lost-host correction |
 | [LIMITATIONS.md](LIMITATIONS.md) | Repetition, host, memory and quality limits |
 | [COMMANDS.md](COMMANDS.md) / [run-index.json](run-index.json) | Expanded commands and 14 timing/behavior run records |
 | [results.json](results.json) / [results.csv](results.csv) | Raw-derived measurement data and configuration |
@@ -39,7 +39,7 @@ Both artifacts failed default b2048/ub512 allocation checks at 128K F16 and 256K
 
 ![Decode with synthetic context already present. Cache, batch and host changes are stated on the figure.](CHARTS/decode-depth.png)
 
-The initial 128K-depth attempts produced no measurement. A subsequent supplemental pod disappeared before its raw tree could be transferred. Its surviving summaries are provisional and are not selected results. The four verified deep rerun measurements replace them.
+The initial 128K-depth attempts produced no measurement. A subsequent supplemental host disappeared before its raw tree could be transferred. Its surviving summaries are provisional and are not selected results. The four verified deep rerun measurements replace them.
 
 One explicit refusal prompt was captured for each file. The base refused and the uncensored file supplied a procedural response. This is a single behavioral observation, not a refusal-rate or quality benchmark. No scored accuracy, perplexity, vision or long-context retrieval evaluation is reported.
 

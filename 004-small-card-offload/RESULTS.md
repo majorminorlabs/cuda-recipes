@@ -53,7 +53,7 @@ Across the T=16 repetitions on hosts A/B and all four depths, the observed range
 | 16GB | 37.02–59.17 tok/s | 480.99–625.07 tok/s |
 | 24GB | 53.87–87.51 tok/s | 1,083.21–1,644.17 tok/s |
 
-At 12GB and depth zero, host A rep 1 measured 47.03 decode tok/s. Host B's initial quick check measured 45.07, while its later reps measured 30.63 and 25.20 tok/s. That same-pod decline is consistent with shared-CPU contention. The full Host B values and host labels are in [`bench-results.csv`](DATA/bench-results.csv).
+At 12GB and depth zero, host A rep 1 measured 47.03 decode tok/s. Host B's initial quick check measured 45.07, while its later reps measured 30.63 and 25.20 tok/s. That same-host decline is consistent with shared-CPU contention. The full Host B values and host labels are in [`bench-results.csv`](DATA/bench-results.csv).
 
 Host 0's archived default-`-t 128` rows:
 
@@ -90,7 +90,7 @@ Wikitext-2 test perplexity was effectively unchanged across the selected offload
 
 ## Costs
 
-compute host RTX 3090 cost was calculated at $0.50/GPU-hour. The successful Vast Host C pod used the provider's $0.388889/hour rate. Vast search/trial attempts are listed separately as estimates from their recorded runtimes.
+compute host RTX 3090 cost was calculated at $0.50/GPU-hour. The successful Host C Host C host used the provider's $0.388889/hour rate. Host C search/trial attempts are listed separately as estimates from their recorded runtimes.
 
 | compute host run | GPU-hours | Cost at $0.50/GPU-hour |
 |---|---:|---:|
@@ -99,11 +99,11 @@ compute host RTX 3090 cost was calculated at $0.50/GPU-hour. The successful Vast
 | Repetitions 2–3 | 0.773540 | $0.3868 |
 | **compute host total** | **2.728126** | **$1.3641** |
 
-| Vast successful run | GPU-hours | Cost |
+| Host C successful run | GPU-hours | Cost |
 |---|---:|---:|
 | Host C desktop benchmark (includes build/fetch setup) | 1.714535 | $0.6668 |
 
-| Vast search attempt | GPU-hours (estimated) | Cost (estimated) | Status |
+| Host C search attempt | GPU-hours (estimated) | Cost (estimated) | Status |
 |---:|---:|---:|---|
 | 1_upper_bound | ≤0.235918 | ≤$0.1638 | runner_failed; stop confirmed before attempt 2 |
 | 2 | 0.235980 | $0.1639 | failed |
@@ -111,6 +111,6 @@ compute host RTX 3090 cost was calculated at $0.50/GPU-hour. The successful Vast
 
 | Estimated all-in total | GPU-hours | Cost |
 |---|---:|---:|
-| compute host + successful Vast run + estimated Vast trials | 5.392324 | $2.6904 |
+| compute host + successful Host C run + estimated Host C trials | 5.392324 | $2.6904 |
 
-Vast trial attempt 1 is an upper-bound entry and attempt 3 has uncertain provider accounting status; the trial subtotal and all-in total are estimates. Costs are provider runtime multiplied by recorded list rates, not invoices.
+Host C trial attempt 1 is an upper-bound entry and attempt 3 has uncertain provider accounting status; the trial subtotal and all-in total are estimates. Costs are provider runtime multiplied by recorded list rates, not invoices.
