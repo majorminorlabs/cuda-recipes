@@ -1,0 +1,1949 @@
+{
+  "trial": {
+    "model": "base",
+    "task_id": "MU05",
+    "repetition": 2,
+    "seed": 2064449264
+  },
+  "task": {
+    "id": "MU05",
+    "category": "multi_step",
+    "prompt": "Prepare a report summary from the fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact returned row count, then verify. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "write_summary",
+        "name": "quarterly-summary",
+        "rows": 2
+      },
+      {
+        "tool": "summarize_source",
+        "name": "quarterly"
+      },
+      {
+        "tool": "verify_summary",
+        "name": "quarterly-summary"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "summarize_source",
+        "name": "quarterly"
+      },
+      {
+        "tool": "write_summary",
+        "name": "quarterly-summary",
+        "rows": 3
+      },
+      {
+        "tool": "verify_summary",
+        "name": "quarterly-summary"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "summarize_source",
+          "description": "Perform the summarize_source operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "write_summary",
+          "description": "Perform the write_summary operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "rows": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "name",
+              "rows"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "verify_summary",
+          "description": "Perform the verify_summary operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "",
+    "finish_reason": "max_tool_turns",
+    "responses": [
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a report summary from the fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact returned row count, then verify. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report\"}"
+                  },
+                  "id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+                }
+              ],
+              "reasoning_content": "The user is asking to prepare a report summary from a fixed source table. There are three tools:\n1. summarize_source(name)\n2. write_summary(name, rows)\n3. verify_summary(name)\n\nWorkflow: summarize, write the exact number of rows returned, then verify.\n\nThe name of the source table isn't specified. It's a \"fixed source table\" — probably there's a default name like \"report\" or \"source\". Let's just call summarize_source with a name and see what happens. The fixture might have a default. Should I try \"report\", or first call summarize_source without a name? No, name is required.\n\nFirst, I'll call summarize_source with a likely name like \"report\". Actually, I don't know what name to use. Maybe the fixture accepts any name and returns a row count. Let me try summarize_source(name=\"report\").\n\nAlternatively, the name might be \"source\". Anyway, let's just try it. Since these calls have dependencies, I can only make one call at a time. First, I'll try summarize_source with \"report\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"source\"}"
+                  },
+                  "id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+                }
+              ],
+              "reasoning_content": "Hmm, an error. Maybe the name should be different, or maybe there's a specific fixed source name. Let me try \"source\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"table\"}"
+                  },
+                  "id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+                }
+              ],
+              "reasoning_content": "still getting an error. Perhaps the fixture expects a particular name. \"report table\"? \"report_table\"? Or maybe the source is named something like \"sales\". It says \"fixed source table\"—maybe it's \"table\"? Let me try a few possibilities. I'll try \"table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report_table\"}"
+                  },
+                  "id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+                }
+              ],
+              "reasoning_content": "Still an error. Maybe the problem is that summarize_source has to be called first — and I actually did that. Or, the error might mean that the fixture only recognizes a specific name. Common candidates: \"source_table\", \"report_table\", \"fixed\", \"main\", \"data\".\n\nOr, could it be that the first tool call was considered \"out of order\" because the fixture expects a specific sequence starting with a different call? But summarize is supposed to come first.\n\nLet me try \"report_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"fixed_source_table\"}"
+                  },
+                  "id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+                }
+              ],
+              "reasoning_content": "Let me think about this. \"Fixed source table\" — maybe the name is literally \"fixed\"? Or \"fixed_source\"? Or \"fixed_source_table\"?\n\nLet me try \"fixed_source_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"data\"}"
+                  },
+                  "id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+                }
+              ],
+              "reasoning_content": "Still an error. Probably the name has to match what the fixture expects. Let me think about typical fixtures for this kind of task: \"Prepare a report summary from a fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact row count that was returned, then verify.\"\n\nProbably the source table name is \"report\" and the summary name is also \"report\". I tried \"report\" first and got an error. Hmm, but the error says \"unsupported, unsafe, or out-of-order simulated action.\" This generic error might mean that the fixture is tracking state, and my first call was out of order. But summarize should be first...\n\nWait — maybe the fixture is tracking which calls are \"safe.\" The error \"unsupported, unsafe, or out-of-order\" might be because the action needs to follow a strict sequence, and my call with the wrong name is \"unsupported.\"\n\nLet me try other names: \"data\", \"main\", \"src\", \"source_table\", \"summary\".\n\nNo, maybe I should reconsider: perhaps the fixture expects summarize_source to be called with the name of the table defined within the prompt, and the table name is given in the task description... The task description says \"a fixed source table\" and doesn't give a name. The name might be something generic like \"source\" (tried), \"report\" (tried).\n\nHmm, maybe the expected sequence is: summarize_source, then write_summary with the returned row count, then verify_summary. And maybe the fixture requires an exact name match for all three. Let me try a few more names."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2064449264,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "summarize_source",
+                "description": "Perform the summarize_source operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "write_summary",
+                "description": "Perform the write_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_summary",
+                "description": "Perform the verify_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user is asking to prepare a report summary from a fixed source table. There are three tools:\n1. summarize_source(name)\n2. write_summary(name, rows)\n3. verify_summary(name)\n\nWorkflow: summarize, write the exact number of rows returned, then verify.\n\nThe name of the source table isn't specified. It's a \"fixed source table\" — probably there's a default name like \"report\" or \"source\". Let's just call summarize_source with a name and see what happens. The fixture might have a default. Should I try \"report\", or first call summarize_source without a name? No, name is required.\n\nFirst, I'll call summarize_source with a likely name like \"report\". Actually, I don't know what name to use. Maybe the fixture accepts any name and returns a row count. Let me try summarize_source(name=\"report\").\n\nAlternatively, the name might be \"source\". Anyway, let's just try it. Since these calls have dependencies, I can only make one call at a time. First, I'll try summarize_source with \"report\".",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "summarize_source",
+                      "arguments": "{\"name\":\"report\"}"
+                    },
+                    "id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 258,
+            "prompt_tokens": 545,
+            "total_tokens": 803,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          },
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 545,
+            "prompt_ms": 763.822,
+            "prompt_per_token_ms": 1.401508256880734,
+            "prompt_per_second": 713.5170235997392,
+            "predicted_n": 258,
+            "predicted_ms": 6806.92,
+            "predicted_per_token_ms": 26.486070038910505,
+            "predicted_per_second": 37.755695674401935
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a report summary from the fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact returned row count, then verify. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report\"}"
+                  },
+                  "id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+                }
+              ],
+              "reasoning_content": "The user is asking to prepare a report summary from a fixed source table. There are three tools:\n1. summarize_source(name)\n2. write_summary(name, rows)\n3. verify_summary(name)\n\nWorkflow: summarize, write the exact number of rows returned, then verify.\n\nThe name of the source table isn't specified. It's a \"fixed source table\" — probably there's a default name like \"report\" or \"source\". Let's just call summarize_source with a name and see what happens. The fixture might have a default. Should I try \"report\", or first call summarize_source without a name? No, name is required.\n\nFirst, I'll call summarize_source with a likely name like \"report\". Actually, I don't know what name to use. Maybe the fixture accepts any name and returns a row count. Let me try summarize_source(name=\"report\").\n\nAlternatively, the name might be \"source\". Anyway, let's just try it. Since these calls have dependencies, I can only make one call at a time. First, I'll try summarize_source with \"report\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"source\"}"
+                  },
+                  "id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+                }
+              ],
+              "reasoning_content": "Hmm, an error. Maybe the name should be different, or maybe there's a specific fixed source name. Let me try \"source\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"table\"}"
+                  },
+                  "id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+                }
+              ],
+              "reasoning_content": "still getting an error. Perhaps the fixture expects a particular name. \"report table\"? \"report_table\"? Or maybe the source is named something like \"sales\". It says \"fixed source table\"—maybe it's \"table\"? Let me try a few possibilities. I'll try \"table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report_table\"}"
+                  },
+                  "id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+                }
+              ],
+              "reasoning_content": "Still an error. Maybe the problem is that summarize_source has to be called first — and I actually did that. Or, the error might mean that the fixture only recognizes a specific name. Common candidates: \"source_table\", \"report_table\", \"fixed\", \"main\", \"data\".\n\nOr, could it be that the first tool call was considered \"out of order\" because the fixture expects a specific sequence starting with a different call? But summarize is supposed to come first.\n\nLet me try \"report_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"fixed_source_table\"}"
+                  },
+                  "id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+                }
+              ],
+              "reasoning_content": "Let me think about this. \"Fixed source table\" — maybe the name is literally \"fixed\"? Or \"fixed_source\"? Or \"fixed_source_table\"?\n\nLet me try \"fixed_source_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"data\"}"
+                  },
+                  "id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+                }
+              ],
+              "reasoning_content": "Still an error. Probably the name has to match what the fixture expects. Let me think about typical fixtures for this kind of task: \"Prepare a report summary from a fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact row count that was returned, then verify.\"\n\nProbably the source table name is \"report\" and the summary name is also \"report\". I tried \"report\" first and got an error. Hmm, but the error says \"unsupported, unsafe, or out-of-order simulated action.\" This generic error might mean that the fixture is tracking state, and my first call was out of order. But summarize should be first...\n\nWait — maybe the fixture is tracking which calls are \"safe.\" The error \"unsupported, unsafe, or out-of-order\" might be because the action needs to follow a strict sequence, and my call with the wrong name is \"unsupported.\"\n\nLet me try other names: \"data\", \"main\", \"src\", \"source_table\", \"summary\".\n\nNo, maybe I should reconsider: perhaps the fixture expects summarize_source to be called with the name of the table defined within the prompt, and the table name is given in the task description... The task description says \"a fixed source table\" and doesn't give a name. The name might be something generic like \"source\" (tried), \"report\" (tried).\n\nHmm, maybe the expected sequence is: summarize_source, then write_summary with the returned row count, then verify_summary. And maybe the fixture requires an exact name match for all three. Let me try a few more names."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2064449265,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "summarize_source",
+                "description": "Perform the summarize_source operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "write_summary",
+                "description": "Perform the write_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_summary",
+                "description": "Perform the verify_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Hmm, an error. Maybe the name should be different, or maybe there's a specific fixed source name. Let me try \"source\".",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "summarize_source",
+                      "arguments": "{\"name\":\"source\"}"
+                    },
+                    "id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 58,
+            "prompt_tokens": 833,
+            "total_tokens": 891,
+            "prompt_tokens_details": {
+              "cached_tokens": 802
+            }
+          },
+          "timings": {
+            "cache_n": 802,
+            "prompt_n": 31,
+            "prompt_ms": 283.337,
+            "prompt_per_token_ms": 9.139903225806451,
+            "prompt_per_second": 109.41034880725073,
+            "predicted_n": 58,
+            "predicted_ms": 1518.088,
+            "predicted_per_token_ms": 26.633122807017543,
+            "predicted_per_second": 37.54723046358314
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a report summary from the fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact returned row count, then verify. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report\"}"
+                  },
+                  "id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+                }
+              ],
+              "reasoning_content": "The user is asking to prepare a report summary from a fixed source table. There are three tools:\n1. summarize_source(name)\n2. write_summary(name, rows)\n3. verify_summary(name)\n\nWorkflow: summarize, write the exact number of rows returned, then verify.\n\nThe name of the source table isn't specified. It's a \"fixed source table\" — probably there's a default name like \"report\" or \"source\". Let's just call summarize_source with a name and see what happens. The fixture might have a default. Should I try \"report\", or first call summarize_source without a name? No, name is required.\n\nFirst, I'll call summarize_source with a likely name like \"report\". Actually, I don't know what name to use. Maybe the fixture accepts any name and returns a row count. Let me try summarize_source(name=\"report\").\n\nAlternatively, the name might be \"source\". Anyway, let's just try it. Since these calls have dependencies, I can only make one call at a time. First, I'll try summarize_source with \"report\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"source\"}"
+                  },
+                  "id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+                }
+              ],
+              "reasoning_content": "Hmm, an error. Maybe the name should be different, or maybe there's a specific fixed source name. Let me try \"source\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"table\"}"
+                  },
+                  "id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+                }
+              ],
+              "reasoning_content": "still getting an error. Perhaps the fixture expects a particular name. \"report table\"? \"report_table\"? Or maybe the source is named something like \"sales\". It says \"fixed source table\"—maybe it's \"table\"? Let me try a few possibilities. I'll try \"table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report_table\"}"
+                  },
+                  "id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+                }
+              ],
+              "reasoning_content": "Still an error. Maybe the problem is that summarize_source has to be called first — and I actually did that. Or, the error might mean that the fixture only recognizes a specific name. Common candidates: \"source_table\", \"report_table\", \"fixed\", \"main\", \"data\".\n\nOr, could it be that the first tool call was considered \"out of order\" because the fixture expects a specific sequence starting with a different call? But summarize is supposed to come first.\n\nLet me try \"report_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"fixed_source_table\"}"
+                  },
+                  "id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+                }
+              ],
+              "reasoning_content": "Let me think about this. \"Fixed source table\" — maybe the name is literally \"fixed\"? Or \"fixed_source\"? Or \"fixed_source_table\"?\n\nLet me try \"fixed_source_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"data\"}"
+                  },
+                  "id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+                }
+              ],
+              "reasoning_content": "Still an error. Probably the name has to match what the fixture expects. Let me think about typical fixtures for this kind of task: \"Prepare a report summary from a fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact row count that was returned, then verify.\"\n\nProbably the source table name is \"report\" and the summary name is also \"report\". I tried \"report\" first and got an error. Hmm, but the error says \"unsupported, unsafe, or out-of-order simulated action.\" This generic error might mean that the fixture is tracking state, and my first call was out of order. But summarize should be first...\n\nWait — maybe the fixture is tracking which calls are \"safe.\" The error \"unsupported, unsafe, or out-of-order\" might be because the action needs to follow a strict sequence, and my call with the wrong name is \"unsupported.\"\n\nLet me try other names: \"data\", \"main\", \"src\", \"source_table\", \"summary\".\n\nNo, maybe I should reconsider: perhaps the fixture expects summarize_source to be called with the name of the table defined within the prompt, and the table name is given in the task description... The task description says \"a fixed source table\" and doesn't give a name. The name might be something generic like \"source\" (tried), \"report\" (tried).\n\nHmm, maybe the expected sequence is: summarize_source, then write_summary with the returned row count, then verify_summary. And maybe the fixture requires an exact name match for all three. Let me try a few more names."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2064449266,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "summarize_source",
+                "description": "Perform the summarize_source operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "write_summary",
+                "description": "Perform the write_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_summary",
+                "description": "Perform the verify_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "still getting an error. Perhaps the fixture expects a particular name. \"report table\"? \"report_table\"? Or maybe the source is named something like \"sales\". It says \"fixed source table\"—maybe it's \"table\"? Let me try a few possibilities. I'll try \"table\".",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "summarize_source",
+                      "arguments": "{\"name\":\"table\"}"
+                    },
+                    "id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 88,
+            "prompt_tokens": 921,
+            "total_tokens": 1009,
+            "prompt_tokens_details": {
+              "cached_tokens": 890
+            }
+          },
+          "timings": {
+            "cache_n": 890,
+            "prompt_n": 31,
+            "prompt_ms": 281.904,
+            "prompt_per_token_ms": 9.093677419354838,
+            "prompt_per_second": 109.96651342300925,
+            "predicted_n": 88,
+            "predicted_ms": 2309.556,
+            "predicted_per_token_ms": 26.546620689655175,
+            "predicted_per_second": 37.66957804876781
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a report summary from the fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact returned row count, then verify. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report\"}"
+                  },
+                  "id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+                }
+              ],
+              "reasoning_content": "The user is asking to prepare a report summary from a fixed source table. There are three tools:\n1. summarize_source(name)\n2. write_summary(name, rows)\n3. verify_summary(name)\n\nWorkflow: summarize, write the exact number of rows returned, then verify.\n\nThe name of the source table isn't specified. It's a \"fixed source table\" — probably there's a default name like \"report\" or \"source\". Let's just call summarize_source with a name and see what happens. The fixture might have a default. Should I try \"report\", or first call summarize_source without a name? No, name is required.\n\nFirst, I'll call summarize_source with a likely name like \"report\". Actually, I don't know what name to use. Maybe the fixture accepts any name and returns a row count. Let me try summarize_source(name=\"report\").\n\nAlternatively, the name might be \"source\". Anyway, let's just try it. Since these calls have dependencies, I can only make one call at a time. First, I'll try summarize_source with \"report\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"source\"}"
+                  },
+                  "id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+                }
+              ],
+              "reasoning_content": "Hmm, an error. Maybe the name should be different, or maybe there's a specific fixed source name. Let me try \"source\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"table\"}"
+                  },
+                  "id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+                }
+              ],
+              "reasoning_content": "still getting an error. Perhaps the fixture expects a particular name. \"report table\"? \"report_table\"? Or maybe the source is named something like \"sales\". It says \"fixed source table\"—maybe it's \"table\"? Let me try a few possibilities. I'll try \"table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report_table\"}"
+                  },
+                  "id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+                }
+              ],
+              "reasoning_content": "Still an error. Maybe the problem is that summarize_source has to be called first — and I actually did that. Or, the error might mean that the fixture only recognizes a specific name. Common candidates: \"source_table\", \"report_table\", \"fixed\", \"main\", \"data\".\n\nOr, could it be that the first tool call was considered \"out of order\" because the fixture expects a specific sequence starting with a different call? But summarize is supposed to come first.\n\nLet me try \"report_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"fixed_source_table\"}"
+                  },
+                  "id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+                }
+              ],
+              "reasoning_content": "Let me think about this. \"Fixed source table\" — maybe the name is literally \"fixed\"? Or \"fixed_source\"? Or \"fixed_source_table\"?\n\nLet me try \"fixed_source_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"data\"}"
+                  },
+                  "id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+                }
+              ],
+              "reasoning_content": "Still an error. Probably the name has to match what the fixture expects. Let me think about typical fixtures for this kind of task: \"Prepare a report summary from a fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact row count that was returned, then verify.\"\n\nProbably the source table name is \"report\" and the summary name is also \"report\". I tried \"report\" first and got an error. Hmm, but the error says \"unsupported, unsafe, or out-of-order simulated action.\" This generic error might mean that the fixture is tracking state, and my first call was out of order. But summarize should be first...\n\nWait — maybe the fixture is tracking which calls are \"safe.\" The error \"unsupported, unsafe, or out-of-order\" might be because the action needs to follow a strict sequence, and my call with the wrong name is \"unsupported.\"\n\nLet me try other names: \"data\", \"main\", \"src\", \"source_table\", \"summary\".\n\nNo, maybe I should reconsider: perhaps the fixture expects summarize_source to be called with the name of the table defined within the prompt, and the table name is given in the task description... The task description says \"a fixed source table\" and doesn't give a name. The name might be something generic like \"source\" (tried), \"report\" (tried).\n\nHmm, maybe the expected sequence is: summarize_source, then write_summary with the returned row count, then verify_summary. And maybe the fixture requires an exact name match for all three. Let me try a few more names."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2064449267,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "summarize_source",
+                "description": "Perform the summarize_source operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "write_summary",
+                "description": "Perform the write_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_summary",
+                "description": "Perform the verify_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Still an error. Maybe the problem is that summarize_source has to be called first — and I actually did that. Or, the error might mean that the fixture only recognizes a specific name. Common candidates: \"source_table\", \"report_table\", \"fixed\", \"main\", \"data\".\n\nOr, could it be that the first tool call was considered \"out of order\" because the fixture expects a specific sequence starting with a different call? But summarize is supposed to come first.\n\nLet me try \"report_table\".",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "summarize_source",
+                      "arguments": "{\"name\":\"report_table\"}"
+                    },
+                    "id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 136,
+            "prompt_tokens": 1039,
+            "total_tokens": 1175,
+            "prompt_tokens_details": {
+              "cached_tokens": 1008
+            }
+          },
+          "timings": {
+            "cache_n": 1008,
+            "prompt_n": 31,
+            "prompt_ms": 282.171,
+            "prompt_per_token_ms": 9.102290322580645,
+            "prompt_per_second": 109.86245928887094,
+            "predicted_n": 136,
+            "predicted_ms": 3586.996,
+            "predicted_per_token_ms": 26.57034074074074,
+            "predicted_per_second": 37.63594941282343
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a report summary from the fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact returned row count, then verify. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report\"}"
+                  },
+                  "id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+                }
+              ],
+              "reasoning_content": "The user is asking to prepare a report summary from a fixed source table. There are three tools:\n1. summarize_source(name)\n2. write_summary(name, rows)\n3. verify_summary(name)\n\nWorkflow: summarize, write the exact number of rows returned, then verify.\n\nThe name of the source table isn't specified. It's a \"fixed source table\" — probably there's a default name like \"report\" or \"source\". Let's just call summarize_source with a name and see what happens. The fixture might have a default. Should I try \"report\", or first call summarize_source without a name? No, name is required.\n\nFirst, I'll call summarize_source with a likely name like \"report\". Actually, I don't know what name to use. Maybe the fixture accepts any name and returns a row count. Let me try summarize_source(name=\"report\").\n\nAlternatively, the name might be \"source\". Anyway, let's just try it. Since these calls have dependencies, I can only make one call at a time. First, I'll try summarize_source with \"report\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"source\"}"
+                  },
+                  "id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+                }
+              ],
+              "reasoning_content": "Hmm, an error. Maybe the name should be different, or maybe there's a specific fixed source name. Let me try \"source\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"table\"}"
+                  },
+                  "id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+                }
+              ],
+              "reasoning_content": "still getting an error. Perhaps the fixture expects a particular name. \"report table\"? \"report_table\"? Or maybe the source is named something like \"sales\". It says \"fixed source table\"—maybe it's \"table\"? Let me try a few possibilities. I'll try \"table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report_table\"}"
+                  },
+                  "id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+                }
+              ],
+              "reasoning_content": "Still an error. Maybe the problem is that summarize_source has to be called first — and I actually did that. Or, the error might mean that the fixture only recognizes a specific name. Common candidates: \"source_table\", \"report_table\", \"fixed\", \"main\", \"data\".\n\nOr, could it be that the first tool call was considered \"out of order\" because the fixture expects a specific sequence starting with a different call? But summarize is supposed to come first.\n\nLet me try \"report_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"fixed_source_table\"}"
+                  },
+                  "id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+                }
+              ],
+              "reasoning_content": "Let me think about this. \"Fixed source table\" — maybe the name is literally \"fixed\"? Or \"fixed_source\"? Or \"fixed_source_table\"?\n\nLet me try \"fixed_source_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"data\"}"
+                  },
+                  "id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+                }
+              ],
+              "reasoning_content": "Still an error. Probably the name has to match what the fixture expects. Let me think about typical fixtures for this kind of task: \"Prepare a report summary from a fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact row count that was returned, then verify.\"\n\nProbably the source table name is \"report\" and the summary name is also \"report\". I tried \"report\" first and got an error. Hmm, but the error says \"unsupported, unsafe, or out-of-order simulated action.\" This generic error might mean that the fixture is tracking state, and my first call was out of order. But summarize should be first...\n\nWait — maybe the fixture is tracking which calls are \"safe.\" The error \"unsupported, unsafe, or out-of-order\" might be because the action needs to follow a strict sequence, and my call with the wrong name is \"unsupported.\"\n\nLet me try other names: \"data\", \"main\", \"src\", \"source_table\", \"summary\".\n\nNo, maybe I should reconsider: perhaps the fixture expects summarize_source to be called with the name of the table defined within the prompt, and the table name is given in the task description... The task description says \"a fixed source table\" and doesn't give a name. The name might be something generic like \"source\" (tried), \"report\" (tried).\n\nHmm, maybe the expected sequence is: summarize_source, then write_summary with the returned row count, then verify_summary. And maybe the fixture requires an exact name match for all three. Let me try a few more names."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2064449268,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "summarize_source",
+                "description": "Perform the summarize_source operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "write_summary",
+                "description": "Perform the write_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_summary",
+                "description": "Perform the verify_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Let me think about this. \"Fixed source table\" — maybe the name is literally \"fixed\"? Or \"fixed_source\"? Or \"fixed_source_table\"?\n\nLet me try \"fixed_source_table\".",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "summarize_source",
+                      "arguments": "{\"name\":\"fixed_source_table\"}"
+                    },
+                    "id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 72,
+            "prompt_tokens": 1205,
+            "total_tokens": 1277,
+            "prompt_tokens_details": {
+              "cached_tokens": 1174
+            }
+          },
+          "timings": {
+            "cache_n": 1174,
+            "prompt_n": 31,
+            "prompt_ms": 281.271,
+            "prompt_per_token_ms": 9.07325806451613,
+            "prompt_per_second": 110.21399291075154,
+            "predicted_n": 72,
+            "predicted_ms": 1886.957,
+            "predicted_per_token_ms": 26.57685915492958,
+            "predicted_per_second": 37.62671857387317
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Prepare a report summary from the fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact returned row count, then verify. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report\"}"
+                  },
+                  "id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+                }
+              ],
+              "reasoning_content": "The user is asking to prepare a report summary from a fixed source table. There are three tools:\n1. summarize_source(name)\n2. write_summary(name, rows)\n3. verify_summary(name)\n\nWorkflow: summarize, write the exact number of rows returned, then verify.\n\nThe name of the source table isn't specified. It's a \"fixed source table\" — probably there's a default name like \"report\" or \"source\". Let's just call summarize_source with a name and see what happens. The fixture might have a default. Should I try \"report\", or first call summarize_source without a name? No, name is required.\n\nFirst, I'll call summarize_source with a likely name like \"report\". Actually, I don't know what name to use. Maybe the fixture accepts any name and returns a row count. Let me try summarize_source(name=\"report\").\n\nAlternatively, the name might be \"source\". Anyway, let's just try it. Since these calls have dependencies, I can only make one call at a time. First, I'll try summarize_source with \"report\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"source\"}"
+                  },
+                  "id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+                }
+              ],
+              "reasoning_content": "Hmm, an error. Maybe the name should be different, or maybe there's a specific fixed source name. Let me try \"source\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"table\"}"
+                  },
+                  "id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+                }
+              ],
+              "reasoning_content": "still getting an error. Perhaps the fixture expects a particular name. \"report table\"? \"report_table\"? Or maybe the source is named something like \"sales\". It says \"fixed source table\"—maybe it's \"table\"? Let me try a few possibilities. I'll try \"table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"report_table\"}"
+                  },
+                  "id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+                }
+              ],
+              "reasoning_content": "Still an error. Maybe the problem is that summarize_source has to be called first — and I actually did that. Or, the error might mean that the fixture only recognizes a specific name. Common candidates: \"source_table\", \"report_table\", \"fixed\", \"main\", \"data\".\n\nOr, could it be that the first tool call was considered \"out of order\" because the fixture expects a specific sequence starting with a different call? But summarize is supposed to come first.\n\nLet me try \"report_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"fixed_source_table\"}"
+                  },
+                  "id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+                }
+              ],
+              "reasoning_content": "Let me think about this. \"Fixed source table\" — maybe the name is literally \"fixed\"? Or \"fixed_source\"? Or \"fixed_source_table\"?\n\nLet me try \"fixed_source_table\"."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "summarize_source",
+                    "arguments": "{\"name\":\"data\"}"
+                  },
+                  "id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+                }
+              ],
+              "reasoning_content": "Still an error. Probably the name has to match what the fixture expects. Let me think about typical fixtures for this kind of task: \"Prepare a report summary from a fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact row count that was returned, then verify.\"\n\nProbably the source table name is \"report\" and the summary name is also \"report\". I tried \"report\" first and got an error. Hmm, but the error says \"unsupported, unsafe, or out-of-order simulated action.\" This generic error might mean that the fixture is tracking state, and my first call was out of order. But summarize should be first...\n\nWait — maybe the fixture is tracking which calls are \"safe.\" The error \"unsupported, unsafe, or out-of-order\" might be because the action needs to follow a strict sequence, and my call with the wrong name is \"unsupported.\"\n\nLet me try other names: \"data\", \"main\", \"src\", \"source_table\", \"summary\".\n\nNo, maybe I should reconsider: perhaps the fixture expects summarize_source to be called with the name of the table defined within the prompt, and the table name is given in the task description... The task description says \"a fixed source table\" and doesn't give a name. The name might be something generic like \"source\" (tried), \"report\" (tried).\n\nHmm, maybe the expected sequence is: summarize_source, then write_summary with the returned row count, then verify_summary. And maybe the fixture requires an exact name match for all three. Let me try a few more names."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3",
+              "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2064449269,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "summarize_source",
+                "description": "Perform the summarize_source operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "write_summary",
+                "description": "Perform the write_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "rows": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "rows"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "verify_summary",
+                "description": "Perform the verify_summary operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Still an error. Probably the name has to match what the fixture expects. Let me think about typical fixtures for this kind of task: \"Prepare a report summary from a fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact row count that was returned, then verify.\"\n\nProbably the source table name is \"report\" and the summary name is also \"report\". I tried \"report\" first and got an error. Hmm, but the error says \"unsupported, unsafe, or out-of-order simulated action.\" This generic error might mean that the fixture is tracking state, and my first call was out of order. But summarize should be first...\n\nWait — maybe the fixture is tracking which calls are \"safe.\" The error \"unsupported, unsafe, or out-of-order\" might be because the action needs to follow a strict sequence, and my call with the wrong name is \"unsupported.\"\n\nLet me try other names: \"data\", \"main\", \"src\", \"source_table\", \"summary\".\n\nNo, maybe I should reconsider: perhaps the fixture expects summarize_source to be called with the name of the table defined within the prompt, and the table name is given in the task description... The task description says \"a fixed source table\" and doesn't give a name. The name might be something generic like \"source\" (tried), \"report\" (tried).\n\nHmm, maybe the expected sequence is: summarize_source, then write_summary with the returned row count, then verify_summary. And maybe the fixture requires an exact name match for all three. Let me try a few more names.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "summarize_source",
+                      "arguments": "{\"name\":\"data\"}"
+                    },
+                    "id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 370,
+            "prompt_tokens": 1307,
+            "total_tokens": 1677,
+            "prompt_tokens_details": {
+              "cached_tokens": 1276
+            }
+          },
+          "timings": {
+            "cache_n": 1276,
+            "prompt_n": 31,
+            "prompt_ms": 292.149,
+            "prompt_per_token_ms": 9.42416129032258,
+            "prompt_per_second": 106.11023826882857,
+            "predicted_n": 370,
+            "predicted_ms": 9832.464,
+            "predicted_per_token_ms": 26.646243902439025,
+            "predicted_per_second": 37.52874152399642
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Prepare a report summary from the fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact returned row count, then verify. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "summarize_source",
+              "arguments": "{\"name\":\"report\"}"
+            },
+            "id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+          }
+        ],
+        "reasoning_content": "The user is asking to prepare a report summary from a fixed source table. There are three tools:\n1. summarize_source(name)\n2. write_summary(name, rows)\n3. verify_summary(name)\n\nWorkflow: summarize, write the exact number of rows returned, then verify.\n\nThe name of the source table isn't specified. It's a \"fixed source table\" — probably there's a default name like \"report\" or \"source\". Let's just call summarize_source with a name and see what happens. The fixture might have a default. Should I try \"report\", or first call summarize_source without a name? No, name is required.\n\nFirst, I'll call summarize_source with a likely name like \"report\". Actually, I don't know what name to use. Maybe the fixture accepts any name and returns a row count. Let me try summarize_source(name=\"report\").\n\nAlternatively, the name might be \"source\". Anyway, let's just try it. Since these calls have dependencies, I can only make one call at a time. First, I'll try summarize_source with \"report\"."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "summarize_source",
+              "arguments": "{\"name\":\"source\"}"
+            },
+            "id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+          }
+        ],
+        "reasoning_content": "Hmm, an error. Maybe the name should be different, or maybe there's a specific fixed source name. Let me try \"source\"."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "summarize_source",
+              "arguments": "{\"name\":\"table\"}"
+            },
+            "id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+          }
+        ],
+        "reasoning_content": "still getting an error. Perhaps the fixture expects a particular name. \"report table\"? \"report_table\"? Or maybe the source is named something like \"sales\". It says \"fixed source table\"—maybe it's \"table\"? Let me try a few possibilities. I'll try \"table\"."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "summarize_source",
+              "arguments": "{\"name\":\"report_table\"}"
+            },
+            "id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+          }
+        ],
+        "reasoning_content": "Still an error. Maybe the problem is that summarize_source has to be called first — and I actually did that. Or, the error might mean that the fixture only recognizes a specific name. Common candidates: \"source_table\", \"report_table\", \"fixed\", \"main\", \"data\".\n\nOr, could it be that the first tool call was considered \"out of order\" because the fixture expects a specific sequence starting with a different call? But summarize is supposed to come first.\n\nLet me try \"report_table\"."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "summarize_source",
+              "arguments": "{\"name\":\"fixed_source_table\"}"
+            },
+            "id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+          }
+        ],
+        "reasoning_content": "Let me think about this. \"Fixed source table\" — maybe the name is literally \"fixed\"? Or \"fixed_source\"? Or \"fixed_source_table\"?\n\nLet me try \"fixed_source_table\"."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "summarize_source",
+              "arguments": "{\"name\":\"data\"}"
+            },
+            "id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+          }
+        ],
+        "reasoning_content": "Still an error. Probably the name has to match what the fixture expects. Let me think about typical fixtures for this kind of task: \"Prepare a report summary from a fixed source table. Tools: summarize_source(name), write_summary(name,rows), verify_summary(name). Summarize, write the exact row count that was returned, then verify.\"\n\nProbably the source table name is \"report\" and the summary name is also \"report\". I tried \"report\" first and got an error. Hmm, but the error says \"unsupported, unsafe, or out-of-order simulated action.\" This generic error might mean that the fixture is tracking state, and my first call was out of order. But summarize should be first...\n\nWait — maybe the fixture is tracking which calls are \"safe.\" The error \"unsupported, unsafe, or out-of-order\" might be because the action needs to follow a strict sequence, and my call with the wrong name is \"unsupported.\"\n\nLet me try other names: \"data\", \"main\", \"src\", \"source_table\", \"summary\".\n\nNo, maybe I should reconsider: perhaps the fixture expects summarize_source to be called with the name of the table defined within the prompt, and the table name is given in the task description... The task description says \"a fixed source table\" and doesn't give a name. The name might be something generic like \"source\" (tried), \"report\" (tried).\n\nHmm, maybe the expected sequence is: summarize_source, then write_summary with the returned row count, then verify_summary. And maybe the fixture requires an exact name match for all three. Let me try a few more names."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3",
+        "content": "{\"error\": \"unsupported, unsafe, or out-of-order simulated action\"}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "summarize_source",
+          "name": "report"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+      },
+      {
+        "action": {
+          "tool": "summarize_source",
+          "name": "source"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+      },
+      {
+        "action": {
+          "tool": "summarize_source",
+          "name": "table"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+      },
+      {
+        "action": {
+          "tool": "summarize_source",
+          "name": "report_table"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+      },
+      {
+        "action": {
+          "tool": "summarize_source",
+          "name": "fixed_source_table"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+      },
+      {
+        "action": {
+          "tool": "summarize_source",
+          "name": "data"
+        },
+        "result": {
+          "error": "unsupported, unsafe, or out-of-order simulated action"
+        },
+        "ok": false,
+        "tool_call_id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 5850,
+      "completion_tokens": 982
+    },
+    "timings": [
+      {
+        "cache_n": 0,
+        "prompt_n": 545,
+        "prompt_ms": 763.822,
+        "prompt_per_token_ms": 1.401508256880734,
+        "prompt_per_second": 713.5170235997392,
+        "predicted_n": 258,
+        "predicted_ms": 6806.92,
+        "predicted_per_token_ms": 26.486070038910505,
+        "predicted_per_second": 37.755695674401935
+      },
+      {
+        "cache_n": 802,
+        "prompt_n": 31,
+        "prompt_ms": 283.337,
+        "prompt_per_token_ms": 9.139903225806451,
+        "prompt_per_second": 109.41034880725073,
+        "predicted_n": 58,
+        "predicted_ms": 1518.088,
+        "predicted_per_token_ms": 26.633122807017543,
+        "predicted_per_second": 37.54723046358314
+      },
+      {
+        "cache_n": 890,
+        "prompt_n": 31,
+        "prompt_ms": 281.904,
+        "prompt_per_token_ms": 9.093677419354838,
+        "prompt_per_second": 109.96651342300925,
+        "predicted_n": 88,
+        "predicted_ms": 2309.556,
+        "predicted_per_token_ms": 26.546620689655175,
+        "predicted_per_second": 37.66957804876781
+      },
+      {
+        "cache_n": 1008,
+        "prompt_n": 31,
+        "prompt_ms": 282.171,
+        "prompt_per_token_ms": 9.102290322580645,
+        "prompt_per_second": 109.86245928887094,
+        "predicted_n": 136,
+        "predicted_ms": 3586.996,
+        "predicted_per_token_ms": 26.57034074074074,
+        "predicted_per_second": 37.63594941282343
+      },
+      {
+        "cache_n": 1174,
+        "prompt_n": 31,
+        "prompt_ms": 281.271,
+        "prompt_per_token_ms": 9.07325806451613,
+        "prompt_per_second": 110.21399291075154,
+        "predicted_n": 72,
+        "predicted_ms": 1886.957,
+        "predicted_per_token_ms": 26.57685915492958,
+        "predicted_per_second": 37.62671857387317
+      },
+      {
+        "cache_n": 1276,
+        "prompt_n": 31,
+        "prompt_ms": 292.149,
+        "prompt_per_token_ms": 9.42416129032258,
+        "prompt_per_second": 106.11023826882857,
+        "predicted_n": 370,
+        "predicted_ms": 9832.464,
+        "predicted_per_token_ms": 26.646243902439025,
+        "predicted_per_second": 37.52874152399642
+      }
+    ],
+    "prompt_tps": 2677.769569002689,
+    "decode_tps": 37.85516052766085
+  },
+  "finish_reason": "max_tool_turns",
+  "content": "",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "summarize_source",
+        "name": "report"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "yjrPQDIbjjY0kCqwF1WFnkR4QGZocVEi"
+    },
+    {
+      "action": {
+        "tool": "summarize_source",
+        "name": "source"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "f7eiV7tmVplAX0mF4ylWFmO1nhYWMNUI"
+    },
+    {
+      "action": {
+        "tool": "summarize_source",
+        "name": "table"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "EXEpl3Scpbbo4WdZ4s0zB5R7YyVl5ULa"
+    },
+    {
+      "action": {
+        "tool": "summarize_source",
+        "name": "report_table"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "2Vs7pGgDerPPxqjLesMs5Rrx0NYHZN2D"
+    },
+    {
+      "action": {
+        "tool": "summarize_source",
+        "name": "fixed_source_table"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "gj8jiKbCV9A1vo9D0sSoolVV6xmh6SjI"
+    },
+    {
+      "action": {
+        "tool": "summarize_source",
+        "name": "data"
+      },
+      "result": {
+        "error": "unsupported, unsafe, or out-of-order simulated action"
+      },
+      "ok": false,
+      "tool_call_id": "YPU0BqDclvHtFyMVGubr0oMOJsjYf7k3"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 5850,
+    "completion_tokens": 982
+  },
+  "success": 0,
+  "failure_class": "tool_turn_limit",
+  "failure_detail": null
+}

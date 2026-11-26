@@ -1,0 +1,946 @@
+{
+  "trial": {
+    "model": "base",
+    "task_id": "MU03",
+    "repetition": 2,
+    "seed": 2577633007
+  },
+  "task": {
+    "id": "MU03",
+    "category": "multi_step",
+    "prompt": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "complete_task",
+        "id": "A"
+      },
+      {
+        "tool": "complete_task",
+        "id": "B"
+      },
+      {
+        "tool": "complete_task",
+        "id": "C"
+      },
+      {
+        "tool": "complete_task",
+        "id": "D"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "complete_task",
+        "id": "D"
+      },
+      {
+        "tool": "complete_task",
+        "id": "B"
+      },
+      {
+        "tool": "complete_task",
+        "id": "C"
+      },
+      {
+        "tool": "complete_task",
+        "id": "A"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "complete_task",
+          "description": "Perform the complete_task operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN"
+                }
+              ],
+              "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd"
+                }
+              ],
+              "reasoning_content": "D is done. Next, B and C can be executed in parallel (both depend only on D, which is already done)."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1"
+                }
+              ],
+              "reasoning_content": "Both B and C are complete. Next up is A."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2577633007,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"D\"}"
+                    },
+                    "id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 108,
+            "prompt_tokens": 392,
+            "total_tokens": 500,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          },
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 392,
+            "prompt_ms": 569.907,
+            "prompt_per_token_ms": 1.4538443877551022,
+            "prompt_per_second": 687.8315233889037,
+            "predicted_n": 108,
+            "predicted_ms": 2844.995,
+            "predicted_per_token_ms": 26.58873831775701,
+            "predicted_per_second": 37.609907926024476
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN"
+                }
+              ],
+              "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd"
+                }
+              ],
+              "reasoning_content": "D is done. Next, B and C can be executed in parallel (both depend only on D, which is already done)."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1"
+                }
+              ],
+              "reasoning_content": "Both B and C are complete. Next up is A."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2577633008,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "D is done. Next, B and C can be executed in parallel (both depend only on D, which is already done).",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"B\"}"
+                    },
+                    "id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb"
+                  },
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"C\"}"
+                    },
+                    "id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 81,
+            "prompt_tokens": 521,
+            "total_tokens": 602,
+            "prompt_tokens_details": {
+              "cached_tokens": 499
+            }
+          },
+          "timings": {
+            "cache_n": 499,
+            "prompt_n": 22,
+            "prompt_ms": 278.386,
+            "prompt_per_token_ms": 12.653909090909092,
+            "prompt_per_second": 79.02696256277255,
+            "predicted_n": 81,
+            "predicted_ms": 2132.019,
+            "predicted_per_token_ms": 26.650237499999996,
+            "predicted_per_second": 37.52311775833143
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN"
+                }
+              ],
+              "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd"
+                }
+              ],
+              "reasoning_content": "D is done. Next, B and C can be executed in parallel (both depend only on D, which is already done)."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1"
+                }
+              ],
+              "reasoning_content": "Both B and C are complete. Next up is A."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2577633009,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Both B and C are complete. Next up is A.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "complete_task",
+                      "arguments": "{\"id\":\"A\"}"
+                    },
+                    "id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 41,
+            "prompt_tokens": 634,
+            "total_tokens": 675,
+            "prompt_tokens_details": {
+              "cached_tokens": 601
+            }
+          },
+          "timings": {
+            "cache_n": 601,
+            "prompt_n": 33,
+            "prompt_ms": 284.363,
+            "prompt_per_token_ms": 8.617060606060607,
+            "prompt_per_second": 116.04885305050236,
+            "predicted_n": 41,
+            "predicted_ms": 1068.22,
+            "predicted_per_token_ms": 26.7055,
+            "predicted_per_second": 37.445470034262605
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"D\"}"
+                  },
+                  "id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN"
+                }
+              ],
+              "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN",
+              "content": "{\"completed\": \"D\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"B\"}"
+                  },
+                  "id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"C\"}"
+                  },
+                  "id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd"
+                }
+              ],
+              "reasoning_content": "D is done. Next, B and C can be executed in parallel (both depend only on D, which is already done)."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb",
+              "content": "{\"completed\": \"B\"}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd",
+              "content": "{\"completed\": \"C\"}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "complete_task",
+                    "arguments": "{\"id\":\"A\"}"
+                  },
+                  "id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1"
+                }
+              ],
+              "reasoning_content": "Both B and C are complete. Next up is A."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1",
+              "content": "{\"completed\": \"A\"}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2577633010,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "complete_task",
+                "description": "Perform the complete_task operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "All tasks are complete: D → B, C → A. Please return the JSON exactly as requested."
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 30,
+            "prompt_tokens": 696,
+            "total_tokens": 726,
+            "prompt_tokens_details": {
+              "cached_tokens": 674
+            }
+          },
+          "timings": {
+            "cache_n": 674,
+            "prompt_n": 22,
+            "prompt_ms": 277.394,
+            "prompt_per_token_ms": 12.608818181818181,
+            "prompt_per_second": 79.30957410758704,
+            "predicted_n": 30,
+            "predicted_ms": 772.92,
+            "predicted_per_token_ms": 26.652413793103445,
+            "predicted_per_second": 37.52005382187031
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Complete project tasks. D is required by B and C; both B and C are required by A. Tool: complete_task(id). Use the available tools to complete the objective, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"D\"}"
+            },
+            "id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN"
+          }
+        ],
+        "reasoning_content": "Let's analyze the task:\n- D is required by B and C (that is, D must be completed before B and C)\n- Both B and C are required by A (that is, B and C must be completed before A)\n\nTherefore, the order is: D, then B and C (in parallel), then A.\n\nFirst, let's complete D."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN",
+        "content": "{\"completed\": \"D\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"B\"}"
+            },
+            "id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb"
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"C\"}"
+            },
+            "id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd"
+          }
+        ],
+        "reasoning_content": "D is done. Next, B and C can be executed in parallel (both depend only on D, which is already done)."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb",
+        "content": "{\"completed\": \"B\"}"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd",
+        "content": "{\"completed\": \"C\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "complete_task",
+              "arguments": "{\"id\":\"A\"}"
+            },
+            "id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1"
+          }
+        ],
+        "reasoning_content": "Both B and C are complete. Next up is A."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1",
+        "content": "{\"completed\": \"A\"}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "D"
+        },
+        "result": {
+          "completed": "D"
+        },
+        "ok": true,
+        "tool_call_id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN"
+      },
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "B"
+        },
+        "result": {
+          "completed": "B"
+        },
+        "ok": true,
+        "tool_call_id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb"
+      },
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "C"
+        },
+        "result": {
+          "completed": "C"
+        },
+        "ok": true,
+        "tool_call_id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd"
+      },
+      {
+        "action": {
+          "tool": "complete_task",
+          "id": "A"
+        },
+        "result": {
+          "completed": "A"
+        },
+        "ok": true,
+        "tool_call_id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2243,
+      "completion_tokens": 260
+    },
+    "timings": [
+      {
+        "cache_n": 0,
+        "prompt_n": 392,
+        "prompt_ms": 569.907,
+        "prompt_per_token_ms": 1.4538443877551022,
+        "prompt_per_second": 687.8315233889037,
+        "predicted_n": 108,
+        "predicted_ms": 2844.995,
+        "predicted_per_token_ms": 26.58873831775701,
+        "predicted_per_second": 37.609907926024476
+      },
+      {
+        "cache_n": 499,
+        "prompt_n": 22,
+        "prompt_ms": 278.386,
+        "prompt_per_token_ms": 12.653909090909092,
+        "prompt_per_second": 79.02696256277255,
+        "predicted_n": 81,
+        "predicted_ms": 2132.019,
+        "predicted_per_token_ms": 26.650237499999996,
+        "predicted_per_second": 37.52311775833143
+      },
+      {
+        "cache_n": 601,
+        "prompt_n": 33,
+        "prompt_ms": 284.363,
+        "prompt_per_token_ms": 8.617060606060607,
+        "prompt_per_second": 116.04885305050236,
+        "predicted_n": 41,
+        "predicted_ms": 1068.22,
+        "predicted_per_token_ms": 26.7055,
+        "predicted_per_second": 37.445470034262605
+      },
+      {
+        "cache_n": 674,
+        "prompt_n": 22,
+        "prompt_ms": 277.394,
+        "prompt_per_token_ms": 12.608818181818181,
+        "prompt_per_second": 79.30957410758704,
+        "predicted_n": 30,
+        "predicted_ms": 772.92,
+        "predicted_per_token_ms": 26.652413793103445,
+        "predicted_per_second": 37.52005382187031
+      }
+    ],
+    "prompt_tps": 1590.7237332009502,
+    "decode_tps": 38.13348891796812
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "D"
+      },
+      "result": {
+        "completed": "D"
+      },
+      "ok": true,
+      "tool_call_id": "QEMsAYPNhfKA8kULIMcrAwu1Ya6KyoiN"
+    },
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "B"
+      },
+      "result": {
+        "completed": "B"
+      },
+      "ok": true,
+      "tool_call_id": "mVgMxI5M1rCmsGy712jIjhNzHSJTgXkb"
+    },
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "C"
+      },
+      "result": {
+        "completed": "C"
+      },
+      "ok": true,
+      "tool_call_id": "Vfb0k4BpH1xcFrs8CL6zIy9SG0EsY5Nd"
+    },
+    {
+      "action": {
+        "tool": "complete_task",
+        "id": "A"
+      },
+      "result": {
+        "completed": "A"
+      },
+      "ok": true,
+      "tool_call_id": "4o8073XS65pj1i9VYVvIAbmAG2DSdfU1"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2243,
+    "completion_tokens": 260
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

@@ -1,0 +1,162 @@
+{
+  "trial": {
+    "model": "base",
+    "task_id": "CO12",
+    "repetition": 3,
+    "seed": 4088387819
+  },
+  "task": {
+    "id": "CO12",
+    "category": "coding",
+    "prompt": "Write a Python function named solve(xs) implementing the requested behavior. Return JSON only in the form {\"code\":\"...\"}. The behavior: Implement a function that flattens one level of a nested integer list.",
+    "reference_response": {
+      "code": "def solve(xs):\n    return sum(xs, [])"
+    },
+    "negative_control": {
+      "code": "def solve(xs):\n    return xs"
+    },
+    "scorer": "restricted-python-function-cases-v1",
+    "kind": "python_function",
+    "signature": "xs",
+    "cases": [
+      {
+        "args": [
+          [
+            [
+              1,
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ]
+          ]
+        ],
+        "expected": [
+          1,
+          2,
+          3,
+          4
+        ]
+      },
+      {
+        "args": [
+          [
+            [
+              5
+            ],
+            [],
+            [
+              6,
+              7
+            ]
+          ]
+        ],
+        "expected": [
+          5,
+          6,
+          7
+        ]
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"code\":\"def solve(xs):\\n    result = []\\n    for x in xs:\\n        if isinstance(x, (list, tuple)):\\n            result.extend(x)\\n        else:\\n            result.append(x)\\n    return result\\n\"}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Write a Python function named solve(xs) implementing the requested behavior. Return JSON only in the form {\"code\":\"...\"}. The behavior: Implement a function that flattens one level of a nested integer list."
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 4088387819,
+          "max_tokens": 4096,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          }
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"code\":\"def solve(xs):\\n    result = []\\n    for x in xs:\\n        if isinstance(x, (list, tuple)):\\n            result.extend(x)\\n        else:\\n            result.append(x)\\n    return result\\n\"}",
+                "reasoning_content": "We need answer user: \"Write a Python function named solve(xs) implementing the requested behavior. Return JSON only in the form {\"code\":\"...\"}. The behavior: Implement a function that flattens one level of a nested integer list.\"\n\nNeed produce final JSON only. Need include code string. Need think about exact behavior. Function solve(xs) flattens one level of nested integer list. Likely if xs is list of lists of ints, return flattened list ints. But maybe robust: if element is list/tuple, extend else append. One level means [ [1,2],[3,4] ] -> [1,2,3,4]; if [1,2,3] -> [1,2,3]. \"nested integer list\" maybe list whose elements are lists of integers. We need JSON only {\"code\":\"...\"}. Need ensure valid JSON string with escaped newlines. Could provide concise.\n\nPotential code:\ndef solve(xs):\n    return [item for sublist in xs for item in sublist]\n\nBut if top-level list can contain ints, this fails. More robust:\ndef solve(xs):\n    res=[]\n    for x in xs:\n        if isinstance(x, (list, tuple)):\n            res.extend(x)\n        else:\n            res.append(x)\n    return res\n\nFlattens one level, works for ints or nested. If nested deeper, only one level: [[1,[2]],[3]] -> [1,[2],3]. That's fine. Should we accept generator? probably list. Could use collections.abc.Iterable, but not strings? integers list no strings. But if element list, extend. Use list/tuple to avoid extending strings if present. If xs itself maybe nested one level? Could be list of lists. Simpler. Need JSON only. Ensure no markdown.\n\nNeed maybe type hints? not necessary. Code as string. Could escape:\n{\"code\":\"def solve(xs):\\n    result = []\\n    for x in xs:\\n        if isinstance(x, (list, tuple)):\\n            result.extend(x)\\n        else:\\n            result.append(x)\\n    return result\\n\"}\n\nNeed ensure final only JSON. No extra."
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 519,
+            "prompt_tokens": 93,
+            "total_tokens": 612,
+            "prompt_tokens_details": {
+              "cached_tokens": 42
+            }
+          },
+          "timings": {
+            "cache_n": 42,
+            "prompt_n": 51,
+            "prompt_ms": 411.257,
+            "prompt_per_token_ms": 8.063862745098039,
+            "prompt_per_second": 124.01004724539644,
+            "predicted_n": 519,
+            "predicted_ms": 13755.754,
+            "predicted_per_token_ms": 26.555509652509652,
+            "predicted_per_second": 37.65696885826833
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Write a Python function named solve(xs) implementing the requested behavior. Return JSON only in the form {\"code\":\"...\"}. The behavior: Implement a function that flattens one level of a nested integer list."
+      }
+    ],
+    "tool_trace": [],
+    "usage": {
+      "prompt_tokens": 93,
+      "completion_tokens": 519
+    },
+    "timings": [
+      {
+        "cache_n": 42,
+        "prompt_n": 51,
+        "prompt_ms": 411.257,
+        "prompt_per_token_ms": 8.063862745098039,
+        "prompt_per_second": 124.01004724539644,
+        "predicted_n": 519,
+        "predicted_ms": 13755.754,
+        "predicted_per_token_ms": 26.555509652509652,
+        "predicted_per_second": 37.65696885826833
+      }
+    ],
+    "prompt_tps": 226.13596850631114,
+    "decode_tps": 37.729665709346065
+  },
+  "finish_reason": "stop",
+  "content": "{\"code\":\"def solve(xs):\\n    result = []\\n    for x in xs:\\n        if isinstance(x, (list, tuple)):\\n            result.extend(x)\\n        else:\\n            result.append(x)\\n    return result\\n\"}",
+  "tool_trace": [],
+  "usage": {
+    "prompt_tokens": 93,
+    "completion_tokens": 519
+  },
+  "success": 0,
+  "failure_class": "code_tests_failed",
+  "failure_detail": null
+}

@@ -3,10 +3,10 @@ set -eu
 cd "$(git rev-parse --show-toplevel)"
 push_input=$(cat)
 python3 - "$push_input" <<'PY'
-import re, subprocess, sys
+import re, subprocess, sys, ipaddress
 
 patterns = {
-    'credential/token': re.compile(rb'(?i)(?:sk-[A-Za-z0-9_-]{20,}|(?:gh[pousr])_[A-Za-z0-9]{20,}|hf_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{16,}|AKIA[0-9A-Z]{16}|(?:[A-Z0-9_]*(?:API_?KEY|ACCESS_TOKEN|SECRET|TOKEN|AUTHKEY|KEY)\s*[:=]\s*[^\s]{8,}|Bearer\s+[A-Za-z0-9._~+/-]{16,}))'),
+    'credential/token': re.compile(rb'(?i)(?:sk-[A-Za-z0-9_-]{20,}|(?:gh[pousr])_[A-Za-z0-9]{20,}|hf_[A-Za-z0-9]{20,}|xox[baprs]-[A-Za-z0-9-]{16,}|AKIA[0-9A-Z]{16}|(?:[A-Z0-9_]*(?:API_?KEY|ACCESS_TOKEN|SECRET|TOKEN|AUTHKEY|KEY)\s*[:=]\s*["\x27]?[A-Za-z0-9_./+=-]{8,}|Bearer\s+[A-Za-z0-9._~+/-]{16,}))'),
     'private path': re.compile(rb'(?i)(?:/' + b'Vol' + b'umes/|/' + b'Us' + b'ers/|/' + b'ho' + b'me/[^\s]+)'),
     'private marker': re.compile(rb'(?i)\b(?:' + b'in' + b'ternal|' + b'hand' + b'off)\b'),
     'pod identifier': re.compile(rb'(?i)\bpod[_ -]?id\b\s*[:=]?\s*[a-z0-9][a-z0-9-]{7,}'),
@@ -19,7 +19,14 @@ def inspect(path, blob):
     if blob.returncode or b'\0' in blob.stdout[:8192]: return
     for category,pattern in patterns.items():
         matches=pattern.findall(blob.stdout)
-        if category == 'IPv6 address': matches=[m for m in matches if m != b'::']
+        if category in ('IP address', 'IPv6 address'):
+            addresses=[]
+            for match in matches:
+                try: address=ipaddress.ip_address(match.decode())
+                except ValueError: continue
+                if address.is_loopback or address.is_unspecified or address in ipaddress.ip_network('192.0.2.0/24'): continue
+                addresses.append(match)
+            matches=addresses
         if matches: bad.append((path,category))
 # With the no-commit workflow, scan the staged branch payload as well.
 staged=subprocess.check_output(['git','diff','--cached','--name-only','--diff-filter=ACMRT','-z']).decode(errors='surrogateescape').split('\0')

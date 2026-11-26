@@ -1,0 +1,150 @@
+{
+  "trial": {
+    "model": "adapter",
+    "task_id": "CO11",
+    "repetition": 3,
+    "seed": 2954878904
+  },
+  "task": {
+    "id": "CO11",
+    "category": "coding",
+    "prompt": "Write a Python function named solve(words) implementing the requested behavior. Return JSON only in the form {\"code\":\"...\"}. The behavior: Implement a function that returns the longest word; ties go to the first.",
+    "reference_response": {
+      "code": "def solve(words):\n    return max(words, key=len)"
+    },
+    "negative_control": {
+      "code": "def solve(words):\n    return min(words, key=len)"
+    },
+    "scorer": "restricted-python-function-cases-v1",
+    "kind": "python_function",
+    "signature": "words",
+    "cases": [
+      {
+        "args": [
+          [
+            "plum",
+            "peach",
+            "pear"
+          ]
+        ],
+        "expected": "peach"
+      },
+      {
+        "args": [
+          [
+            "a",
+            "bbb",
+            "cc"
+          ]
+        ],
+        "expected": "bbb"
+      },
+      {
+        "args": [
+          [
+            "pear",
+            "plum"
+          ]
+        ],
+        "expected": "pear"
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"code\":\"def solve(words):\\n    if not words:\\n        return None\\n    return max(words, key=len)\\n\"}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "Write a Python function named solve(words) implementing the requested behavior. Return JSON only in the form {\"code\":\"...\"}. The behavior: Implement a function that returns the longest word; ties go to the first."
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 2954878904,
+          "max_tokens": 4096,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          }
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"code\":\"def solve(words):\\n    if not words:\\n        return None\\n    return max(words, key=len)\\n\"}",
+                "reasoning_content": "We need answer user asks: Write Python function named solve(words) implementing behavior. Return JSON only in form {\"code\":\"...\"}. Behavior: Implement a function that returns longest word; ties go to first.\n\nNeed produce final JSON only. Need think through code. Function solve(words) likely takes iterable/list of strings. Return longest word, ties first. Edge cases? If empty? Not specified. Could return None or empty string. Need robust. Use max(words, key=len) if words else None. But if words generator? max works. If empty, return None. But perhaps expected return ''? The prompt: returns the longest word; ties go to the first. For empty list maybe no word. Could return None. In coding tasks often solve(words) where words is list. Maybe they expect if no words return ''. Need infer. To be safe? If test includes empty, what is more likely? Function returns the longest word. No word exists, maybe empty string. But None is typical. Let's consider common platforms: \"Write a Python function named solve(words) implementing the requested behavior. Return JSON only in the form {\"code\":\"...\"}. The behavior: Implement a function that returns the longest word; ties go to the first.\" They probably will call solve([\"a\",\"bb\"]) and expect \"bb\". If empty maybe expect None? Hard.\n\nCould implement:\ndef solve(words):\n    return max(words, key=len) if words else None\n\nBut if words is tuple? if words: works. If None? Could guard:\nif not words: return None\nreturn max(words, key=len)\n\nIf words contains non-string? key len maybe fail. Not necessary.\n\nTies to first: max returns first maximal? Python max: If multiple max, returns first encountered. Yes.\n\nNeed output JSON with code string escaped. Ensure valid JSON. Code:\ndef solve(words):\n    if not words:\n        return None\n    return max(words, key=len)\n\nCould include docstring? Fine.\n\nNeed only JSON no markdown. Final: {\"code\":\"def solve(words):\\n    if not words:\\n        return None\\n    return max(words, key=len)\\n\"}\n\nDouble-check JSON escaping newline? In JSON string can include \\n literal backslash n. Yes."
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 506,
+            "prompt_tokens": 94,
+            "total_tokens": 600,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          },
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 94,
+            "prompt_ms": 402.662,
+            "prompt_per_token_ms": 4.28363829787234,
+            "prompt_per_second": 233.44641411407088,
+            "predicted_n": 506,
+            "predicted_ms": 15795.837,
+            "predicted_per_token_ms": 31.27888514851485,
+            "predicted_per_second": 31.97044892271299
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "Write a Python function named solve(words) implementing the requested behavior. Return JSON only in the form {\"code\":\"...\"}. The behavior: Implement a function that returns the longest word; ties go to the first."
+      }
+    ],
+    "tool_trace": [],
+    "usage": {
+      "prompt_tokens": 94,
+      "completion_tokens": 506
+    },
+    "timings": [
+      {
+        "cache_n": 0,
+        "prompt_n": 94,
+        "prompt_ms": 402.662,
+        "prompt_per_token_ms": 4.28363829787234,
+        "prompt_per_second": 233.44641411407088,
+        "predicted_n": 506,
+        "predicted_ms": 15795.837,
+        "predicted_per_token_ms": 31.27888514851485,
+        "predicted_per_second": 31.97044892271299
+      }
+    ],
+    "prompt_tps": 233.44641411407088,
+    "decode_tps": 32.03375674236193
+  },
+  "finish_reason": "stop",
+  "content": "{\"code\":\"def solve(words):\\n    if not words:\\n        return None\\n    return max(words, key=len)\\n\"}",
+  "tool_trace": [],
+  "usage": {
+    "prompt_tokens": 94,
+    "completion_tokens": 506
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

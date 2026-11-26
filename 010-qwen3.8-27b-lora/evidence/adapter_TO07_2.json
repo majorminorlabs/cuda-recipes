@@ -1,0 +1,445 @@
+{
+  "trial": {
+    "model": "adapter",
+    "task_id": "TO07",
+    "repetition": 2,
+    "seed": 3875191827
+  },
+  "task": {
+    "id": "TO07",
+    "category": "tool_use",
+    "prompt": "A git tool exposes status(), diff(), commit(message). Inspect uncommitted changes only. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "commit",
+        "message": "checkpoint"
+      }
+    ],
+    "scorer": "canonical-json-equality-v1",
+    "expected_calls": [
+      {
+        "tool": "status"
+      },
+      {
+        "tool": "diff"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "status",
+          "description": "Perform the status operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "diff",
+          "description": "Perform the diff operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": [],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A git tool exposes status(), diff(), commit(message). Inspect uncommitted changes only. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "status",
+                    "arguments": "{}"
+                  },
+                  "id": "NrnjVO9UpyGZ7miVQBanhWO9AUhME9JF"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "diff",
+                    "arguments": "{}"
+                  },
+                  "id": "pArYPTqoGQCnjUKFamWf7dpXIIgwqIDw"
+                }
+              ],
+              "reasoning_content": "The user wants me to inspect uncommitted changes using a git tool that exposes status(), diff(), and commit(message). I should inspect uncommitted changes only. Let me start by calling status() and diff() to see what's there.\n\nThe final response should be JSON only, no markdown, exactly {\"done\":true} once complete.\n\nLet me start with status() and diff() in parallel since they're independent."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "NrnjVO9UpyGZ7miVQBanhWO9AUhME9JF",
+              "content": "{\"branch\": \"benchmark-fixture\", \"changes\": 2}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "pArYPTqoGQCnjUKFamWf7dpXIIgwqIDw",
+              "content": "{\"files_changed\": [\"src/a.py\", \"README.md\"]}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 3875191827,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "status",
+                "description": "Perform the status operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "diff",
+                "description": "Perform the diff operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The user wants me to inspect uncommitted changes using a git tool that exposes status(), diff(), and commit(message). I should inspect uncommitted changes only. Let me start by calling status() and diff() to see what's there.\n\nThe final response should be JSON only, no markdown, exactly {\"done\":true} once complete.\n\nLet me start with status() and diff() in parallel since they're independent.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "status",
+                      "arguments": "{}"
+                    },
+                    "id": "NrnjVO9UpyGZ7miVQBanhWO9AUhME9JF"
+                  },
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "diff",
+                      "arguments": "{}"
+                    },
+                    "id": "pArYPTqoGQCnjUKFamWf7dpXIIgwqIDw"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 115,
+            "prompt_tokens": 404,
+            "total_tokens": 519,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          },
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 404,
+            "prompt_ms": 676.206,
+            "prompt_per_token_ms": 1.6737772277227723,
+            "prompt_per_second": 597.451072602136,
+            "predicted_n": 115,
+            "predicted_ms": 3607.258,
+            "predicted_per_token_ms": 31.642614035087718,
+            "predicted_per_second": 31.602951604792338
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A git tool exposes status(), diff(), commit(message). Inspect uncommitted changes only. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "status",
+                    "arguments": "{}"
+                  },
+                  "id": "NrnjVO9UpyGZ7miVQBanhWO9AUhME9JF"
+                },
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "diff",
+                    "arguments": "{}"
+                  },
+                  "id": "pArYPTqoGQCnjUKFamWf7dpXIIgwqIDw"
+                }
+              ],
+              "reasoning_content": "The user wants me to inspect uncommitted changes using a git tool that exposes status(), diff(), and commit(message). I should inspect uncommitted changes only. Let me start by calling status() and diff() to see what's there.\n\nThe final response should be JSON only, no markdown, exactly {\"done\":true} once complete.\n\nLet me start with status() and diff() in parallel since they're independent."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "NrnjVO9UpyGZ7miVQBanhWO9AUhME9JF",
+              "content": "{\"branch\": \"benchmark-fixture\", \"changes\": 2}"
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "pArYPTqoGQCnjUKFamWf7dpXIIgwqIDw",
+              "content": "{\"files_changed\": [\"src/a.py\", \"README.md\"]}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 3875191828,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "status",
+                "description": "Perform the status operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "diff",
+                "description": "Perform the diff operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {},
+                  "required": [],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "The status shows 2 changes on branch benchmark-fixture, and diff shows files changed: src/a.py and README.md. The task was to inspect uncommitted changes only — that's done. I should not commit. Now return the JSON exactly {\"done\":true}."
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 63,
+            "prompt_tokens": 566,
+            "total_tokens": 629,
+            "prompt_tokens_details": {
+              "cached_tokens": 518
+            }
+          },
+          "timings": {
+            "cache_n": 518,
+            "prompt_n": 48,
+            "prompt_ms": 329.312,
+            "prompt_per_token_ms": 6.860666666666667,
+            "prompt_per_second": 145.75842969585074,
+            "predicted_n": 63,
+            "predicted_ms": 1959.705,
+            "predicted_per_token_ms": 31.60814516129032,
+            "predicted_per_second": 31.637414814984908
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "A git tool exposes status(), diff(), commit(message). Inspect uncommitted changes only. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "status",
+              "arguments": "{}"
+            },
+            "id": "NrnjVO9UpyGZ7miVQBanhWO9AUhME9JF"
+          },
+          {
+            "type": "function",
+            "function": {
+              "name": "diff",
+              "arguments": "{}"
+            },
+            "id": "pArYPTqoGQCnjUKFamWf7dpXIIgwqIDw"
+          }
+        ],
+        "reasoning_content": "The user wants me to inspect uncommitted changes using a git tool that exposes status(), diff(), and commit(message). I should inspect uncommitted changes only. Let me start by calling status() and diff() to see what's there.\n\nThe final response should be JSON only, no markdown, exactly {\"done\":true} once complete.\n\nLet me start with status() and diff() in parallel since they're independent."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "NrnjVO9UpyGZ7miVQBanhWO9AUhME9JF",
+        "content": "{\"branch\": \"benchmark-fixture\", \"changes\": 2}"
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "pArYPTqoGQCnjUKFamWf7dpXIIgwqIDw",
+        "content": "{\"files_changed\": [\"src/a.py\", \"README.md\"]}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "status"
+        },
+        "result": {
+          "branch": "benchmark-fixture",
+          "changes": 2
+        },
+        "ok": true,
+        "tool_call_id": "NrnjVO9UpyGZ7miVQBanhWO9AUhME9JF"
+      },
+      {
+        "action": {
+          "tool": "diff"
+        },
+        "result": {
+          "files_changed": [
+            "src/a.py",
+            "README.md"
+          ]
+        },
+        "ok": true,
+        "tool_call_id": "pArYPTqoGQCnjUKFamWf7dpXIIgwqIDw"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 970,
+      "completion_tokens": 178
+    },
+    "timings": [
+      {
+        "cache_n": 0,
+        "prompt_n": 404,
+        "prompt_ms": 676.206,
+        "prompt_per_token_ms": 1.6737772277227723,
+        "prompt_per_second": 597.451072602136,
+        "predicted_n": 115,
+        "predicted_ms": 3607.258,
+        "predicted_per_token_ms": 31.642614035087718,
+        "predicted_per_second": 31.602951604792338
+      },
+      {
+        "cache_n": 518,
+        "prompt_n": 48,
+        "prompt_ms": 329.312,
+        "prompt_per_token_ms": 6.860666666666667,
+        "prompt_per_second": 145.75842969585074,
+        "predicted_n": 63,
+        "predicted_ms": 1959.705,
+        "predicted_per_token_ms": 31.60814516129032,
+        "predicted_per_second": 31.637414814984908
+      }
+    ],
+    "prompt_tps": 964.6769127951961,
+    "decode_tps": 31.974345796801597
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "status"
+      },
+      "result": {
+        "branch": "benchmark-fixture",
+        "changes": 2
+      },
+      "ok": true,
+      "tool_call_id": "NrnjVO9UpyGZ7miVQBanhWO9AUhME9JF"
+    },
+    {
+      "action": {
+        "tool": "diff"
+      },
+      "result": {
+        "files_changed": [
+          "src/a.py",
+          "README.md"
+        ]
+      },
+      "ok": true,
+      "tool_call_id": "pArYPTqoGQCnjUKFamWf7dpXIIgwqIDw"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 970,
+    "completion_tokens": 178
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}

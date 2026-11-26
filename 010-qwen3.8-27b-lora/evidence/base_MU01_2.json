@@ -1,0 +1,966 @@
+{
+  "trial": {
+    "model": "base",
+    "task_id": "MU01",
+    "repetition": 2,
+    "seed": 1888702205
+  },
+  "task": {
+    "id": "MU01",
+    "category": "multi_step",
+    "prompt": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown.",
+    "reference_response": {
+      "done": true
+    },
+    "negative_control": [
+      {
+        "tool": "get_stock",
+        "product": "cable"
+      },
+      {
+        "tool": "adjust_stock",
+        "product": "cable",
+        "delta": -6
+      },
+      {
+        "tool": "get_stock",
+        "product": "cable"
+      }
+    ],
+    "scorer": "ordered-simulated-state-transition-v1",
+    "expected_calls": [
+      {
+        "tool": "get_stock",
+        "product": "cable"
+      },
+      {
+        "tool": "adjust_stock",
+        "product": "cable",
+        "delta": -5
+      },
+      {
+        "tool": "get_stock",
+        "product": "cable"
+      }
+    ],
+    "tool_definitions": [
+      {
+        "type": "function",
+        "function": {
+          "name": "get_stock",
+          "description": "Perform the get_stock operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "product": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "product"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "adjust_stock",
+          "description": "Perform the adjust_stock operation in the task fixture.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "product": {
+                "type": "string"
+              },
+              "delta": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "product",
+              "delta"
+            ],
+            "additionalProperties": false
+          }
+        }
+      }
+    ]
+  },
+  "interaction": {
+    "content": "{\"done\":true}",
+    "finish_reason": "stop",
+    "responses": [
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ"
+                }
+              ],
+              "reasoning_content": "I need to first check the stock, then subtract exactly 5, and then verify the final stock.\n\nStep 1: Check the stock of \"cable\" (product name). The shipment requires 5 cable units, and the stock starts at 12. The product name is probably \"cable\".\n\nLet me try calling get_stock(\"cable\")."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ",
+              "content": "{\"product\": \"cable\", \"quantity\": 12}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "adjust_stock",
+                    "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                  },
+                  "id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z"
+                }
+              ],
+              "reasoning_content": "Confirmed the inventory: 12. Next, deduct exactly 5 → adjust_stock(\"cable\", -5)."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z",
+              "content": "{\"quantity\": 7}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG"
+                }
+              ],
+              "reasoning_content": "The adjustment was successful, and the quantity is now 7. To confirm the final quantity, I'll retrieve the inventory again."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG",
+              "content": "{\"product\": \"cable\", \"quantity\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 1888702205,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "get_stock",
+                "description": "Perform the get_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "adjust_stock",
+                "description": "Perform the adjust_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    },
+                    "delta": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "product",
+                    "delta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "I need to first check the stock, then subtract exactly 5, and then verify the final stock.\n\nStep 1: Check the stock of \"cable\" (product name). The shipment requires 5 cable units, and the stock starts at 12. The product name is probably \"cable\".\n\nLet me try calling get_stock(\"cable\").",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "get_stock",
+                      "arguments": "{\"product\":\"cable\"}"
+                    },
+                    "id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 105,
+            "prompt_tokens": 479,
+            "total_tokens": 584,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            }
+          },
+          "timings": {
+            "cache_n": 0,
+            "prompt_n": 479,
+            "prompt_ms": 614.891,
+            "prompt_per_token_ms": 1.283697286012526,
+            "prompt_per_second": 778.9998552588996,
+            "predicted_n": 105,
+            "predicted_ms": 2765.699,
+            "predicted_per_token_ms": 26.593259615384618,
+            "predicted_per_second": 37.603513614460574
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ"
+                }
+              ],
+              "reasoning_content": "I need to first check the stock, then subtract exactly 5, and then verify the final stock.\n\nStep 1: Check the stock of \"cable\" (product name). The shipment requires 5 cable units, and the stock starts at 12. The product name is probably \"cable\".\n\nLet me try calling get_stock(\"cable\")."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ",
+              "content": "{\"product\": \"cable\", \"quantity\": 12}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "adjust_stock",
+                    "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                  },
+                  "id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z"
+                }
+              ],
+              "reasoning_content": "Confirmed the inventory: 12. Next, deduct exactly 5 → adjust_stock(\"cable\", -5)."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z",
+              "content": "{\"quantity\": 7}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG"
+                }
+              ],
+              "reasoning_content": "The adjustment was successful, and the quantity is now 7. To confirm the final quantity, I'll retrieve the inventory again."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG",
+              "content": "{\"product\": \"cable\", \"quantity\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 1888702206,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "get_stock",
+                "description": "Perform the get_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "adjust_stock",
+                "description": "Perform the adjust_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    },
+                    "delta": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "product",
+                    "delta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "Confirmed the inventory: 12. Next, deduct exactly 5 → adjust_stock(\"cable\", -5).",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "adjust_stock",
+                      "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                    },
+                    "id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 68,
+            "prompt_tokens": 613,
+            "total_tokens": 681,
+            "prompt_tokens_details": {
+              "cached_tokens": 583
+            }
+          },
+          "timings": {
+            "cache_n": 583,
+            "prompt_n": 30,
+            "prompt_ms": 293.209,
+            "prompt_per_token_ms": 9.773633333333333,
+            "prompt_per_second": 102.31609534495871,
+            "predicted_n": 68,
+            "predicted_ms": 1775.694,
+            "predicted_per_token_ms": 26.50289552238806,
+            "predicted_per_second": 37.73172629968902
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ"
+                }
+              ],
+              "reasoning_content": "I need to first check the stock, then subtract exactly 5, and then verify the final stock.\n\nStep 1: Check the stock of \"cable\" (product name). The shipment requires 5 cable units, and the stock starts at 12. The product name is probably \"cable\".\n\nLet me try calling get_stock(\"cable\")."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ",
+              "content": "{\"product\": \"cable\", \"quantity\": 12}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "adjust_stock",
+                    "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                  },
+                  "id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z"
+                }
+              ],
+              "reasoning_content": "Confirmed the inventory: 12. Next, deduct exactly 5 → adjust_stock(\"cable\", -5)."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z",
+              "content": "{\"quantity\": 7}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG"
+                }
+              ],
+              "reasoning_content": "The adjustment was successful, and the quantity is now 7. To confirm the final quantity, I'll retrieve the inventory again."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG",
+              "content": "{\"product\": \"cable\", \"quantity\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 1888702207,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "get_stock",
+                "description": "Perform the get_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "adjust_stock",
+                "description": "Perform the adjust_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    },
+                    "delta": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "product",
+                    "delta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "tool_calls",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "",
+                "reasoning_content": "The adjustment was successful, and the quantity is now 7. To confirm the final quantity, I'll retrieve the inventory again.",
+                "tool_calls": [
+                  {
+                    "type": "function",
+                    "function": {
+                      "name": "get_stock",
+                      "arguments": "{\"product\":\"cable\"}"
+                    },
+                    "id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG"
+                  }
+                ]
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 56,
+            "prompt_tokens": 702,
+            "total_tokens": 758,
+            "prompt_tokens_details": {
+              "cached_tokens": 680
+            }
+          },
+          "timings": {
+            "cache_n": 680,
+            "prompt_n": 22,
+            "prompt_ms": 279.585,
+            "prompt_per_token_ms": 12.70840909090909,
+            "prompt_per_second": 78.68805551084644,
+            "predicted_n": 56,
+            "predicted_ms": 1458.991,
+            "predicted_per_token_ms": 26.52710909090909,
+            "predicted_per_second": 37.69728531567364
+          }
+        }
+      },
+      {
+        "request": {
+          "model": "qwen3.8-study",
+          "messages": [
+            {
+              "role": "user",
+              "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ"
+                }
+              ],
+              "reasoning_content": "I need to first check the stock, then subtract exactly 5, and then verify the final stock.\n\nStep 1: Check the stock of \"cable\" (product name). The shipment requires 5 cable units, and the stock starts at 12. The product name is probably \"cable\".\n\nLet me try calling get_stock(\"cable\")."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ",
+              "content": "{\"product\": \"cable\", \"quantity\": 12}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "adjust_stock",
+                    "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+                  },
+                  "id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z"
+                }
+              ],
+              "reasoning_content": "Confirmed the inventory: 12. Next, deduct exactly 5 → adjust_stock(\"cable\", -5)."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z",
+              "content": "{\"quantity\": 7}"
+            },
+            {
+              "role": "assistant",
+              "content": "",
+              "tool_calls": [
+                {
+                  "type": "function",
+                  "function": {
+                    "name": "get_stock",
+                    "arguments": "{\"product\":\"cable\"}"
+                  },
+                  "id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG"
+                }
+              ],
+              "reasoning_content": "The adjustment was successful, and the quantity is now 7. To confirm the final quantity, I'll retrieve the inventory again."
+            },
+            {
+              "role": "tool",
+              "tool_call_id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG",
+              "content": "{\"product\": \"cable\", \"quantity\": 7}"
+            }
+          ],
+          "temperature": 1.0,
+          "top_p": 0.95,
+          "top_k": 20,
+          "min_p": 0.0,
+          "seed": 1888702208,
+          "max_tokens": 1024,
+          "stream": false,
+          "chat_template_kwargs": {
+            "enable_thinking": true
+          },
+          "tools": [
+            {
+              "type": "function",
+              "function": {
+                "name": "get_stock",
+                "description": "Perform the get_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "product"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            {
+              "type": "function",
+              "function": {
+                "name": "adjust_stock",
+                "description": "Perform the adjust_stock operation in the task fixture.",
+                "parameters": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "type": "string"
+                    },
+                    "delta": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "product",
+                    "delta"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          ]
+        },
+        "response": {
+          "choices": [
+            {
+              "finish_reason": "stop",
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"done\":true}",
+                "reasoning_content": "Confirmed: 12 - 5 = 7. The final inventory has been verified as 7. Returning exactly {\"done\":true}, with no markdown, JSON only."
+              }
+            }
+          ],
+          "model": "qwen3.8-study",
+          "object": "chat.completion",
+          "usage": {
+            "completion_tokens": 45,
+            "prompt_tokens": 786,
+            "total_tokens": 831,
+            "prompt_tokens_details": {
+              "cached_tokens": 757
+            }
+          },
+          "timings": {
+            "cache_n": 757,
+            "prompt_n": 29,
+            "prompt_ms": 286.031,
+            "prompt_per_token_ms": 9.863137931034483,
+            "prompt_per_second": 101.38761183228391,
+            "predicted_n": 45,
+            "predicted_ms": 1174.665,
+            "predicted_per_token_ms": 26.696931818181817,
+            "predicted_per_second": 37.4574878795231
+          }
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": "A shipment needs five cable units. The inventory starts at 12. Tools: get_stock(product), adjust_stock(product,delta). Inspect stock, deduct exactly five, and verify the final stock. Use the available tools, then return JSON exactly {\"done\":true}. Respond with JSON only and no markdown.\nUse the available tools; after the requested outcome is complete, return JSON exactly {\"done\":true} and no markdown."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "get_stock",
+              "arguments": "{\"product\":\"cable\"}"
+            },
+            "id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ"
+          }
+        ],
+        "reasoning_content": "I need to first check the stock, then subtract exactly 5, and then verify the final stock.\n\nStep 1: Check the stock of \"cable\" (product name). The shipment requires 5 cable units, and the stock starts at 12. The product name is probably \"cable\".\n\nLet me try calling get_stock(\"cable\")."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ",
+        "content": "{\"product\": \"cable\", \"quantity\": 12}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "adjust_stock",
+              "arguments": "{\"product\":\"cable\",\"delta\":-5}"
+            },
+            "id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z"
+          }
+        ],
+        "reasoning_content": "Confirmed the inventory: 12. Next, deduct exactly 5 → adjust_stock(\"cable\", -5)."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z",
+        "content": "{\"quantity\": 7}"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [
+          {
+            "type": "function",
+            "function": {
+              "name": "get_stock",
+              "arguments": "{\"product\":\"cable\"}"
+            },
+            "id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG"
+          }
+        ],
+        "reasoning_content": "The adjustment was successful, and the quantity is now 7. To confirm the final quantity, I'll retrieve the inventory again."
+      },
+      {
+        "role": "tool",
+        "tool_call_id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG",
+        "content": "{\"product\": \"cable\", \"quantity\": 7}"
+      }
+    ],
+    "tool_trace": [
+      {
+        "action": {
+          "tool": "get_stock",
+          "product": "cable"
+        },
+        "result": {
+          "product": "cable",
+          "quantity": 12
+        },
+        "ok": true,
+        "tool_call_id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ"
+      },
+      {
+        "action": {
+          "tool": "adjust_stock",
+          "product": "cable",
+          "delta": -5
+        },
+        "result": {
+          "quantity": 7
+        },
+        "ok": true,
+        "tool_call_id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z"
+      },
+      {
+        "action": {
+          "tool": "get_stock",
+          "product": "cable"
+        },
+        "result": {
+          "product": "cable",
+          "quantity": 7
+        },
+        "ok": true,
+        "tool_call_id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 2580,
+      "completion_tokens": 274
+    },
+    "timings": [
+      {
+        "cache_n": 0,
+        "prompt_n": 479,
+        "prompt_ms": 614.891,
+        "prompt_per_token_ms": 1.283697286012526,
+        "prompt_per_second": 778.9998552588996,
+        "predicted_n": 105,
+        "predicted_ms": 2765.699,
+        "predicted_per_token_ms": 26.593259615384618,
+        "predicted_per_second": 37.603513614460574
+      },
+      {
+        "cache_n": 583,
+        "prompt_n": 30,
+        "prompt_ms": 293.209,
+        "prompt_per_token_ms": 9.773633333333333,
+        "prompt_per_second": 102.31609534495871,
+        "predicted_n": 68,
+        "predicted_ms": 1775.694,
+        "predicted_per_token_ms": 26.50289552238806,
+        "predicted_per_second": 37.73172629968902
+      },
+      {
+        "cache_n": 680,
+        "prompt_n": 22,
+        "prompt_ms": 279.585,
+        "prompt_per_token_ms": 12.70840909090909,
+        "prompt_per_second": 78.68805551084644,
+        "predicted_n": 56,
+        "predicted_ms": 1458.991,
+        "predicted_per_token_ms": 26.52710909090909,
+        "predicted_per_second": 37.69728531567364
+      },
+      {
+        "cache_n": 757,
+        "prompt_n": 29,
+        "prompt_ms": 286.031,
+        "prompt_per_token_ms": 9.863137931034483,
+        "prompt_per_second": 101.38761183228391,
+        "predicted_n": 45,
+        "predicted_ms": 1174.665,
+        "predicted_per_token_ms": 26.696931818181817,
+        "predicted_per_second": 37.4574878795231
+      }
+    ],
+    "prompt_tps": 1750.6765211207587,
+    "decode_tps": 38.187892514741016
+  },
+  "finish_reason": "stop",
+  "content": "{\"done\":true}",
+  "tool_trace": [
+    {
+      "action": {
+        "tool": "get_stock",
+        "product": "cable"
+      },
+      "result": {
+        "product": "cable",
+        "quantity": 12
+      },
+      "ok": true,
+      "tool_call_id": "9RYUEefX5kyZpaXxt42hcwC2sELf6BqQ"
+    },
+    {
+      "action": {
+        "tool": "adjust_stock",
+        "product": "cable",
+        "delta": -5
+      },
+      "result": {
+        "quantity": 7
+      },
+      "ok": true,
+      "tool_call_id": "3WzRogqtLiSySl6biCy033HF6F0FtR2z"
+    },
+    {
+      "action": {
+        "tool": "get_stock",
+        "product": "cable"
+      },
+      "result": {
+        "product": "cable",
+        "quantity": 7
+      },
+      "ok": true,
+      "tool_call_id": "BsWRdri96fyrL1gAdxgyBjqSGOLlfuGG"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 2580,
+    "completion_tokens": 274
+  },
+  "success": 1,
+  "failure_class": null,
+  "failure_detail": null
+}
