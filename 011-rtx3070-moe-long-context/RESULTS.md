@@ -82,3 +82,7 @@ This is one substitute 60-item set, not the separate 120-trial suite. Same promp
 ## Later stock Raon load probe
 
 Upstream llama.cpp 1.1.0-dev, build 12767, commit a8ad690ca, failed to load the official Raon Q4_K_M file: expected 736 tensors, got 731. No speed or quality measurements exist for this pairing. The working Raon path remains the separately identified KRAFTON branch.
+
+## Instruction format inspection
+
+Inspection of published failed instruction outputs found correct JSON content enclosed in a forbidden JSON Markdown fence on nine Edge0 items (IF01, IF05, IF07, IF10, IF13, IF14, IF15, IF21, IF23), two Qwen items (IF01, IF15), and no Raon items. This checks parsed fenced content against the fixed reference answer without changing the original strict scores. Other failures remain; it is not a relaxed reranking.

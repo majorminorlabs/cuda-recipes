@@ -23,3 +23,5 @@ RAM measurements differ: Windows Job Object peak commit, Docker samples/cgroup p
 60 fixed items: 15 coding, 20 exact math, 23 instruction following and 2 retrieval. One pass per model, same user prompts and ordering, 512-token output cap, greedy sampling, seed 42, reasoning disabled. Bare JSON or one outer JSON fence is accepted for content categories. Instruction tasks require bare JSON. Numeric strings differ from numbers. Coding checks restricted Python cases; passing does not prove general program correctness.
 
 Edge0 uses 65536 context after allocation failure at 131072. Qwen and Raon use 131072 context. Retrieval spans are tokenizer dependent: Qwen 64340/126957 tokens, Raon 51301/100951. Edge0 rejects the second retrieval as over capacity. The original scorer is preserved with item definitions; public score rows retain task outputs but omit operational transport records and failed setup attempts. These are quality records, not executable instructions.
+
+Qwen quality-server cgroup RAM peaked at 22.77 GiB with 5559 MiB sampled VRAM. These peaks differ from the roughly 20.1 GiB speed runs; do not use speed-run memory as a quality-server requirement.
